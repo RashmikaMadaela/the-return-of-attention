@@ -602,102 +602,470 @@ sudo apt install postgresql  # Ubuntu
 # - PlanetScale (Free tier: 5GB)
 ```
 
-### **Phase 2: Project Structure (Next.js Full-Stack)**
+### **Phase 2: Project Structure (Optimized for The Return of Attention)**
 
 ```
-meditation-app/
+the-return-of-attention/
 ├── prisma/
-│   ├── schema.prisma              # Database schema
-│   ├── migrations/                # Database migrations
-│   └── seed.ts                    # Database seeding
+│   ├── schema.prisma              # Complete database schema with all models
+│   ├── migrations/                # Database migrations history
+│   ├── seed.ts                    # Seed data for stages, sessions, initial data
+│   └── seeds/                     # Seed data files
+│       ├── stages.json            # 6 stages with sub-stages (T1-T5 for Stage 1)
+│       ├── session-types.json     # Timer-only vs PAHM matrix sessions
+│       └── admin-users.json       # Initial admin user data
 ├── src/
-│   ├── app/                       # App Router
-│   │   ├── (auth)/                # Auth route group
+│   ├── app/                       # Next.js App Router
+│   │   ├── (public)/              # Public route group (before authentication)
+│   │   │   ├── page.tsx           # Landing/Welcome page
+│   │   │   ├── about/
+│   │   │   │   └── page.tsx       # About page with PAHM methodology
+│   │   │   ├── privacy/
+│   │   │   │   └── page.tsx       # Privacy policy
+│   │   │   ├── terms/
+│   │   │   │   └── page.tsx       # Terms of service
+│   │   │   └── layout.tsx         # Public layout (header with sign in/up)
+│   │   ├── (auth)/                # Authentication route group
 │   │   │   ├── signin/
-│   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx       # Sign in page
 │   │   │   ├── signup/
-│   │   │   │   └── page.tsx
-│   │   │   └── layout.tsx
-│   │   ├── (dashboard)/           # Dashboard route group
+│   │   │   │   └── page.tsx       # Sign up page
+│   │   │   ├── verify-email/
+│   │   │   │   └── page.tsx       # Email verification page
+│   │   │   ├── forgot-password/
+│   │   │   │   └── page.tsx       # Forgot password page
+│   │   │   ├── reset-password/
+│   │   │   │   └── page.tsx       # Password reset page
+│   │   │   └── layout.tsx         # Auth layout (minimal, centered)
+│   │   ├── (onboarding)/          # Onboarding route group (authenticated)
+│   │   │   ├── personal-info/
+│   │   │   │   └── page.tsx       # Personal information collection
+│   │   │   ├── questionnaire/
+│   │   │   │   ├── page.tsx       # Multi-step questionnaire
+│   │   │   │   ├── step/
+│   │   │   │   │   └── [stepNumber]/
+│   │   │   │   │       └── page.tsx # Individual questionnaire steps (1-6)
+│   │   │   │   └── success/
+│   │   │   │       └── page.tsx   # Questionnaire completion success
+│   │   │   ├── self-assessment/
+│   │   │   │   ├── page.tsx       # 6-category self-assessment
+│   │   │   │   └── success/
+│   │   │   │       └── page.tsx   # Self-assessment completion & happiness score
+│   │   │   └── layout.tsx         # Onboarding layout with progress indicator
+│   │   ├── (app)/                 # Main application route group
 │   │   │   ├── dashboard/
-│   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx       # Main dashboard (happiness score, stages, assessment status)
 │   │   │   ├── progress/
-│   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx       # Detailed progress overview
+│   │   │   ├── stages/
+│   │   │   │   ├── page.tsx       # Stages overview (integrated in dashboard)
+│   │   │   │   └── [stageId]/
+│   │   │   │       ├── page.tsx   # Individual stage page
+│   │   │   │       └── sessions/
+│   │   │   │           └── [sessionId]/
+│   │   │   │               └── page.tsx # Session preparation
 │   │   │   ├── sessions/
-│   │   │   │   ├── [id]/
-│   │   │   │   │   └── page.tsx
-│   │   │   │   └── page.tsx
-│   │   │   └── layout.tsx
+│   │   │   │   ├── preparation/
+│   │   │   │   │   └── [sessionId]/
+│   │   │   │   │       └── page.tsx # Session preparation page
+│   │   │   │   ├── posture/
+│   │   │   │   │   └── [sessionId]/
+│   │   │   │   │       └── page.tsx # Posture selection page
+│   │   │   │   ├── practice/
+│   │   │   │   │   └── [sessionId]/
+│   │   │   │   │       ├── timer/
+│   │   │   │   │       │   └── page.tsx # Stage 1 timer-only sessions
+│   │   │   │   │       └── pahm/
+│   │   │   │   │           └── page.tsx # Stage 2+ PAHM matrix sessions
+│   │   │   │   └── completion/
+│   │   │   │       └── [sessionId]/
+│   │   │   │           └── page.tsx # Session completion & feedback
+│   │   │   ├── mind-recovery/
+│   │   │   │   └── page.tsx       # Mind Recovery page (unlocked after Stage 1)
+│   │   │   ├── daily-notes/
+│   │   │   │   └── page.tsx       # Daily notes & mood tracking
+│   │   │   ├── profile/
+│   │   │   │   └── page.tsx       # User profile & account settings
+│   │   │   ├── help/
+│   │   │   │   └── page.tsx       # Help & support page
+│   │   │   └── layout.tsx         # Main app layout with navigation
 │   │   ├── (admin)/               # Admin route group
 │   │   │   ├── admin/
-│   │   │   │   └── page.tsx
-│   │   │   └── layout.tsx
+│   │   │   │   ├── page.tsx       # Admin dashboard
+│   │   │   │   ├── login/
+│   │   │   │   │   └── page.tsx   # Admin-specific login
+│   │   │   │   ├── users/
+│   │   │   │   │   ├── page.tsx   # User management page
+│   │   │   │   │   └── [userId]/
+│   │   │   │   │       └── page.tsx # Individual user details
+│   │   │   │   ├── sessions/
+│   │   │   │   │   └── page.tsx   # Session management & analytics
+│   │   │   │   ├── system/
+│   │   │   │   │   └── page.tsx   # System monitoring
+│   │   │   │   └── analytics/
+│   │   │   │       └── page.tsx   # Analytics & reports
+│   │   │   └── layout.tsx         # Admin layout with admin navigation
 │   │   ├── api/                   # API Routes
 │   │   │   ├── auth/
-│   │   │   │   └── [...nextauth]/
-│   │   │   │       └── route.ts
-│   │   │   ├── users/
-│   │   │   │   ├── route.ts
-│   │   │   │   └── [id]/
-│   │   │   │       └── route.ts
-│   │   │   ├── questionnaire/
-│   │   │   │   └── route.ts
-│   │   │   ├── assessments/
-│   │   │   │   └── route.ts
-│   │   │   ├── sessions/
-│   │   │   │   ├── route.ts
-│   │   │   │   └── [id]/
-│   │   │   │       ├── route.ts
-│   │   │   │       └── pahm/
-│   │   │   │           └── route.ts
+│   │   │   │   ├── [...nextauth]/
+│   │   │   │   │   └── route.ts   # NextAuth.js configuration
+│   │   │   │   ├── register/
+│   │   │   │   │   └── route.ts   # User registration
+│   │   │   │   ├── verify-email/
+│   │   │   │   │   └── route.ts   # Email verification
+│   │   │   │   └── reset-password/
+│   │   │   │       └── route.ts   # Password reset
+│   │   │   ├── user/
+│   │   │   │   ├── profile/
+│   │   │   │   │   └── route.ts   # GET/PUT user profile
+│   │   │   │   ├── personal-info/
+│   │   │   │   │   └── route.ts   # PUT personal information
+│   │   │   │   ├── preferences/
+│   │   │   │   │   └── route.ts   # GET/PUT user preferences
+│   │   │   │   ├── change-password/
+│   │   │   │   │   └── route.ts   # PUT password change
+│   │   │   │   └── delete-account/
+│   │   │   │       └── route.ts   # DELETE account
+│   │   │   ├── assessment/
+│   │   │   │   ├── questionnaire/
+│   │   │   │   │   ├── route.ts   # POST questionnaire submission
+│   │   │   │   │   └── status/
+│   │   │   │   │       └── route.ts # GET questionnaire status
+│   │   │   │   ├── self-assessment/
+│   │   │   │   │   └── route.ts   # POST self-assessment submission
+│   │   │   │   ├── history/
+│   │   │   │   │   └── route.ts   # GET assessment history
+│   │   │   │   └── type/
+│   │   │   │       └── route.ts   # GET assessment type check
+│   │   │   ├── stages/
+│   │   │   │   ├── route.ts       # GET all stages
+│   │   │   │   └── [stageId]/
+│   │   │   │       ├── route.ts   # GET individual stage
+│   │   │   │       └── unlock/
+│   │   │   │           └── route.ts # GET stage unlock check
+│   │   │   ├── session/
+│   │   │   │   ├── start/
+│   │   │   │   │   └── route.ts   # POST session start
+│   │   │   │   ├── update/
+│   │   │   │   │   └── route.ts   # PUT session update
+│   │   │   │   ├── complete/
+│   │   │   │   │   └── route.ts   # POST session completion
+│   │   │   │   ├── history/
+│   │   │   │   │   └── route.ts   # GET session history
+│   │   │   │   └── progress/
+│   │   │   │       └── route.ts   # GET user progress
+│   │   │   ├── pahm/
+│   │   │   │   ├── start/
+│   │   │   │   │   └── route.ts   # POST PAHM session start
+│   │   │   │   ├── click/
+│   │   │   │   │   └── route.ts   # POST PAHM click tracking
+│   │   │   │   ├── complete/
+│   │   │   │   │   └── route.ts   # POST PAHM session completion
+│   │   │   │   └── session/
+│   │   │   │       └── [sessionId]/
+│   │   │   │           └── route.ts # GET PAHM session data
+│   │   │   ├── progress/
+│   │   │   │   ├── overview/
+│   │   │   │   │   └── route.ts   # GET user progress overview
+│   │   │   │   └── stages/
+│   │   │   │       └── route.ts   # GET stage progression
+│   │   │   ├── notes/
+│   │   │   │   ├── emoji/
+│   │   │   │   │   └── route.ts   # POST emoji note submission
+│   │   │   │   ├── detailed/
+│   │   │   │   │   └── route.ts   # POST detailed note submission
+│   │   │   │   ├── history/
+│   │   │   │   │   └── route.ts   # GET notes history
+│   │   │   │   └── trends/
+│   │   │   │       └── route.ts   # GET mood trends
 │   │   │   ├── happiness/
-│   │   │   │   └── route.ts
+│   │   │   │   ├── calculate/
+│   │   │   │   │   └── route.ts   # POST happiness score calculation
+│   │   │   │   ├── history/
+│   │   │   │   │   └── route.ts   # GET happiness score history
+│   │   │   │   ├── breakdown/
+│   │   │   │   │   └── route.ts   # GET happiness score breakdown
+│   │   │   │   └── trends/
+│   │   │   │       └── route.ts   # GET happiness trends
 │   │   │   └── admin/
+│   │   │       ├── auth/
+│   │   │       │   └── login/
+│   │   │       │       └── route.ts # POST admin login
 │   │   │       ├── users/
-│   │   │       │   └── route.ts
-│   │   │       └── analytics/
-│   │   │           └── route.ts
-│   │   ├── globals.css
-│   │   └── layout.tsx
+│   │   │       │   ├── route.ts   # GET admin user list
+│   │   │       │   ├── [userId]/
+│   │   │       │   │   └── route.ts # GET/PUT/DELETE admin user operations
+│   │   │       │   └── bulk/
+│   │   │       │       └── route.ts # POST bulk user operations
+│   │   │       ├── stats/
+│   │   │       │   └── route.ts   # GET system statistics
+│   │   │       ├── analytics/
+│   │   │       │   ├── users/
+│   │   │       │   │   └── route.ts # GET user analytics
+│   │   │       │   ├── sessions/
+│   │   │       │   │   └── route.ts # GET session analytics
+│   │   │       │   └── happiness/
+│   │   │       │       └── route.ts # GET happiness analytics
+│   │   │       ├── system/
+│   │   │       │   └── monitor/
+│   │   │       │       └── route.ts # GET system monitoring
+│   │   │       └── sessions/
+│   │   │           └── manage/
+│   │   │               └── route.ts # POST session management
+│   │   ├── globals.css            # Global styles with meditation theme
+│   │   ├── layout.tsx             # Root layout
+│   │   ├── loading.tsx            # Global loading UI
+│   │   ├── error.tsx              # Global error UI
+│   │   ├── not-found.tsx          # 404 page
+│   │   └── favicon.ico
 │   ├── components/                # Reusable components
-│   │   ├── ui/                    # Base UI components
+│   │   ├── ui/                    # Base UI components (shadcn/ui style)
 │   │   │   ├── button.tsx
 │   │   │   ├── input.tsx
+│   │   │   ├── textarea.tsx
+│   │   │   ├── card.tsx
 │   │   │   ├── dialog.tsx
-│   │   │   └── form.tsx
-│   │   ├── auth/                  # Auth components
+│   │   │   ├── form.tsx
+│   │   │   ├── progress.tsx
+│   │   │   ├── slider.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── toast.tsx
+│   │   │   ├── badge.tsx
+│   │   │   └── loading.tsx
+│   │   ├── auth/                  # Authentication components
 │   │   │   ├── signin-form.tsx
 │   │   │   ├── signup-form.tsx
-│   │   │   └── auth-guard.tsx
+│   │   │   ├── forgot-password-form.tsx
+│   │   │   ├── reset-password-form.tsx
+│   │   │   ├── auth-guard.tsx
+│   │   │   └── oauth-buttons.tsx
+│   │   ├── onboarding/            # Onboarding flow components
+│   │   │   ├── personal-info-form.tsx
+│   │   │   ├── questionnaire/
+│   │   │   │   ├── questionnaire-step.tsx
+│   │   │   │   ├── progress-indicator.tsx
+│   │   │   │   └── step-navigation.tsx
+│   │   │   ├── self-assessment/
+│   │   │   │   ├── assessment-category.tsx
+│   │   │   │   ├── attachment-scale.tsx
+│   │   │   │   └── assessment-progress.tsx
+│   │   │   └── completion-success.tsx
 │   │   ├── dashboard/             # Dashboard components
-│   │   │   ├── happiness-score.tsx
+│   │   │   ├── happiness-score-display.tsx
+│   │   │   ├── assessment-status-overview.tsx
+│   │   │   ├── stages-overview.tsx
 │   │   │   ├── stage-card.tsx
-│   │   │   └── assessment-status.tsx
+│   │   │   ├── progress-summary.tsx
+│   │   │   ├── streak-counter.tsx
+│   │   │   └── recent-activity.tsx
+│   │   ├── stages/                # Stage-related components
+│   │   │   ├── stage-details.tsx
+│   │   │   ├── stage-progression.tsx
+│   │   │   ├── session-list.tsx
+│   │   │   ├── unlock-requirements.tsx
+│   │   │   └── stage-completion-badge.tsx
 │   │   ├── sessions/              # Session components
-│   │   │   ├── timer.tsx
-│   │   │   ├── pahm-matrix.tsx
-│   │   │   └── session-feedback.tsx
-│   │   ├── assessments/           # Assessment components
-│   │   │   ├── questionnaire-step.tsx
-│   │   │   └── self-assessment.tsx
-│   │   └── admin/                 # Admin components
-│   │       ├── user-table.tsx
-│   │       └── analytics-chart.tsx
+│   │   │   ├── session-preparation.tsx
+│   │   │   ├── posture-selection.tsx
+│   │   │   ├── timer/
+│   │   │   │   ├── meditation-timer.tsx
+│   │   │   │   ├── timer-controls.tsx
+│   │   │   │   └── session-guidance.tsx
+│   │   │   ├── pahm/
+│   │   │   │   ├── pahm-matrix.tsx
+│   │   │   │   ├── matrix-button.tsx
+│   │   │   │   ├── matrix-explanation.tsx
+│   │   │   │   └── click-tracking.tsx
+│   │   │   ├── session-completion.tsx
+│   │   │   ├── session-feedback.tsx
+│   │   │   └── session-summary.tsx
+│   │   ├── mind-recovery/         # Mind Recovery components
+│   │   │   ├── exercise-card.tsx
+│   │   │   ├── exercise-recommendation.tsx
+│   │   │   └── recovery-timer.tsx
+│   │   ├── progress/              # Progress tracking components
+│   │   │   ├── progress-overview.tsx
+│   │   │   ├── happiness-trends.tsx
+│   │   │   ├── session-statistics.tsx
+│   │   │   ├── achievement-badges.tsx
+│   │   │   └── progress-charts.tsx
+│   │   ├── daily-notes/           # Daily notes components
+│   │   │   ├── emoji-mood-selector.tsx
+│   │   │   ├── detailed-notes-form.tsx
+│   │   │   ├── emotion-intensity-slider.tsx
+│   │   │   ├── notes-history.tsx
+│   │   │   └── mood-trends.tsx
+│   │   ├── profile/               # Profile & settings components
+│   │   │   ├── profile-form.tsx
+│   │   │   ├── account-settings.tsx
+│   │   │   ├── password-change.tsx
+│   │   │   ├── privacy-settings.tsx
+│   │   │   └── data-export.tsx
+│   │   ├── admin/                 # Admin components
+│   │   │   ├── admin-auth-guard.tsx
+│   │   │   ├── admin-dashboard.tsx
+│   │   │   ├── user-management/
+│   │   │   │   ├── user-table.tsx
+│   │   │   │   ├── user-details.tsx
+│   │   │   │   ├── user-search.tsx
+│   │   │   │   └── bulk-operations.tsx
+│   │   │   ├── analytics/
+│   │   │   │   ├── analytics-charts.tsx
+│   │   │   │   ├── user-engagement.tsx
+│   │   │   │   ├── session-analytics.tsx
+│   │   │   │   └── happiness-analytics.tsx
+│   │   │   ├── system/
+│   │   │   │   ├── system-monitor.tsx
+│   │   │   │   ├── performance-metrics.tsx
+│   │   │   │   └── error-logs.tsx
+│   │   │   └── session-management.tsx
+│   │   ├── layout/                # Layout components
+│   │   │   ├── header.tsx
+│   │   │   ├── navigation.tsx
+│   │   │   ├── sidebar.tsx
+│   │   │   ├── footer.tsx
+│   │   │   └── breadcrumbs.tsx
+│   │   └── common/                # Common reusable components
+│   │       ├── loading-spinner.tsx
+│   │       ├── error-boundary.tsx
+│   │       ├── confirmation-dialog.tsx
+│   │       ├── data-table.tsx
+│   │       ├── chart-wrapper.tsx
+│   │       └── page-header.tsx
 │   ├── lib/                       # Utilities & configurations
-│   │   ├── prisma.ts              # Prisma client
-│   │   ├── auth.ts                # NextAuth config
-│   │   ├── validations.ts         # Zod schemas
-│   │   ├── utils.ts               # Utility functions
+│   │   ├── prisma.ts              # Prisma client setup
+│   │   ├── auth.ts                # NextAuth.js configuration
+│   │   ├── validations/           # Zod validation schemas
+│   │   │   ├── auth.ts            # Auth form validations
+│   │   │   ├── user.ts            # User profile validations
+│   │   │   ├── questionnaire.ts   # Questionnaire validations
+│   │   │   ├── assessment.ts      # Self-assessment validations
+│   │   │   ├── session.ts         # Session validations
+│   │   │   ├── notes.ts           # Daily notes validations
+│   │   │   └── admin.ts           # Admin operations validations
+│   │   ├── calculations/          # Business logic calculations
+│   │   │   ├── happiness.ts       # Happiness score algorithm
+│   │   │   ├── stage-progression.ts # Stage unlock logic
+│   │   │   ├── session-requirements.ts # Session completion logic
+│   │   │   └── analytics.ts       # Analytics calculations
+│   │   ├── utils.ts               # General utility functions
+│   │   ├── constants.ts           # App constants and configurations
+│   │   ├── middleware.ts          # Auth middleware
+│   │   ├── emails.ts              # Email templates and sending
+│   │   ├── api-client.ts          # API client utilities
 │   │   └── stores/                # Zustand stores
-│   │       ├── auth-store.ts
-│   │       ├── session-store.ts
-│   │       └── ui-store.ts
-│   ├── types/                     # TypeScript types
-│   │   ├── auth.ts
-│   │   ├── user.ts
-│   │   ├── session.ts
-│   │   ├── assessment.ts
+│   │       ├── auth-store.ts      # Authentication state
+│   │       ├── session-store.ts   # Current session state
+│   │       ├── ui-store.ts        # UI state management
+│   │       ├── assessment-store.ts # Assessment progress state
+│   │       └── progress-store.ts  # User progress state
+│   ├── types/                     # TypeScript type definitions
+│   │   ├── auth.ts                # Authentication types
+│   │   ├── user.ts                # User and profile types
+│   │   ├── questionnaire.ts       # Questionnaire types
+│   │   ├── assessment.ts          # Self-assessment types
+│   │   ├── session.ts             # Meditation session types
+│   │   ├── pahm.ts                # PAHM matrix types
+│   │   ├── stage.ts               # Stage progression types
+│   │   ├── happiness.ts           # Happiness calculation types
+│   │   ├── notes.ts               # Daily notes types
+│   │   ├── admin.ts               # Admin types
+│   │   ├── api.ts                 # API response types
 │   │   └── database.ts            # Prisma generated types
+│   ├── hooks/                     # Custom React hooks
+│   │   ├── use-auth.ts            # Authentication hooks
+│   │   ├── use-session.ts         # Session management hooks
+│   │   ├── use-timer.ts           # Meditation timer hooks
+│   │   ├── use-pahm-matrix.ts     # PAHM matrix interaction hooks
+│   │   ├── use-happiness.ts       # Happiness score hooks
+│   │   ├── use-progress.ts        # Progress tracking hooks
+│   │   ├── use-debounce.ts        # Debounce utility hook
+│   │   └── use-api.ts             # API interaction hooks
+│   └── styles/                    # Additional styles
+│       ├── globals.css            # Global styles and meditation theme
+│       ├── components.css         # Component-specific styles
+│       └── meditation-theme.css   # PAHM methodology themed styles
+├── public/                        # Static files
+│   ├── audio/                     # Meditation audio files
+│   │   ├── stage1/                # Stage 1 timer guidance audio
+│   │   ├── stage2+/               # PAHM matrix guidance audio
+│   │   ├── mind-recovery/         # Mind Recovery exercise audio
+│   │   └── general/               # General meditation sounds
+│   ├── images/                    # Images and graphics
+│   │   ├── stages/                # Stage-specific images
+│   │   ├── pahm/                  # PAHM matrix illustrations
+│   │   ├── postures/              # Meditation posture guides
+│   │   ├── icons/                 # App icons and SVGs
+│   │   └── logos/                 # App logos and branding
+│   ├── docs/                      # Documentation files
+│   │   ├── pahm-methodology.pdf   # PAHM methodology guide
+│   │   ├── user-manual.pdf        # User manual
+│   │   └── privacy-policy.pdf     # Privacy policy document
+│   ├── favicon.ico
+│   ├── manifest.json              # PWA manifest
+│   ├── robots.txt
+│   └── sitemap.xml
+├── tests/                         # Test files (future)
+│   ├── __mocks__/                 # Test mocks
+│   ├── api/                       # API route tests
+│   ├── components/                # Component tests
+│   ├── lib/                       # Utility function tests
+│   └── e2e/                       # End-to-end tests
+├── docs/                          # Additional documentation
+│   ├── api-documentation.md       # API documentation
+│   ├── deployment-guide.md        # Deployment instructions
+│   ├── database-schema.md         # Database schema documentation
+│   └── contributing.md            # Contribution guidelines
+├── .env                           # Environment variables template
+├── .env.local                     # Local environment (git ignored)
+├── .env.example                   # Environment variables example
+├── .gitignore                     # Git ignore rules
+├── .eslintrc.json                 # ESLint configuration
+├── .prettierrc                    # Prettier configuration
+├── next.config.js                 # Next.js configuration
+├── tailwind.config.js             # Tailwind CSS configuration with meditation theme
+├── tsconfig.json                  # TypeScript configuration
+├── package.json                   # Dependencies and scripts
+├── package-lock.json              # Dependency lock file
+├── README.md                      # Project documentation
+└── vercel.json                    # Vercel deployment configuration
+```
+
+### **Key Structure Benefits for Our Meditation App:**
+
+#### **1. Route Organization Aligned with User Journey:**
+- **(public)**: Landing and info pages for unauthenticated users
+- **(auth)**: Complete authentication flow
+- **(onboarding)**: Step-by-step onboarding with assessments
+- **(app)**: Main application with all meditation features
+- **(admin)**: Secure admin interface
+
+#### **2. Component Organization by Feature:**
+- **Meditation-specific components**: Timer, PAHM matrix, session management
+- **Assessment components**: Questionnaire and self-assessment flows
+- **Progress tracking**: Happiness scores, stage progression
+- **Admin tools**: User management, analytics, system monitoring
+
+#### **3. Business Logic Separation:**
+- **`lib/calculations/`**: All happiness and progression algorithms
+- **`lib/validations/`**: Input validation for each feature
+- **`lib/stores/`**: State management for complex user flows
+
+#### **4. Type Safety Throughout:**
+- **Feature-specific types**: Each major feature has dedicated type definitions
+- **Database types**: Prisma-generated types for type-safe database operations
+- **API types**: Consistent API response types
+
+#### **5. Scalable File Organization:**
+- **Nested API routes**: Clear organization of all 50+ API endpoints
+- **Component hierarchy**: Reusable UI components with meditation-specific variants
+- **Asset organization**: Audio, images, and docs organized by feature
+
+#### **6. Future-Ready Architecture:**
+- **Hardware integration provision**: Ready for ESP32 PAHM matrix integration
+- **Real-time features**: Structure supports WebSocket integration
+- **Testing framework**: Organized test structure for future testing implementation
+- **Documentation**: Comprehensive docs for maintenance and contribution
 │   └── styles/                    # Additional styles
 │       └── globals.css
 ├── public/                        # Static files
