@@ -83,13 +83,36 @@ This project follows a **backend-first development approach**:
 - Next.js project with TypeScript and Tailwind CSS
 - Core dependencies installed (Prisma, NextAuth, Supabase, Zod)
 - Project folder structure established
-- ESLint configuration set up
+- ESLint and Prettier configurations set up
 - Git repository initialized
+- Placeholder files created for organized development
 
 🔄 **Next Steps**
 - Set up Supabase account and database
 - Design and implement database schema
 - Create authentication system
+
+## 📁 File Structure
+
+All files are set up with placeholder content and TODO comments:
+
+```
+src/
+├── app/
+│   ├── globals.css          # Basic Tailwind setup
+│   ├── layout.tsx           # Root layout component
+│   ├── page.tsx             # Home page (minimal)
+│   └── api/                 # API routes (empty, ready for backend)
+├── components/              # UI components (empty, ready for frontend)
+├── lib/
+│   ├── utils.ts             # Utility functions (placeholder)
+│   ├── prisma.ts            # Database client (placeholder)
+│   └── happiness.ts         # Happiness calculation (placeholder)
+├── types/
+│   └── index.ts             # TypeScript types (placeholder)
+prisma/
+└── schema.prisma            # Database schema (placeholder)
+```
 
 ## 🤝 Contributing
 
