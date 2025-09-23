@@ -1,0 +1,180 @@
+﻿Documentation Notes
+
+
+* User manual signup
+   * Request include
+      * Email
+      * Password
+      * First Name
+      * Last Name
+   * Response
+      * success
+* User signup through google
+   * Request
+      * Email
+      * First Name
+      * Last Name
+   * Response
+      * success
+* User submitting personal info
+   * Request
+      * Age
+      * Gender
+      * Nationality
+      * Current country
+      * Account created date time
+   * Response
+      * success
+* User signin
+   * Request
+      * Email
+      * Password
+      * Or Google sign in
+   * Response
+      * Session id or token
+* User email confirmation for manual signup
+   * Request
+      * Session id/userid
+   * Response
+      * Sucess, email sent
+* User forgot password option
+   * Request
+      * Email
+   * Response
+      * Success, email sent
+* Password reset
+   * Request
+      * email
+      * New password
+   * Response
+      * Success
+* Check users self assessment and questioner completion status and pop a notice
+   * Request
+      * Session id, token/uderID
+   * Response
+      * Self assessment status
+      * Questioner status
+      * Stage completion status
+* Submit questioner
+   * Request
+      * Session id/User ID
+      * Experience level
+      * Goals
+      * Age Range
+      * Location
+      * Occupation
+      * Education level
+      * Meditation Background
+      * Sleep Pattern
+      * Physical Activity
+      * Stress Triggers
+      * Daily Routine
+      * Diet Pattern
+      * Screen Time
+      * Social Connections
+      * Work Life Balance
+      * Emotional Awareness
+      * Stress Response
+      * Decision Making
+      * Self Reflection
+      * Thought Patterns
+      * Mindfulness in Daily Life
+      * Mindfulness Experience
+      * Meditation Background Detail
+      * Practice Goals
+      * Preferred Duration
+      * Biggest Challenges
+      * Motivation
+   * Response
+      * Success
+* Submit self assessment
+   * Request
+      * Session Id/User ID
+      * Self Assesment Type (initial/mid/final)
+      * Food Taste
+      * Scents & Aromas
+      * Sounds & Music
+      * Visual & Beauty
+      * Touch & Textures
+      * Thoughts & Mental Images
+   * Response
+      * success
+* Calculating happiness score
+   * Request
+      * Questioner Response
+      * Practice Session Response
+      * Daily Notes
+      * Self Assessment Response
+   * Response
+      * Success, Calculated
+* Showing happiness score 
+   * Request
+      * Questioner Status
+      * Self Assessment Complete Status
+   * Response
+      * Happiness Score
+* Show self assessment responses and comparison on account page
+   * Request
+      * userID/session id
+   * Response
+      * Self assessment responses
+
+
+* Get stage completion info
+   * Request
+      * UserID/SessionID
+   * Response
+      * Stage Info
+* For each stage, session completion info
+   * Request
+      * UserID/SessionID
+   * Response
+      * Session Info
+* For each session users completion data
+   * Request
+      * UserID/SessionID
+      * Timer
+      * Start Time/Date
+* For pahm matrix track user inputs
+   * Request
+      * SessionID/UserID
+      * Timer
+      * Each button click with the timestamp
+   * Response
+      * Sucess
+* Posture Selection
+   * Request
+      * SessionID/UserID
+      * Posture
+   * Response
+      * Success
+* Submit daily notes as an emoji
+   * Request
+      * UserID/SessionID
+      * Emoji
+   * Response
+      * Success
+* Submit daily notes as a detailed note
+   * Request
+      * UserID/SessionID
+      * What's happening? (Note) (optional)
+      * Emotion
+      * Intensity
+      * What triggered this (optional)
+   * Response
+      * Success
+* Submit Practice Reflection
+   * Request
+      * UserID/SessionID
+      * Stage/Session
+      * How do you feel about this?
+      * Challenges (optional)
+      * Insights (optional)
+
+
+* Get user count, total sessions completed, current online users (ADMIN)
+* Get individual user stat (ADMIN)
+* Give admin privileges to user (ADMIN)
+* Delete and edit user (ADMIN)
+* For admins test sessions with speeded timers (ADMIN)
+* For admins unlock a locked session (ADMIN)

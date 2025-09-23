@@ -1,0 +1,292 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and profile
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Auth relations
+  accounts Account[]
+  sessions Session[]
+
+  // App-specific relations
+  userProfile        UserProfile?
+  questionnaireAnswers QuestionnaireAnswer[]
+  selfAssessments    SelfAssessment[]
+  sessions_meditate  MeditationSession[]
+  pahmSessions       PAHMSession[]
+  dailyNotes         DailyNote[]
+
+  @@map("users")
+}
+
+// NextAuth required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
+
+// User profile and personal information
+model UserProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Personal Information
+  fullName      String?
+  dateOfBirth   DateTime?
+  gender        String?
+  location      String?
+  phoneNumber   String?
+  
+  // App Preferences
+  timezone              String?
+  preferredSessionTime  String?
+  notificationsEnabled  Boolean @default(true)
+  reminderFrequency     String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_profiles")
+}
+
+// Questionnaire system
+model Questionnaire {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  category    String
+  order       Int
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  questions QuestionnaireQuestion[]
+
+  @@map("questionnaires")
+}
+
+model QuestionnaireQuestion {
+  id              String   @id @default(cuid())
+  questionnaireId String
+  questionnaire   Questionnaire @relation(fields: [questionnaireId], references: [id], onDelete: Cascade)
+  
+  questionText    String
+  questionType    String // "single", "multiple", "text", "scale"
+  options         Json?  // For multiple choice questions
+  isRequired      Boolean @default(true)
+  order           Int
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  answers QuestionnaireAnswer[]
+
+  @@map("questionnaire_questions")
+}
+
+model QuestionnaireAnswer {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId String
+  question   QuestionnaireQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  answer     Json     // Flexible storage for different answer types
+  answeredAt DateTime @default(now())
+
+  @@unique([userId, questionId])
+  @@map("questionnaire_answers")
+}
+
+// Self-assessment system
+model SelfAssessment {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  category String
+  ratings  Json     // Store all ratings for the category
+  notes    String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assessments Assessment[]
+
+  @@map("self_assessments")
+}
+
+model Assessment {
+  id               String         @id @default(cuid())
+  selfAssessmentId String
+  selfAssessment   SelfAssessment @relation(fields: [selfAssessmentId], references: [id], onDelete: Cascade)
+  
+  questionText String
+  rating       Int
+  notes        String?
+  
+  createdAt DateTime @default(now())
+
+  @@map("assessments")
+}
+
+// Meditation stages and progression
+model Stage {
+  id          String   @id @default(cuid())
+  stageNumber Int      @unique
+  title       String
+  description String
+  requirements Json    // Prerequisites to unlock this stage
+  isActive    Boolean  @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions MeditationSession[]
+
+  @@map("stages")
+}
+
+// Meditation sessions
+model MeditationSession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stageId   String
+  stage     Stage    @relation(fields: [stageId], references: [id])
+  
+  sessionType    String   // "timer" or "pahm"
+  duration       Int      // in seconds
+  completedAt    DateTime?
+  isCompleted    Boolean  @default(false)
+  
+  // Session data
+  notes          String?
+  mood           String?
+  focusRating    Int?
+  enjoymentRating Int?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pahmSession PAHMSession?
+
+  @@map("meditation_sessions")
+}
+
+// PAHM (Present Attention and Happiness Matrix) sessions
+model PAHMSession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String   @unique
+  session   MeditationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  matrixType     String   // "3x3" for main PAHM
+  totalClicks    Int      @default(0)
+  sessionData    Json     // Store complete session data
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clicks PAHMClick[]
+
+  @@map("pahm_sessions")
+}
+
+model PAHMClick {
+  id            String      @id @default(cuid())
+  pahmSessionId String
+  pahmSession   PAHMSession @relation(fields: [pahmSessionId], references: [id], onDelete: Cascade)
+  
+  position      Json        // {row: number, col: number}
+  timestamp     DateTime
+  orderIndex    Int
+  
+  @@map("pahm_clicks")
+}
+
+// Daily notes and mood tracking
+model DailyNote {
+  id     String   @id @default(cuid())
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  date           DateTime @db.Date
+  emojiMood      String?
+  detailedNotes  String?
+  emotions       Json?    // Array of emotions with intensities
+  gratitude      String?
+  insights       String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@map("daily_notes")
+}
+
+// Admin users
+model AdminUser {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  name     String
+  role     String   @default("admin")
+  isActive Boolean  @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_users")
+}
