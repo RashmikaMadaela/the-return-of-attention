@@ -13,13 +13,13 @@ This document contains all atomic tasks needed to complete "The Return of Attent
 ## 🏗️ PHASE 1: PROJECT SETUP & DATABASE FOUNDATION (Week 1)
 
 ### **Initial Setup**
-- [ ] Create Next.js project with TypeScript and Tailwind CSS
-- [ ] Set up GitHub repository and initial commit
-- [ ] Install core dependencies (Prisma, NextAuth, etc.)
-- [ ] Set up Supabase account and create project database
-- [ ] Configure environment variables (.env.local)
-- [ ] Set up project folder structure (lib, types, api, etc.)
-- [ ] Set up ESLint and Prettier configurations
+- [x] Create Next.js project with TypeScript and Tailwind CSS
+- [x] Set up GitHub repository and initial commit
+- [x] Install core dependencies (Prisma, NextAuth, etc.)
+- [x] Set up Supabase account and create project database
+- [x] Configure environment variables (.env.local)
+- [x] Set up project folder structure (lib, types, api, etc.)
+- [x] Set up ESLint and Prettier configurations
 
 ### **Database & Schema Design**
 - [ ] Initialize Prisma and create complete database schema
