@@ -131,51 +131,49 @@ model UserProfile {
 model Questionnaire {
   id        String   @id @default(cuid())
   userId    String   @unique
-  completed Boolean  @default(false)
+  // No type field - questionnaire collected only once after account creation
   
-  // Personal Background
-  experienceLevel String?
-  goals          String?
-  ageRange       String?
-  location       String?
+  // Personal & Background Information
+  experienceLevel              String?   // Multiple choice: 'beginner', 'intermediate', 'advanced'
+  mainGoals                   String[]  // Multiple choice array: meditation goals
+  ageRange                    String?   // Multiple choice: age brackets
+  location                    String?   // Multiple choice: geographic region
+  occupation                  String?   // Multiple choice: profession categories
+  educationLevel              String?   // Multiple choice: education levels
   
-  // Lifestyle
-  occupation     String?
-  educationLevel String?
-  meditationBackground String?
-  sleepPattern   String?
-  physicalActivity String?
+  // Meditation & Mindfulness Background
+  meditationBackground        String?   // Multiple choice: experience levels
+  sleepPattern               Int?      // Slider 1-10: sleep quality rating
+  physicalActivity           Int?      // Slider 1-10: activity level
+  stressTrigers              String[]  // Multiple choice array: stress sources
+  dailyRoutine               String?   // Multiple choice: routine structure
+  dietPattern                Int?      // Slider 1-10: diet quality
+  screenTime                 Int?      // Slider 1-10: daily screen hours
   
-  // Daily Life
-  stressTriggers String?
-  dailyRoutine   String?
-  dietPattern    String?
-  screenTime     String?
+  // Social & Lifestyle
+  socialConnections          Int?      // Slider 1-10: social connection strength
+  workLifeBalance           Int?      // Slider 1-10: work-life balance rating
   
-  // Social & Work
-  socialConnections String?
-  workLifeBalance   String?
+  // Mental & Emotional Awareness
+  emotionalAwareness         Int?      // Slider 1-10: self-awareness level
+  stressResponse             Int?      // Slider 1-10: stress management ability
+  decisionMaking             Int?      // Slider 1-10: decision confidence
+  selfReflection             Int?      // Slider 1-10: reflection frequency
+  thoughtPatterns            Int?      // Slider 1-10: thought clarity
+  mindfulnessInDailyLife     Int?      // Slider 1-10: daily mindfulness practice
   
-  // Mental & Emotional
-  emotionalAwareness String?
-  stressResponse     String?
-  decisionMaking     String?
-  selfReflection     String?
-  
-  // Mindfulness & Meditation
-  thoughtPatterns        String?
-  mindfulnessInDailyLife String?
-  mindfulnessExperience  String?
-  meditationBackgroundDetail String?
-  practiceGoals          String?
-  preferredDuration      String?
-  biggestChallenges      String?
-  motivation             String?
-  
-  completedAt DateTime?
+  // Detailed Meditation Experience
+  mindfulnessExperience      String?   // Multiple choice: experience type
+  meditationBackgroundDetail String?   // Multiple choice: detailed background
+  practiceGoals              String[]  // Multiple choice array: specific goals
+  preferredDuration          Int?      // Slider 1-10: session length preference
+  biggestChallenges          String[]  // Multiple choice array: practice obstacles
+  motivation                 Int?      // Slider 1-10: motivation level
+
+  isCompleted DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@map("questionnaires")

@@ -67,31 +67,73 @@ Personal Info Form → Validation → Storage → Assessment Flow
 - All fields mandatory for progression
 - Data used in happiness calculation weighting
 
-### **Step 3: Questionnaire Assessment**
+### **Step 3: One-Time Questionnaire Collection**
 ```
-6-Step Questionnaire → Validation → Scoring → Assessment Status Update
+27-Field Questionnaire → Individual Field Validation → Scoring → Initial Self-Assessment Unlock
 ```
 
-**Questionnaire Components:**
-1. **Personal Background**: Age, lifestyle, experience level
-2. **Lifestyle Section**: Physical activity, sleep patterns, diet
-3. **Daily Life Patterns**: Work-life balance, daily mindfulness
-4. **Social & Work**: Relationships, work satisfaction, social connections
-5. **Mental & Emotional**: Stress response, emotional awareness, thought patterns
-6. **Mindfulness & Meditation**: Prior experience, motivation, goals
+**Collection Rules:**
+- **Timing**: Collected only once after account creation
+- **No Type Variants**: Unlike self-assessment, questionnaire has no different types
+- **Mandatory**: Required before accessing any meditation stages
+
+**Questionnaire Structure (27 Fields):**
+
+**Personal & Background (6 fields):**
+- `experienceLevel` (multiple choice): beginner/intermediate/advanced
+- `mainGoals` (array): stress reduction, focus, emotional balance, etc.
+- `ageRange` (multiple choice): age brackets
+- `location` (multiple choice): geographic region
+- `occupation` (multiple choice): profession categories
+- `educationLevel` (multiple choice): education levels
+
+**Lifestyle Metrics (4 slider fields 1-10):**
+- `sleepPattern`: sleep quality rating
+- `physicalActivity`: activity level
+- `dietPattern`: diet quality
+- `screenTime`: daily screen hours
+
+**Social & Environmental (4 fields):**
+- `stressTrigers` (array): work, relationships, health, etc.
+- `dailyRoutine` (multiple choice): structured/flexible/chaotic
+- `socialConnections` (slider 1-10): social connection strength
+- `workLifeBalance` (slider 1-10): balance rating
+
+**Mental & Emotional Awareness (6 slider fields 1-10):**
+- `emotionalAwareness`: self-awareness level
+- `stressResponse`: stress management ability  
+- `decisionMaking`: decision confidence
+- `selfReflection`: reflection frequency
+- `thoughtPatterns`: thought clarity
+- `mindfulnessInDailyLife`: daily mindfulness practice
+
+**Meditation Experience (7 fields):**
+- `meditationBackground` (multiple choice): experience type
+- `mindfulnessExperience` (multiple choice): apps/classes/books
+- `meditationBackgroundDetail` (multiple choice): detailed background
+- `practiceGoals` (array): specific meditation goals
+- `preferredDuration` (slider 1-10): session length preference
+- `biggestChallenges` (array): time, focus, consistency, etc.
+- `motivation` (slider 1-10): motivation level
 
 **Business Rules:**
-- All 6 steps must be completed
-- Progress can be saved and resumed
+- Single comprehensive submission (27 fields)
+- Each field individually assessed and weighted
+- Progress auto-saved for partial completion
 - Completion triggers self-assessment availability
-- Responses weighted in happiness calculation
+- All responses weighted in happiness calculation algorithms
 
-### **Step 4: Self-Assessment**
+### **Step 4: Progressive Self-Assessment System**
 ```
-6-Category Assessment → Scoring → Attachment Analysis → Happiness Calculation Enable
+6-Category Assessment → Type-Based Scoring → Attachment Analysis → Progress Tracking
 ```
 
-**Assessment Categories:**
+**Assessment Types & Timing:**
+- **"initial"**: Mandatory after account creation (enables stage access)
+- **"mid"**: Required after completing stages 1-3 (spiritual progress tracking)  
+- **"final"**: Required after completing all 6 stages (transformation measurement)
+
+**Assessment Categories (Same for All Types):**
 1. **Food Taste** (3-choice attachment scale: "none", "some", "strong")
 2. **Scents & Aromas** (3-choice attachment scale: "none", "some", "strong")
 3. **Sounds & Music** (3-choice attachment scale: "none", "some", "strong")
@@ -99,7 +141,7 @@ Personal Info Form → Validation → Storage → Assessment Flow
 5. **Touch & Textures** (3-choice attachment scale: "none", "some", "strong")
 6. **Thoughts & Mental Images** (3-choice attachment scale: "none", "some", "strong")
 
-**Scoring System:**
+**Scoring System (Consistent Across All Types):**
 - **"none" (non-attachment)**: +12 bonus points per category
 - **"some" attachment**: -7 penalty points per category  
 - **"strong" attachment**: -15 penalty points per category
@@ -156,7 +198,9 @@ Stage Requirements → Session Practice → Progress Tracking → Stage Completi
 - **Stage 6 (Illuminator)**: 60 sessions × 30 minutes = 30 hours
 
 **Business Rules:**
-- 30-minute sessions with PAHM Matrix tracking
+- **Minimum Duration**: 30-minute minimum sessions with user extension capability
+- **Duration Control**: Time slider allows users to extend beyond minimum requirements
+- **Fixed Mind Recovery**: 5-minute fixed duration for mind recovery exercises (non-adjustable)
 - Minimum session count per stage enforced
 - Previous stage completion required for unlock
 - PAHM click data recorded for each session
@@ -239,40 +283,30 @@ Assessment Completion Check → Data Validation → Component Calculation → Fi
 function calculateCurrentState(questionnaire: any, emotionalNotes: any[]): number {
   let score = 0;
   
-  // Emotional awareness
+  // Emotional awareness (slider 1-10)
   score += questionnaire.emotionalAwareness * 8;
   
-  // Sleep pattern
+  // Sleep pattern (slider 1-10)
   score += questionnaire.sleepPattern * 6;
   
-  // Physical activity bonus
-  const activityBonus = {
-    'very_active': 25,
-    'moderate': 15,
-    'light': 8,
-    'sedentary': 0
-  };
-  score += activityBonus[questionnaire.physicalActivity];
+  // Physical activity (slider 1-10) - direct scoring
+  score += questionnaire.physicalActivity * 2.5;
   
-  // Work-life balance
-  const workLifeBonus = {
-    'excellent': 20,
-    'good': 12,
-    'struggle': -10
-  };
-  score += workLifeBonus[questionnaire.workLifeBalance];
+  // Work-life balance (slider 1-10) - direct scoring
+  score += questionnaire.workLifeBalance * 2;
   
-  // Stress response
-  const stressBonus = {
-    'manage_well': 15,
-    'usually_manage': 8,
-    'overwhelmed': -15
-  };
-  score += stressBonus[questionnaire.stressResponse];
+  // Stress response (slider 1-10) - direct scoring
+  score += questionnaire.stressResponse * 1.5;
   
-  // Recent mood average
+  // Diet pattern (slider 1-10) - new field
+  score += questionnaire.dietPattern * 1.2;
+  
+  // Social connections (slider 1-10) - new field
+  score += questionnaire.socialConnections * 1.8;
+  
+  // Recent mood average from daily notes
   if (emotionalNotes.length > 0) {
-    const avgMood = emotionalNotes.reduce((sum, note) => sum + note.mood, 0) / emotionalNotes.length;
+    const avgMood = emotionalNotes.reduce((sum, note) => sum + note.moodRating, 0) / emotionalNotes.length;
     score += avgMood * 8;
   }
   
@@ -309,10 +343,11 @@ function calculateAttachmentScore(selfAssessment: any): number {
 #### **Component 3: PAHM Development (25% weight - Primary)**
 ```typescript
 function calculatePAHMScore(questionnaire: any, sessions: any[]): number {
-  // Assessment foundation
+  // Assessment foundation using new slider fields
   const assessmentFoundation = 
-    (questionnaire.experienceLevel * 2.5) + 
-    (questionnaire.mindfulnessExperience * 2);
+    (questionnaire.experienceLevel === 'beginner' ? 1 : questionnaire.experienceLevel === 'intermediate' ? 2 : 3) * 2.5 + 
+    (questionnaire.mindfulnessInDailyLife * 2) +  // Using new slider field
+    (questionnaire.motivation * 1.5);              // Using new slider field
   
   // Practice realization bonuses
   let practiceBonus = 0;
@@ -377,7 +412,7 @@ function assignUserLevel(score: number): string {
 
 ### **Daily Notes Collection**
 ```
-Mood Check → Emotion Selection → Note Entry → Pattern Analysis → Happiness Update
+Emotion Trigger → Real-time Entry → Note Entry → Pattern Analysis → Happiness Update
 ```
 
 **Note Types:**
@@ -392,10 +427,12 @@ Mood Check → Emotion Selection → Note Entry → Pattern Analysis → Happine
 - **Notes**: Free-form reflection text
 
 **Business Rules:**
-- One entry per day maximum
-- Historical entries viewable
+- Multiple entries per day allowed (instant emotion recording)
+- Each entry timestamped for chronological tracking
+- Historical entries viewable with timeline
 - Data feeds into happiness calculation
 - Trend analysis for progress tracking
+- Real-time emotional state capture
 
 ---
 
@@ -409,7 +446,7 @@ Stage Completion Check → PAHM Learning Check → Mind Recovery Unlock → Exer
 **Unlock Requirements:**
 - ✅ Stage 1 completed (all T1-T5 sub-stages)
 - ✅ PAHM Matrix introduction learning resource completed
-- ❌ Stage 2 completion NOT required (unlocks after Stage 1 + learning)
+- ❌ Stage 2 completion NOT required (unlocks after Stage 1 + PAHM learning)
 
 **Business Rules:**
 - Mind Recovery unlocks immediately after Stage 1 completion AND PAHM learning
@@ -582,7 +619,7 @@ Health Check → Metric Collection → Threshold Analysis → Alert Generation �
 - **Email Format**: RFC 5322 compliant
 - **Password Strength**: Minimum 8 characters, mixed case recommended
 - **Age Range**: 13-120 years
-- **Session Duration**: 5 minutes (Mind Recovery) or 10-30 minutes (Stage sessions)
+- **Session Duration**: 5 minutes fixed (Mind Recovery) or 10-30+ minutes minimum (Stage sessions with user extension)
 - **Quality Ratings**: 1-10 scale only
 - **PAHM Clicks**: Valid matrix positions only
 

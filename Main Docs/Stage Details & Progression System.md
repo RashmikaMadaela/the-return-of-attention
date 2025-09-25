@@ -10,18 +10,24 @@ This document details the complete stage progression system for "The Return of A
 - **Stage 1**: Timer-only sessions (building stillness foundation)
 - **Stage 2+**: Timer + PAHM Matrix sessions (attention tracking practice)
 
+**Duration Rules**:
+- **Meditation Sessions**: Minimum duration specified per stage (user can extend via slider)
+- **Mind Recovery Exercises**: Fixed 5-minute duration (non-adjustable)
+
 ---
 
 ## 🎯 STAGE PROGRESSION OVERVIEW
 
-| Stage | Designation | Sessions | Per Session | Min Sessions | Min Hours | Total Hours |
-|-------|-------------|----------|-------------|--------------|-----------|-------------|
-| **1** | Seeker | T1-T5 | 10-30 min | 3-10 sessions | Variable | **11.50** |
-| **2** | PAHM Trainee | Single | 30 min | 30 sessions | 15 hours | **15.00** |
-| **3** | PAHM Beginner | Single | 30 min | 30 sessions | 15 hours | **15.00** |
-| **4** | PAHM Practitioner | Single | 30 min | 40 sessions | 20 hours | **20.00** |
-| **5** | PAHM Master | Single | 30 min | 50 sessions | 25 hours | **25.00** |
-| **6** | PAHM Illuminator | Single | 30 min | 60 sessions | 30 hours | **30.00** |
+| Stage | Designation | Sessions | Min Duration | Min Sessions | Min Hours | Total Hours |
+|-------|-------------|----------|--------------|--------------|-----------|-------------|
+| **1** | Seeker | T1-T5 | 10-30 min* | 3-10 sessions | Variable | **11.50** |
+| **2** | PAHM Trainee | Single | 30 min* | 30 sessions | 15 hours | **15.00** |
+| **3** | PAHM Beginner | Single | 30 min* | 30 sessions | 15 hours | **15.00** |
+| **4** | PAHM Practitioner | Single | 30 min* | 40 sessions | 20 hours | **20.00** |
+| **5** | PAHM Master | Single | 30 min* | 50 sessions | 25 hours | **25.00** |
+| **6** | PAHM Illuminator | Single | 30 min* | 60 sessions | 30 hours | **30.00** |
+
+*Minimum duration - users can extend sessions via time slider
 
 **Total Minimum Journey**: 115.50 hours of meditation practice
 
@@ -42,11 +48,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
 ### **Sub-Stages Breakdown**
 
 #### **T1 - Initial Introduction**
-- **Duration**: 10 minutes per session
+- **Minimum Duration**: 10 minutes per session (user can extend via slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 3 sessions
 - **Total Minimum Time**: 0.50 hours (30 minutes)
 - **Focus**: Basic posture and breathing awareness
+- **Duration Control**: Time slider allows extension beyond 10 minutes
 - **Skills Developed**: 
   - Comfortable sitting position
   - Basic breath awareness
@@ -54,11 +61,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
   - Introduction to meditation fundamentals
 
 #### **T2 - Building Consistency**
-- **Duration**: 15 minutes per session
+- **Minimum Duration**: 15 minutes per session (user can extend via slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 4 sessions
 - **Total Minimum Time**: 1.00 hour
 - **Focus**: Extending stillness duration
+- **Duration Control**: Time slider allows extension beyond 15 minutes
 - **Skills Developed**:
   - Sustained attention for longer periods
   - Posture stability
@@ -66,11 +74,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
   - Comfort with extended sitting
 
 #### **T3 - Deepening Practice**
-- **Duration**: 20 minutes per session
+- **Minimum Duration**: 20 minutes per session (user can extend via slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 6 sessions
 - **Total Minimum Time**: 2.00 hours
 - **Focus**: Deeper stillness and awareness
+- **Duration Control**: Time slider allows extension beyond 20 minutes
 - **Skills Developed**:
   - Enhanced focus capability
   - Body awareness
@@ -78,11 +87,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
   - Observation without judgment
 
 #### **T4 - Advanced Preparation**
-- **Duration**: 25 minutes per session
+- **Minimum Duration**: 25 minutes per session (user can extend via slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 6 sessions
 - **Total Minimum Time**: 2.50 hours
 - **Focus**: Preparation for PAHM methodology
+- **Duration Control**: Time slider allows extension beyond 25 minutes
 - **Skills Developed**:
   - Extended concentration
   - Self-observation skills
@@ -90,11 +100,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
   - Readiness for attention tracking
 
 #### **T5 - PAHM Readiness**
-- **Duration**: 30 minutes per session
+- **Minimum Duration**: 30 minutes per session (user can extend via slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 10 sessions
 - **Total Minimum Time**: 5.00 hours
 - **Focus**: Final preparation for PAHM Matrix introduction
+- **Duration Control**: Time slider allows extension beyond 30 minutes
 - **Skills Developed**:
   - Full 30-minute stillness capability
   - Mental clarity and focus
@@ -172,10 +183,11 @@ Pure awareness in the here and now. This is mindfulness where attention is ancho
 - **Worry**: Aversion to future possibilities, anxiety, fear, catastrophizing
 
 ### **Practice Details**
-- **Duration**: 30 minutes per session
+- **Minimum Duration**: 30 minutes per session (user can extend via slider)
 - **Session Type**: Timer + PAHM Matrix tracking
 - **Minimum Sessions Required**: 30 sessions
 - **Minimum Hours to Complete**: 15 hours
+- **Duration Control**: Time slider allows extension beyond 30 minutes
 - **Total Stage Time**: 15.00 hours minimum
 
 ### **How to Practice with PAHM Matrix**
@@ -236,10 +248,11 @@ Pure awareness in the here and now. This is mindfulness where attention is ancho
 PAHM Beginners deepen their practice by developing greater sensitivity to attention patterns and building consistency in their observations. This stage focuses on refined awareness and understanding of personal mental habits through continued PAHM Matrix practice.
 
 ### **Practice Details**
-- **Duration**: 30 minutes per session
+- **Minimum Duration**: 30 minutes per session (user can extend via slider)
 - **Session Type**: Advanced PAHM Matrix tracking with deeper observation
 - **Minimum Sessions Required**: 30 sessions
 - **Minimum Hours to Complete**: 15 hours
+- **Duration Control**: Time slider allows extension beyond 30 minutes
 - **Total Stage Time**: 15.00 hours minimum
 
 ### **Advanced Practice Elements**
@@ -272,10 +285,11 @@ PAHM Beginners deepen their practice by developing greater sensitivity to attent
 PAHM Practitioners develop advanced skills in attention awareness and begin to experience the deeper benefits of sustained practice. This stage emphasizes mastery of the methodology and preparation for teaching others.
 
 ### **Practice Details**
-- **Duration**: 30 minutes per session
+- **Minimum Duration**: 30 minutes per session (user can extend via slider)
 - **Session Type**: Master-level PAHM Matrix practice
 - **Minimum Sessions Required**: 40 sessions
 - **Minimum Hours to Complete**: 20 hours
+- **Duration Control**: Time slider allows extension beyond 30 minutes
 - **Total Stage Time**: 20.00 hours minimum
 
 ### **Master-Level Elements**
@@ -301,10 +315,11 @@ PAHM Practitioners develop advanced skills in attention awareness and begin to e
 PAHM Masters achieve complete mastery of the methodology and develop the skills necessary to guide others. This stage represents the highest level of personal practice and the beginning of leadership development.
 
 ### **Practice Details**
-- **Duration**: 30 minutes per session
+- **Minimum Duration**: 30 minutes per session (user can extend via slider)
 - **Session Type**: Mastery-level practice with teaching elements
 - **Minimum Sessions Required**: 50 sessions
 - **Minimum Hours to Complete**: 25 hours
+- **Duration Control**: Time slider allows extension beyond 30 minutes
 - **Total Stage Time**: 25.00 hours minimum
 
 ### **Mastery Elements**
@@ -330,10 +345,11 @@ PAHM Masters achieve complete mastery of the methodology and develop the skills 
 PAHM Illuminators represent the highest achievement in the methodology, combining complete mastery with enlightened understanding and the ability to train other teachers.
 
 ### **Practice Details**
-- **Duration**: 30 minutes per session
+- **Minimum Duration**: 30 minutes per session (user can extend via slider)
 - **Session Type**: Illuminated practice with teacher training elements
 - **Minimum Sessions Required**: 60 sessions
 - **Minimum Hours to Complete**: 30 hours
+- **Duration Control**: Time slider allows extension beyond 30 minutes
 - **Total Stage Time**: 30.00 hours minimum
 
 ### **Illuminated Elements**

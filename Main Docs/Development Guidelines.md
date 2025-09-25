@@ -150,18 +150,44 @@ export async function POST(request: NextRequest) {
 
 #### **2. Input Validation Requirements**
 ```typescript
-// Create validation schemas for all inputs
+// Create validation schemas for comprehensive questionnaire
 const questionnaireSchema = z.object({
-  step1: z.object({
-    age: z.number().min(13).max(120),
-    gender: z.string(),
-    nationality: z.string(),
-    currentCountry: z.string(),
-  }),
-  step2: z.object({
-    // lifestyle questions
-  }),
-  // ... all steps
+  // Personal & Background
+  experienceLevel: z.enum(['beginner', 'intermediate', 'advanced']).optional(),
+  mainGoals: z.array(z.string()).optional(),
+  ageRange: z.string().optional(),
+  location: z.string().optional(),
+  occupation: z.string().optional(),
+  educationLevel: z.string().optional(),
+  
+  // Meditation Background
+  meditationBackground: z.string().optional(),
+  sleepPattern: z.number().min(1).max(10).optional(),
+  physicalActivity: z.number().min(1).max(10).optional(),
+  stressTrigers: z.array(z.string()).optional(),
+  dailyRoutine: z.string().optional(),
+  dietPattern: z.number().min(1).max(10).optional(),
+  screenTime: z.number().min(1).max(10).optional(),
+  
+  // Social & Lifestyle
+  socialConnections: z.number().min(1).max(10).optional(),
+  workLifeBalance: z.number().min(1).max(10).optional(),
+  
+  // Mental & Emotional (all slider 1-10)
+  emotionalAwareness: z.number().min(1).max(10).optional(),
+  stressResponse: z.number().min(1).max(10).optional(),
+  decisionMaking: z.number().min(1).max(10).optional(),
+  selfReflection: z.number().min(1).max(10).optional(),
+  thoughtPatterns: z.number().min(1).max(10).optional(),
+  mindfulnessInDailyLife: z.number().min(1).max(10).optional(),
+  
+  // Practice Details
+  mindfulnessExperience: z.string().optional(),
+  meditationBackgroundDetail: z.string().optional(),
+  practiceGoals: z.array(z.string()).optional(),
+  preferredDuration: z.number().min(1).max(10).optional(),
+  biggestChallenges: z.array(z.string()).optional(),
+  motivation: z.number().min(1).max(10).optional(),
 });
 ```
 

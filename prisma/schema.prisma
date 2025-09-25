@@ -11,15 +11,358 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Basic User model to test connection
-// Full schema will be added in Phase 2
+// ============================================================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================================================
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String   @id @default(cuid())
+  email             String   @unique
+  name              String?
+  image             String?
+  emailVerified     DateTime?
+  password          String?  // For email/password auth
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  profile           UserProfile?
+  questionnaire     Questionnaire?
+  selfAssessments   SelfAssessment[]
+  stageProgress     UserStageProgress[]
+  sessions          Session[]
+  pahmSessions      PAHMSession[]
+  dailyNotes        DailyNote[]
+  happinessScores   HappinessScore[]
+  accounts          Account[]  // For NextAuth
 
   @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model UserProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  age         Int
+  gender      String   // 'male', 'female', 'other', 'prefer_not_to_say'
+  nationality String
+  country     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+// ============================================================================
+// ASSESSMENT SYSTEM
+// ============================================================================
+
+model Questionnaire {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  // No type field - questionnaire collected only once after account creation
+  
+  // Phase 1: Demographics & Background (7 questions)
+  experienceLevel            Int?      // Q1: Slider 1-10 (Beginner to Expert)
+  mainGoals                 String[]  // Q2: Multi-select array
+  ageRange                  String?   // Q3: MCQ (18-24, 25-34, etc.)
+  location                  String?   // Q4: MCQ (Urban, Suburban, Rural, etc.)
+  occupation                String?   // Q5: MCQ (Software Developer, Teacher, etc.)
+  educationLevel            String?   // Q6: MCQ (High school, Bachelor's, etc.)
+  meditationBackground      String?   // Q7: MCQ (Never tried, Some experience, etc.)
+  
+  // Phase 2: Lifestyle Patterns (8 questions)
+  sleepPattern              Int?      // Q8: Slider 1-10 (Very Poor to Excellent)
+  physicalActivity          String?   // Q9: MCQ (Sedentary, Light, Moderate, etc.)
+  stressTrigers             String[]  // Q10: Multi-select array
+  dailyRoutine              String?   // Q11: MCQ (Very structured, Flexible, etc.)
+  dietPattern               String?   // Q12: MCQ (Very healthy, Balanced, etc.)
+  screenTime                String?   // Q13: MCQ (1-2 hours, 3-4 hours, etc.)
+  socialConnections         String?   // Q14: MCQ (Deep relationships, Strong network, etc.)
+  workLifeBalance           String?   // Q15: MCQ (Perfect integration, Excellent, etc.)
+  
+  // Phase 3: Thinking Patterns (6 questions)
+  emotionalAwareness        Int?      // Q16: Slider 3-9 (Low to Very High Awareness)
+  stressResponse            String?   // Q17: MCQ (Observe and let go, Take deep breaths, etc.)
+  decisionMaking            String?   // Q18: MCQ (Intuitive, Careful analysis, etc.)
+  selfReflection            String?   // Q19: MCQ (Daily meditation, Regular journaling, etc.)
+  thoughtPatterns           String?   // Q20: MCQ (Peaceful, Optimistic, etc.)
+  mindfulnessInDailyLife    String?   // Q21: MCQ (Constant awareness, Regular moments, etc.)
+  
+  // Phase 4: Mindfulness Specific (6 questions)
+  mindfulnessExperience     Int?      // Q22: Slider 1-8 (No Experience to Advanced)
+  meditationBackgroundDetail String?  // Q23: MCQ (None, Guided meditations, etc.)
+  practiceGoals             String?   // Q24: MCQ (Liberation, Spiritual awakening, etc.)
+  preferredDuration         String?   // Q25: MCQ (5 minutes, 10 minutes, etc.)
+  biggestChallenges         String?   // Q26: MCQ (None, Finding time, etc.)
+  motivation                String?   // Q27: MCQ (Service to others, Personal growth, etc.)
+
+  isCompleted DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("questionnaires")
+}
+
+model SelfAssessment {
+  id             String   @id @default(cuid())
+  userId         String
+  type           String   // 'initial' (after account), 'mid' (after stage 3), 'final' (after stage 6)
+  
+  // 6 Categories with 3-choice scale (exact field names from screenshots)
+  foodTaste      String   // "none" (+12), "some" (-7), "strong" (-15)
+  scentsAromas   String   // "none" (+12), "some" (-7), "strong" (-15)
+  soundsMusic    String   // "none" (+12), "some" (-7), "strong" (-15)
+  visualBeauty   String   // "none" (+12), "some" (-7), "strong" (-15)
+  touchTextures  String   // "none" (+12), "some" (-7), "strong" (-15)
+  thoughtsImages String   // "none" (+12), "some" (-7), "strong" (-15) - Updated field name
+  
+  // Calculated score based on choices
+  totalScore     Int      // Sum of all category scores
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, type])
+  @@map("self_assessments")
+}
+
+// ============================================================================
+// STAGE & SESSION SYSTEM
+// ============================================================================
+
+model Stage {
+  id           String @id @default(cuid())
+  stageNumber  Int    @unique
+  name         String // 'Seeker', 'PAHM Trainee', etc.
+  description  String @db.Text
+  
+  // Stage requirements
+  minSessions  Int
+  minHours     Decimal @db.Decimal(5,2)
+  sessionType  String // 'timer_only', 'pahm_matrix'
+  
+  // Sub-stages (for Stage 1 only)
+  hasSubStages Boolean @default(false)
+  subStages    Json?   // JSON array of sub-stage details
+  
+  isActive     Boolean @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  userProgress UserStageProgress[]
+  sessions     Session[]
+
+  @@map("stages")
+}
+
+model UserStageProgress {
+  id               String   @id @default(cuid())
+  userId           String
+  stageId          String
+  stageNumber      Int
+  subStage         String?  // 'T1', 'T2', 'T3', 'T4', 'T5' for Stage 1
+  
+  sessionsCompleted Int     @default(0)
+  hoursCompleted    Decimal @db.Decimal(5,2) @default(0)
+  
+  isCompleted      Boolean   @default(false)
+  completedAt      DateTime?
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stage Stage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, stageId, subStage])
+  @@map("user_stage_progress")
+}
+
+model Session {
+  id              String   @id @default(cuid())
+  userId          String
+  stageId         String
+  stageNumber     Int
+  subStage        String?  // For Stage 1 sub-stages
+  
+  sessionType     String   // 'timer_only', 'pahm_matrix', 'mind_recovery'
+  duration        Int      // in minutes
+  status          String   @default("not_started") // 'not_started', 'in_progress', 'completed', 'abandoned'
+  
+  // Session data
+  startedAt       DateTime?
+  completedAt     DateTime?
+  qualityRating   Int?     // 1-10 scale (optional)
+  insights        String?  // User notes
+  posture         String?  // 'sitting', 'lying', 'walking', 'custom'
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stage        Stage        @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  pahmSession  PAHMSession?
+
+  @@map("sessions")
+}
+
+// ============================================================================
+// PAHM MATRIX SYSTEM
+// ============================================================================
+
+model PAHMSession {
+  id               String   @id @default(cuid())
+  sessionId        String   @unique
+  userId           String
+  stageNumber      Int
+  exerciseType     String?  // For mind recovery: 'morning_recharge', 'midday_reset', etc.
+  
+  // PAHM Matrix click counts (9 positions)
+  regretClicks     Int      @default(0)  // Past + Dislikes
+  pastClicks       Int      @default(0)  // Past + Neutral
+  nostalgiaClicks  Int      @default(0)  // Past + Likes
+  dislikesClicks   Int      @default(0)  // Present + Dislikes
+  presentClicks    Int      @default(0)  // Present + Neutral (center)
+  likesClicks      Int      @default(0)  // Present + Likes
+  worryClicks      Int      @default(0)  // Future + Dislikes
+  futureClicks     Int      @default(0)  // Future + Neutral
+  anticipationClicks Int    @default(0)  // Future + Likes
+  
+  totalClicks      Int      @default(0)
+  clickTimestamps  Json     // Array of click data with timestamps
+  patternNotes     String?  // User reflection on patterns
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("pahm_sessions")
+}
+
+// ============================================================================
+// DAILY TRACKING & NOTES
+// ============================================================================
+
+model DailyNote {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // 'emoji', 'detailed'
+  
+  // Quick emoji entry
+  moodRating  Int?     // 1-10 scale
+  
+  // Detailed entry
+  emotions    Json?    // Array of emotion objects with intensity
+  triggers    String?  // What caused this emotional state
+  notes       String?  // Free-form reflection
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("daily_notes")
+}
+
+// ============================================================================
+// HAPPINESS SCORE SYSTEM
+// ============================================================================
+
+model HappinessScore {
+  id                  String   @id @default(cuid())
+  userId              String
+  
+  // Score components (based on Business Logic Documentation)
+  currentStateScore   Decimal  @db.Decimal(5,2) // Component 1: 12% weight
+  attachmentScore     Decimal  @db.Decimal(5,2) // Component 2: 20% weight  
+  pahmScore          Decimal  @db.Decimal(5,2) // Component 3: 25% weight
+  practiceScore      Decimal  @db.Decimal(5,2) // Component 4: 15% weight
+  progressScore      Decimal  @db.Decimal(5,2) // Component 5: 10% weight
+  consistencyScore   Decimal  @db.Decimal(5,2) // Component 6: 8% weight
+  reflectionScore    Decimal  @db.Decimal(5,2) // Component 7: 5% weight
+  dailyLifeScore     Decimal  @db.Decimal(5,2) // Component 8: 5% weight
+  
+  // Final calculated score
+  finalScore         Decimal  @db.Decimal(5,2) // 0-100
+  userLevel          String   // 'Seeker', 'Aware Seeker', etc.
+  
+  // Calculation metadata
+  questionnaireBased Boolean  @default(false)
+  selfAssessmentBased Boolean @default(false)
+  practiceEnhanced   Boolean  @default(false)
+  
+  calculatedAt       DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("happiness_scores")
+}
+
+// ============================================================================
+// ADMIN SYSTEM
+// ============================================================================
+
+model AdminUser {
+  id          String   @id @default(cuid())
+  userId      String   @unique // References main User
+  role        String   @default("admin") // 'admin', 'super_admin'
+  permissions Json     // Array of permissions
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+// ============================================================================
+// SYSTEM & CONFIGURATION
+// ============================================================================
+
+model MindRecoveryExercise {
+  id           String @id @default(cuid())
+  name         String
+  type         String // 'morning_recharge', 'midday_reset', 'emotional_reset', 'work_home_transition'
+  description  String @db.Text
+  purpose      String @db.Text
+  bestTime     String
+  duration     Int    @default(5) // Always 5 minutes
+  isActive     Boolean @default(true)
+  sortOrder    Int    @default(0)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("mind_recovery_exercises")
 }
