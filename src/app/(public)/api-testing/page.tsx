@@ -5,20 +5,36 @@ import { useState } from 'react'
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
 const API_ENDPOINTS = [
-  { method: 'POST' as HttpMethod, path: '/api/auth/register', description: 'Register new user' },
-  { method: 'POST' as HttpMethod, path: '/api/auth/reset-password', description: 'Reset password' },
-  { method: 'GET' as HttpMethod, path: '/api/user/profile', description: 'Get user profile' },
-  { method: 'PUT' as HttpMethod, path: '/api/user/profile', description: 'Update user profile' },
-  { method: 'GET' as HttpMethod, path: '/api/user/personal-info', description: 'Get personal info' },
-  { method: 'POST' as HttpMethod, path: '/api/user/personal-info', description: 'Create personal info' },
-  { method: 'PUT' as HttpMethod, path: '/api/user/personal-info', description: 'Update personal info' },
-  { method: 'GET' as HttpMethod, path: '/api/user/preferences', description: 'Get preferences' },
-  { method: 'PUT' as HttpMethod, path: '/api/user/preferences', description: 'Update preferences' },
-  { method: 'PUT' as HttpMethod, path: '/api/user/change-password', description: 'Change password' },
-  { method: 'DELETE' as HttpMethod, path: '/api/user/delete-account', description: 'Delete account' },
+  // Authentication APIs
+  { method: 'POST' as HttpMethod, path: '/api/auth/register', description: 'Register new user', category: 'Auth' },
+  { method: 'POST' as HttpMethod, path: '/api/auth/reset-password', description: 'Reset password', category: 'Auth' },
+  
+  // User Management APIs
+  { method: 'GET' as HttpMethod, path: '/api/user/profile', description: 'Get user profile', category: 'User' },
+  { method: 'PUT' as HttpMethod, path: '/api/user/profile', description: 'Update user profile', category: 'User' },
+  { method: 'GET' as HttpMethod, path: '/api/user/personal-info', description: 'Get personal info', category: 'User' },
+  { method: 'POST' as HttpMethod, path: '/api/user/personal-info', description: 'Create personal info', category: 'User' },
+  { method: 'PUT' as HttpMethod, path: '/api/user/personal-info', description: 'Update personal info', category: 'User' },
+  { method: 'GET' as HttpMethod, path: '/api/user/preferences', description: 'Get preferences', category: 'User' },
+  { method: 'PUT' as HttpMethod, path: '/api/user/preferences', description: 'Update preferences', category: 'User' },
+  { method: 'PUT' as HttpMethod, path: '/api/user/change-password', description: 'Change password', category: 'User' },
+  { method: 'DELETE' as HttpMethod, path: '/api/user/delete-account', description: 'Delete account', category: 'User' },
+  
+  // Assessment APIs
+  { method: 'POST' as HttpMethod, path: '/api/assessment/questionnaire', description: 'Submit questionnaire (27 questions)', category: 'Assessment' },
+  { method: 'GET' as HttpMethod, path: '/api/assessment/questionnaire', description: 'Get questionnaire results', category: 'Assessment' },
+  { method: 'POST' as HttpMethod, path: '/api/assessment/self-assessment', description: 'Submit self assessment (6 categories)', category: 'Assessment' },
+  { method: 'GET' as HttpMethod, path: '/api/assessment/self-assessment', description: 'Get self assessment results', category: 'Assessment' },
+  { method: 'GET' as HttpMethod, path: '/api/assessment/results', description: 'Get comprehensive assessment results', category: 'Assessment' },
+  { method: 'DELETE' as HttpMethod, path: '/api/assessment/reset', description: 'Reset assessments (testing only)', category: 'Assessment' },
+  
+  // Happiness Tracking APIs
+  { method: 'POST' as HttpMethod, path: '/api/happiness', description: 'Submit happiness score', category: 'Happiness' },
+  { method: 'GET' as HttpMethod, path: '/api/happiness', description: 'Get happiness history', category: 'Happiness' },
 ]
 
 const SAMPLE_PAYLOADS = {
+  // Authentication APIs
   '/api/auth/register': {
     name: 'Test User',
     email: 'test@example.com',
@@ -28,6 +44,8 @@ const SAMPLE_PAYLOADS = {
   '/api/auth/reset-password': {
     email: 'test@example.com'
   },
+  
+  // User Management APIs
   '/api/user/profile': {
     name: 'Updated User',
     image: 'https://example.com/avatar.jpg'
@@ -52,6 +70,64 @@ const SAMPLE_PAYLOADS = {
     password: 'TestPassword123!',
     confirmation: 'DELETE',
     reason: 'Testing account deletion API'
+  },
+  
+  // Assessment APIs
+  '/api/assessment/questionnaire': {
+    // Phase 1: Demographics & Background
+    experienceLevel: 5,
+    mainGoals: ["Stress Reduction", "Better Sleep", "Emotional Balance"],
+    ageRange: "25-34 years",
+    location: "Urban area",
+    occupation: "Software Developer",
+    educationLevel: "Bachelor's degree",
+    meditationBackground: "Some guided meditation experience",
+    
+    // Phase 2: Lifestyle Patterns
+    sleepPattern: 6,
+    physicalActivity: "Moderate (regular exercise)",
+    stressTrigers: ["Work Pressure", "Social Media", "Traffic"],
+    dailyRoutine: "Structured but flexible",
+    dietPattern: "Balanced with occasional treats",
+    screenTime: "6-8 hours daily",
+    socialConnections: "Good friends and family relationships",
+    workLifeBalance: "Sometimes struggle but generally good",
+    
+    // Phase 3: Thinking Patterns
+    emotionalAwareness: 6,
+    stressResponse: "Usually manage well",
+    decisionMaking: "Balanced approach",
+    selfReflection: "Weekly reflection time",
+    thoughtPatterns: "Generally positive with some worry",
+    mindfulnessInDailyLife: "Try to be mindful but forget",
+    
+    // Phase 4: Mindfulness Specific
+    mindfulnessExperience: 4,
+    meditationBackgroundDetail: "Guided meditations, apps",
+    practiceGoals: "Better sleep",
+    preferredDuration: "10 minutes",
+    biggestChallenges: "Finding time and staying consistent",
+    motivation: "Stress reduction and emotional balance"
+  },
+  '/api/assessment/self-assessment': {
+    type: "initial",
+    foodTaste: "some",
+    scentsAromas: "none",
+    soundsMusic: "strong",
+    visualBeauty: "some",
+    touchTextures: "none",
+    thoughtsImages: "strong"
+  },
+  '/api/assessment/reset': {
+    confirmReset: "DELETE_ALL_ASSESSMENTS"
+  },
+  
+  // Happiness Tracking APIs
+  '/api/happiness': {
+    overallHappiness: 7,
+    stressLevel: 4,
+    mindfulnessLevel: 6,
+    notes: "Feeling good today after morning meditation"
   }
 }
 
@@ -129,8 +205,8 @@ export default function ApiTestingPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="px-6 py-4 bg-gray-800 text-white">
-            <h1 className="text-2xl font-bold">API Testing Interface</h1>
-            <p className="text-gray-300 mt-1">Test all authentication and user management APIs</p>
+            <h1 className="text-2xl font-bold">Comprehensive API Testing Interface</h1>
+            <p className="text-gray-300 mt-1">Test authentication, user management, assessment, and happiness tracking APIs</p>
           </div>
 
           <div className="p-6">
@@ -139,31 +215,40 @@ export default function ApiTestingPage() {
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Select API Endpoint
               </label>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {API_ENDPOINTS.map((endpoint, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleEndpointChange(endpoint)}
-                    className={`p-3 text-left rounded-lg border-2 transition-colors ${
-                      selectedEndpoint === endpoint
-                        ? 'border-indigo-500 bg-indigo-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className={`px-2 py-1 rounded text-xs font-medium ${getMethodColor(endpoint.method)}`}>
-                        {endpoint.method}
-                      </span>
-                    </div>
-                    <div className="text-sm font-mono text-gray-600 mb-1">
-                      {endpoint.path}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {endpoint.description}
-                    </div>
-                  </button>
-                ))}
-              </div>
+              
+              {/* Group endpoints by category */}
+              {['Auth', 'User', 'Assessment', 'Happiness'].map((category) => (
+                <div key={category} className="mb-4">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-2 px-2">
+                    {category} APIs
+                  </h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {API_ENDPOINTS.filter(endpoint => endpoint.category === category).map((endpoint, index) => (
+                      <button
+                        key={`${category}-${index}`}
+                        onClick={() => handleEndpointChange(endpoint)}
+                        className={`p-3 text-left rounded-lg border-2 transition-colors ${
+                          selectedEndpoint === endpoint
+                            ? 'border-indigo-500 bg-indigo-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${getMethodColor(endpoint.method)}`}>
+                            {endpoint.method}
+                          </span>
+                        </div>
+                        <div className="text-sm font-mono text-gray-600 mb-1">
+                          {endpoint.path}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {endpoint.description}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="grid lg:grid-cols-2 gap-6">
@@ -191,10 +276,14 @@ export default function ApiTestingPage() {
                         <span className="text-xs text-gray-500 ml-1">(Required for account deletion)</span>
                       )}
                     </label>
+                    <div className="mb-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+                      💡 <strong>Customize as needed:</strong> Sample payloads are pre-filled but you can modify any values, 
+                      add/remove fields, or test edge cases. For assessments, try different combinations of choices.
+                    </div>
                     <textarea
                       value={requestBody}
                       onChange={(e) => setRequestBody(e.target.value)}
-                      rows={12}
+                      rows={16}
                       className="w-full p-3 border border-gray-300 rounded-md font-mono text-sm focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder="Enter JSON request body..."
                     />
@@ -239,10 +328,13 @@ export default function ApiTestingPage() {
             <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h3 className="text-sm font-semibold text-blue-900 mb-2">📝 Usage Notes</h3>
               <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Authentication required for all /api/user/* endpoints</li>
-                <li>• Sign in first to get a session, then test user management APIs</li>
-                <li>• Check browser dev tools Network tab for additional debugging info</li>
-                <li>• Sample payloads are pre-filled for POST/PUT requests</li>
+                <li>• <strong>Authentication:</strong> Required for all /api/user/*, /api/assessment/*, and /api/happiness/* endpoints</li>
+                <li>• <strong>Testing Flow:</strong> Register → Sign in → Test user management → Test assessments → Test happiness tracking</li>
+                <li>• <strong>Assessment System:</strong> Questionnaire (27 questions, one-time) + Self-assessment (6 categories, 3 types)</li>
+                <li>• <strong>Self-Assessment Types:</strong> 'initial' (after registration), 'mid' (after stage 3), 'final' (after stage 6)</li>
+                <li>• <strong>Sample Payloads:</strong> Pre-filled for POST/PUT requests - customize as needed</li>
+                <li>• <strong>Debugging:</strong> Check browser dev tools Network tab for additional info</li>
+                <li>• <strong>Reset Testing:</strong> Use DELETE /api/assessment/reset to clear test data</li>
               </ul>
             </div>
           </div>
