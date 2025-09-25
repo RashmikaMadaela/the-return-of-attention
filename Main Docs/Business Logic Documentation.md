@@ -92,16 +92,21 @@ Personal Info Form → Validation → Storage → Assessment Flow
 ```
 
 **Assessment Categories:**
-1. **Food Taste** (1-10 attachment scale)
-2. **Scents & Aromas** (1-10 attachment scale)
-3. **Sounds & Music** (1-10 attachment scale)
-4. **Visual & Beauty** (1-10 attachment scale)
-5. **Touch & Textures** (1-10 attachment scale)
-6. **Thoughts & Mental Images** (1-10 attachment scale)
+1. **Food Taste** (3-choice attachment scale: "none", "some", "strong")
+2. **Scents & Aromas** (3-choice attachment scale: "none", "some", "strong")
+3. **Sounds & Music** (3-choice attachment scale: "none", "some", "strong")
+4. **Visual & Beauty** (3-choice attachment scale: "none", "some", "strong")
+5. **Touch & Textures** (3-choice attachment scale: "none", "some", "strong")
+6. **Thoughts & Mental Images** (3-choice attachment scale: "none", "some", "strong")
+
+**Scoring System:**
+- **"none" (non-attachment)**: +12 bonus points per category
+- **"some" attachment**: -7 penalty points per category  
+- **"strong" attachment**: -15 penalty points per category
 
 **Business Rules:**
 - All 6 categories required for completion
-- Scale: 1-3 (none), 4-6 (some), 7-10 (strong attachment)
+- 3-choice scale per category: "none", "some", "strong"
 - Completion enables happiness score calculation
 - Reassessment available every 30 days
 
@@ -279,26 +284,25 @@ function calculateCurrentState(questionnaire: any, emotionalNotes: any[]): numbe
 ```typescript
 function calculateAttachmentScore(selfAssessment: any): number {
   let attachmentScore = 0;
-  let nonAttachmentBonus = 0;
   
   const categories = ['food', 'scents', 'sounds', 'visual', 'touch', 'thoughts'];
   
   categories.forEach(category => {
-    const score = selfAssessment[category];
+    const choice = selfAssessment[category];
     
-    if (score >= 1 && score <= 3) {
-      // Non-attachment
-      nonAttachmentBonus += 12;
-    } else if (score >= 4 && score <= 6) {
-      // Some attachment
+    if (choice === 'none') {
+      // Non-attachment: +12 bonus
+      attachmentScore += 12;
+    } else if (choice === 'some') {
+      // Some attachment: -7 penalty
       attachmentScore -= 7;
-    } else if (score >= 7 && score <= 10) {
-      // Strong attachment
+    } else if (choice === 'strong') {
+      // Strong attachment: -15 penalty
       attachmentScore -= 15;
     }
   });
   
-  return attachmentScore + nonAttachmentBonus;
+  return attachmentScore;
 }
 ```
 

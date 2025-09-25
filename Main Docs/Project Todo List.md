@@ -17,21 +17,24 @@ This document contains all atomic tasks needed to complete "The Return of Attent
 - [x] Set up GitHub repository and initial commit
 - [x] Install core dependencies (Prisma, NextAuth, etc.)
 - [x] Set up Supabase account and create project database
-- [x] Configure environment variables (.env.local)
+- [x] Configure environment variables (.env.local) with real Supabase credentials
+- [x] Test Supabase connection and database access
 - [x] Set up project folder structure (lib, types, api, etc.)
 - [x] Set up ESLint and Prettier configurations
+- [x] Create Supabase setup documentation
 
 ### **Database & Schema Design**
-- [ ] Initialize Prisma and create complete database schema
-- [ ] Design User model with all required fields
+- [x] Initialize Prisma and create basic database schema
+- [x] Create initial User model for testing
+- [ ] Design complete User model with all required fields
 - [ ] Design UserProfile model for personal information
 - [ ] Design Questionnaire and QuestionnaireAnswer models
 - [ ] Design SelfAssessment and Assessment models
 - [ ] Design Stage and Session models
 - [ ] Design PAHMSession and PAHMClick models
 - [ ] Design DailyNote and AdminUser models
-- [ ] Run first Prisma migration (`npx prisma migrate dev --name init`)
-- [ ] Test database connection and Prisma Studio
+- [x] Run first Prisma migration (`npx prisma migrate dev --name init`)
+- [x] Test database connection and Prisma Studio
 - [ ] Seed database with initial stages and session data
 
 ---
@@ -220,7 +223,7 @@ This document contains all atomic tasks needed to complete "The Return of Attent
 - [ ] Create Step 4: Social & Work form
 - [ ] Create Step 5: Mental & Emotional form
 - [ ] Create Step 6: Mindfulness & Meditation form
-- [ ] Create self-assessment page with all 6 categories
+- [ ] Create self-assessment page with all 6 categories (3-choice scale: none/some/strong)
 - [ ] Implement progress indicators and save/resume
 - [ ] Test complete assessment flow
 
