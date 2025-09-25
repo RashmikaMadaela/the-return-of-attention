@@ -60,6 +60,18 @@ model Account {
   @@map("accounts")
 }
 
+model VerificationToken {
+  id          String   @id @default(cuid())
+  identifier  String   // Email address
+  token       String   @unique
+  type        String   // 'email_verification' or 'password_reset'
+  expires     DateTime
+  createdAt   DateTime @default(now())
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
 model UserProfile {
   id          String   @id @default(cuid())
   userId      String   @unique
