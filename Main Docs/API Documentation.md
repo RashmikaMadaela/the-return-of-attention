@@ -148,27 +148,56 @@ Delete user account (requires confirmation).
 Base URL: `/api/assessment`
 
 #### **POST /api/assessment/questionnaire**
-Submit questionnaire responses (6-step process).
+Submit one-time comprehensive questionnaire (collected only after account creation).
 
 **Request Body:**
 ```json
 {
-  "step": 1,
-  "responses": {
-    "personalBackground": {
-      "experienceLevel": "beginner",
-      "goals": ["stress_reduction", "focus_improvement"],
-      "ageRange": "25-34",
-      "location": "urban"
-    }
-  }
+  // Phase 1: Demographics & Background
+  "experienceLevel": 7,
+  "mainGoals": ["Stress Reduction", "Better Sleep", "Emotional Balance"],
+  "ageRange": "25-34 years",
+  "location": "Urban area",
+  "occupation": "Software Developer", 
+  "educationLevel": "Bachelor's degree",
+  "meditationBackground": "Some guided meditation experience",
+  
+  // Phase 2: Lifestyle Patterns
+  "sleepPattern": 6,
+  "physicalActivity": "Moderate (regular exercise)",
+  "stressTrigers": ["Work Pressure", "Finances", "Social Media"],
+  "dailyRoutine": "Structured but flexible",
+  "dietPattern": "Balanced with occasional treats",
+  "screenTime": "6-8 hours daily",
+  "socialConnections": "Good friends and family relationships",
+  "workLifeBalance": "Sometimes struggle but generally good",
+  
+  // Phase 3: Thinking Patterns
+  "emotionalAwareness": 7,
+  "stressResponse": "Usually manage well",
+  "decisionMaking": "Balanced approach",
+  "selfReflection": "Weekly reflection time",
+  "thoughtPatterns": "Generally positive with some worry",
+  "mindfulnessInDailyLife": "Try to be mindful but forget",
+  
+  // Phase 4: Mindfulness Specific
+  "mindfulnessExperience": 5,
+  "meditationBackgroundDetail": "Guided meditations, apps",
+  "practiceGoals": "Better sleep",
+  "preferredDuration": "20 minutes",
+  "biggestChallenges": "Finding time and staying consistent",
+  "motivation": "Stress reduction and emotional balance"
 }
 ```
 
 **Business Rules:**
-- All 6 steps must be completed sequentially
-- Progress can be saved and resumed
-- Completion triggers self-assessment availability
+- **One-time Collection**: Questionnaire submitted only once after account creation
+- **No Type Field**: Unlike self-assessment, questionnaire has no type variants
+- **Total Questions**: 27 questions across 4 phases
+- **Completion**: All questions required for full assessment
+- **Multi-select**: `mainGoals` and `stressTrigers` allow multiple selections
+- **Sliders**: `experienceLevel` (1-10), `sleepPattern` (1-10), `emotionalAwareness` (3-9), `mindfulnessExperience` (1-8)
+- **Progression**: Completion triggers initial self-assessment availability
 
 #### **GET /api/assessment/questionnaire/status**
 Get questionnaire completion status.
@@ -187,27 +216,45 @@ Get questionnaire completion status.
 ```
 
 #### **POST /api/assessment/self-assessment**
-Submit self-assessment (6 categories with 3-choice attachment scale).
+Submit self-assessment with 3 different types at specific progression milestones.
 
 **Request Body:**
 ```json
 {
-  "assessmentType": "initial",
-  "categories": {
-    "foodTaste": "some",
-    "scentsAromas": "none",
-    "soundsMusic": "strong",
-    "visualBeauty": "none",
-    "touchTextures": "some",
-    "thoughtsMental": "strong"
-  }
+  "type": "initial",  // Required: "initial", "mid", or "final"
+  "foodTaste": "some",
+  "scentsAromas": "none", 
+  "soundsMusic": "strong",
+  "visualBeauty": "none",
+  "touchTextures": "some",
+  "thoughtsImages": "strong"
 }
 ```
 
+**Assessment Types & Triggers:**
+- **"initial"**: Submitted after account creation (mandatory before accessing stages)
+- **"mid"**: Submitted after completing first 3 stages (stages 1-3)
+- **"final"**: Submitted after completing all 6 stages (track spiritual progress)
+
+**Category Questions & Scoring:**
+- **foodTaste**: "How would you describe your relationship with food and flavors?"
+- **scentsAromas**: "How do you feel about different scents and fragrances?"
+- **soundsMusic**: "What's your relationship with sounds, music, and audio?"
+- **visualBeauty**: "How do you respond to visual beauty, colors, and sights?"
+- **touchTextures**: "How do you feel about different textures and physical sensations?"
+- **thoughtsImages**: "What's your relationship with thoughts, ideas, and mental imagery?"
+
+**3-Choice Scale Options:**
+- **"none"** (+12 points): "I don't have particular preferences for this"
+- **"some"** (-7 points): "I have some preferences, but I'm flexible"  
+- **"strong"** (-15 points): "I have strong preferences and specific likes/dislikes"
+
 **Business Rules:**
-- All 6 categories required (3-choice scale per category)
-- Scale options: "none" (+12 bonus), "some" (-7 penalty), "strong" (-15 penalty)
-- Enables happiness score calculation when complete
+- **Multiple Assessments**: User can have up to 3 self-assessments (one per type)
+- **Progressive Unlocking**: Mid assessment unlocks after stage 3, final after stage 6
+- **Score Tracking**: Each assessment tracks spiritual progress over time
+- **Mandatory Initial**: Initial self-assessment required before accessing meditation stages
+- **Score Range**: -90 to +72 points per assessment (higher = less attachment)
 
 #### **GET /api/assessment/history**
 Get assessment history and timeline.
@@ -294,6 +341,10 @@ Start a new meditation session.
   "posture": "sitting"
 }
 ```
+
+**Duration Notes:**
+- `duration`: Actual session duration in minutes (user can extend minimum duration via slider)
+- Mind recovery exercises are fixed at 5 minutes (non-adjustable)
 
 **Response:**
 ```json
@@ -422,43 +473,63 @@ Get detailed stage progression data.
 
 ## 📝 DAILY NOTES & MOOD APIs
 
-### **Daily Notes Management**
+### **Real-time Emotional Tracking**
 Base URL: `/api/notes`
 
 #### **POST /api/notes/emoji**
-Submit quick emoji-based mood note.
+Submit quick emoji-based mood note (multiple entries per day).
 
 **Request Body:**
 ```json
 {
-  "mood": "😊",
-  "intensity": 7,
+  "type": "emoji",
+  "moodRating": 7,
   "timestamp": "2024-01-01T18:00:00Z"
 }
 ```
 
+**Business Rules:**
+- Multiple entries per day allowed
+- Instant emotion recording
+- Auto-timestamped for chronological order
+
 #### **POST /api/notes/detailed**
-Submit detailed emotional note.
+Submit detailed emotional note (multiple entries per day).
 
 **Request Body:**
 ```json
 {
-  "noteType": "detailed",
-  "mood": "calm",
-  "intensity": 8,
-  "happening": "Had a stressful meeting but meditation helped",
-  "feelings": "Initially anxious, then peaceful",
-  "thoughts": "Noticed thoughts slowing down",
-  "triggers": "Work deadline pressure",
-  "responses": "Used breathing technique from practice"
+  "type": "detailed",
+  "moodRating": 8,
+  "emotions": [
+    {"name": "anxiety", "intensity": 6},
+    {"name": "peace", "intensity": 8}
+  ],
+  "triggers": "Work deadline pressure, then completed meditation",
+  "notes": "Initially anxious about meeting, but PAHM practice helped me find calm"
 }
 ```
 
+**Business Rules:**
+- Multiple detailed entries per day supported
+- Real-time emotional state capture
+- Complex emotion tracking with intensities
+
 #### **GET /api/notes/history**
-Get daily notes history with filtering.
+Get chronological notes history with filtering and pagination.
+
+**Query Parameters:**
+- `date`: Filter by specific date
+- `dateRange`: Filter by date range
+- `type`: Filter by note type (emoji/detailed)
+- `limit`: Number of entries to return
+- `offset`: Pagination offset
 
 #### **GET /api/notes/trends**
-Get mood trends and patterns analysis.
+Get mood trends and emotional patterns analysis.
+
+#### **DELETE /api/notes/:id**
+Delete specific note entry.
 
 ---
 
