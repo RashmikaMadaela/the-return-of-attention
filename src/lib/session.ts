@@ -134,12 +134,13 @@ export async function getUserStageProgress(userId: string) {
 }
 
 // Utility to handle API errors consistently
-export function createErrorResponse(error: string, status = 400, code?: string) {
+export function createErrorResponse(error: string, status = 400, code?: string, details?: any) {
   return NextResponse.json(
     { 
       success: false, 
       error,
-      code 
+      code,
+      ...(details && { details })
     }, 
     { status }
   )

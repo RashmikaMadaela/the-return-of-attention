@@ -20,7 +20,8 @@
     "test:connectivity": "node tests/api/connectivity.test.js",
     "test:auth": "node tests/api/auth/auth-api.test.js",
     "test:auth:flow": "node tests/api/auth/email-verification-flow.test.mjs",
-    "test:postman": "node tests/api/auth/postman-helper.test.js"
+    "test:postman": "node tests/api/auth/postman-helper.test.js",
+    "test:user": "node tests/api/user/run-user-tests.js"
   },
   "keywords": [
     "meditation",
