@@ -103,15 +103,16 @@ This document outlines all the main pages that need to be created for "The Retur
 - "Continue to Self-Assessment" button
 
 ### 10. **Self-Assessment Page**
-- **Food Taste Assessment** 
-- **Scents & Aromas Assessment** 
-- **Sounds & Music Assessment** 
-- **Visual & Beauty Assessment** 
-- **Touch & Textures Assessment** 
-- **Thoughts & Mental Images Assessment** 
+- **Food Taste Assessment** (3-choice: none/some/strong)
+- **Scents & Aromas Assessment** (3-choice: none/some/strong)
+- **Sounds & Music Assessment** (3-choice: none/some/strong)
+- **Visual & Beauty Assessment** (3-choice: none/some/strong)
+- **Touch & Textures Assessment** (3-choice: none/some/strong)
+- **Thoughts & Mental Images Assessment** (3-choice: none/some/strong)
 - Progress indicator
 - Save and continue functionality
 - *Note: Assessment type (initial/mid/final) is determined by the system*
+- *Scoring: "none" (+12), "some" (-7), "strong" (-15) per category*
 
 ### 9. **Self Assesment Completion Success Page**
 - Success message and congratulations

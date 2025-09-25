@@ -186,12 +186,12 @@ model SelfAssessment {
   userId String
   type   AssessmentType // initial, mid, final
   
-  foodTaste       Int // 1-10 scale
-  scentsAromas    Int // 1-10 scale
-  soundsMusic     Int // 1-10 scale
-  visualBeauty    Int // 1-10 scale
-  touchTextures   Int // 1-10 scale
-  thoughtsMental  Int // 1-10 scale
+  foodTaste       String // "none", "some", "strong"
+  scentsAromas    String // "none", "some", "strong"
+  soundsMusic     String // "none", "some", "strong"
+  visualBeauty    String // "none", "some", "strong"
+  touchTextures   String // "none", "some", "strong"
+  thoughtsMental  String // "none", "some", "strong"
   
   completedAt DateTime @default(now())
   
@@ -648,7 +648,7 @@ the-return-of-attention/
 │   │   │   │   └── success/
 │   │   │   │       └── page.tsx   # Questionnaire completion success
 │   │   │   ├── self-assessment/
-│   │   │   │   ├── page.tsx       # 6-category self-assessment
+│   │   │   │   ├── page.tsx       # 6-category self-assessment (3-choice scale)
 │   │   │   │   └── success/
 │   │   │   │       └── page.tsx   # Self-assessment completion & happiness score
 │   │   │   └── layout.tsx         # Onboarding layout with progress indicator
@@ -939,7 +939,7 @@ the-return-of-attention/
 │   │   │   ├── auth.ts            # Auth form validations
 │   │   │   ├── user.ts            # User profile validations
 │   │   │   ├── questionnaire.ts   # Questionnaire validations
-│   │   │   ├── assessment.ts      # Self-assessment validations
+│   │   │   ├── assessment.ts      # Self-assessment validations (3-choice scale)
 │   │   │   ├── session.ts         # Session validations
 │   │   │   ├── notes.ts           # Daily notes validations
 │   │   │   └── admin.ts           # Admin operations validations
@@ -963,7 +963,7 @@ the-return-of-attention/
 │   │   ├── auth.ts                # Authentication types
 │   │   ├── user.ts                # User and profile types
 │   │   ├── questionnaire.ts       # Questionnaire types
-│   │   ├── assessment.ts          # Self-assessment types
+│   │   ├── assessment.ts          # Self-assessment types (3-choice scale)
 │   │   ├── session.ts             # Meditation session types
 │   │   ├── pahm.ts                # PAHM matrix types
 │   │   ├── stage.ts               # Stage progression types
@@ -1723,7 +1723,7 @@ export const trackPerformance = (metric: string, value: number) => {
 
 ✅ **Week 5: Self-Assessment**
 - 6-category assessment interface
-- Rating scale components
+- 3-choice selection components (none/some/strong)
 - Assessment history tracking
 - Initial/mid/final assessment logic
 
