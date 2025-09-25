@@ -1,0 +1,2 @@
+Notes :
+    Email Verification Disabled for easier implementation

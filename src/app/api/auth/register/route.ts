@@ -67,7 +67,8 @@ export async function POST(request: NextRequest) {
           email,
           password: hashedPassword,
           name,
-          isActive: false, // User is inactive until email verification
+          emailVerified: new Date(), // Auto-verify for testing purposes
+          isActive: true, // Activate user immediately for testing
         }
       })
 
@@ -86,19 +87,14 @@ export async function POST(request: NextRequest) {
 
     const user = result
     
-    // Send verification email
-    try {
-      await sendVerificationEmail(email, verificationToken)
-    } catch (emailError) {
-      console.error('Failed to send verification email:', emailError)
-      // Continue with registration but log the error
-    }
+    // Skip email sending for now
+    console.log('Email verification skipped for testing purposes')
 
     // Return success response (don't include password or sensitive data)
     return NextResponse.json(
       {
         success: true,
-        message: 'Account created successfully. Please check your email to verify your account.',
+        message: 'Account created successfully! You can now sign in immediately. (Email verification auto-enabled for testing)',
         data: {
           id: user.id,
           email: user.email,

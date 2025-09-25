@@ -53,6 +53,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "autoprefixer": "^10.4.21",

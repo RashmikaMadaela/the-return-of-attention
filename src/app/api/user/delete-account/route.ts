@@ -23,7 +23,17 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Parse and validate request body
-    const body = await request.json()
+    let body = {}
+    try {
+      const rawBody = await request.text()
+      if (rawBody.trim()) {
+        body = JSON.parse(rawBody)
+      }
+    } catch (error) {
+      // If JSON parsing fails, treat as empty body
+      body = {}
+    }
+    
     const validationResult = deleteAccountSchema.safeParse(body)
 
     if (!validationResult.success) {

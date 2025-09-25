@@ -90,10 +90,11 @@ export const authOptions: NextAuthOptions = {
             return null
           }
 
-          // Check if email is verified
-          if (!user.emailVerified) {
-            throw new Error('Please verify your email before signing in')
-          }
+          // Check if email is verified (temporarily disabled for testing)
+          // TODO: Re-enable email verification once email flow is implemented
+          // if (!user.emailVerified) {
+          //   throw new Error('Please verify your email before signing in')
+          // }
 
           // Return user object
           return {
