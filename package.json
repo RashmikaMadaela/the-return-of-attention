@@ -15,7 +15,12 @@
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:studio": "dotenv -e .env.local -- prisma studio",
-    "db:seed": "dotenv -e .env.local -- ts-node prisma/seed.ts"
+    "db:seed": "dotenv -e .env.local -- ts-node prisma/seed.ts",
+    "test": "node tests/api/run-tests.js",
+    "test:connectivity": "node tests/api/connectivity.test.js",
+    "test:auth": "node tests/api/auth/auth-api.test.js",
+    "test:auth:flow": "node tests/api/auth/email-verification-flow.test.mjs",
+    "test:postman": "node tests/api/auth/postman-helper.test.js"
   },
   "keywords": [
     "meditation",
