@@ -41,6 +41,12 @@ export function Navigation() {
                 Meditation APIs
               </Link>
               <Link 
+                href="/tracking-notes-testing" 
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Tracking APIs
+              </Link>
+              <Link 
                 href="/email-verification-test" 
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
