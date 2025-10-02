@@ -1169,48 +1169,6 @@ Administrative interface for system monitoring, user management, and advanced an
 
 ---
 
-### **GET /api/admin/analytics/users**
-**Purpose**: Advanced user engagement analytics and behavior patterns  
-**Method**: GET  
-**Authentication**: Admin level required
-
-**Success Response (200)**:
-```json
-{
-  "success": true,
-  "data": {
-    "engagementTrends": {
-      "dailyActive": [245, 267, 234, 289, 223],  // Last 5 days
-      "weeklyGrowth": 2.3,   // Percentage
-      "churnRate": 0.08,     // Monthly churn
-      "lifetimeValue": 156   // Days average engagement
-    },
-    "userJourney": {
-      "conversionFunnel": {
-        "registration": 1000,
-        "emailVerification": 850,
-        "personalInfo": 765,
-        "questionnaire": 650,
-        "initialAssessment": 507,
-        "firstSession": 445,
-        "stage1Completion": 289
-      },
-      "dropoffPoints": [
-        "Email verification (15% dropout)",
-        "Questionnaire completion (15% dropout)",
-        "First session start (12% dropout)"
-      ]
-    },
-    "demographicInsights": {
-      "ageDistributions": { "18-24": 15, "25-34": 35, "35-44": 28, "45+": 22 },
-      "genderDistribution": { "male": 42, "female": 48, "other": 7, "prefer_not_to_say": 3 },
-      "topCountries": ["United States", "Canada", "United Kingdom", "Australia", "Germany"]
-    }
-  }
-}
-```
-
----
 
 ### **POST /api/admin/sessions/manage**
 **Purpose**: Advanced session management tools for testing and debugging  
@@ -2500,6 +2458,7 @@ Real-time emotional state tracking with multiple daily entries support: quick em
 **Method**: POST  
 **Authentication**: Authenticated user required  
 **Database Table**: daily_notes  
+**Validation**: emojiNoteSchema (see src/lib/validations/notes.ts)  
 **Rate Limiting**: 50 entries per day per user
 
 **Frontend Integration**:
@@ -2550,30 +2509,29 @@ Real-time emotional state tracking with multiple daily entries support: quick em
 ---
 
 ### **POST /api/notes/detailed**
-**Purpose**: Submit comprehensive emotional note with triggers and analysis  
+**Purpose**: Submit comprehensive emotional note with single emotion, intensity, context and triggers  
 **Method**: POST  
 **Authentication**: Authenticated user required  
 **Database Table**: daily_notes  
+**Validation**: detailedNoteSchema (see src/lib/validations/notes.ts)  
 **Rate Limiting**: 20 detailed entries per day per user
 
 **Frontend Integration**:
-- Detailed journaling interface
-- Emotion selection tools
-- Trigger identification prompts
-- Reflection and insight forms
+- Detailed emotion logging form with structured inputs
+- **Emotion Dropdown**: "How are you feeling?" with categorized emotion options
+- **Intensity Slider**: 1-10 scale with "Mild" to "Intense" labels (shows current value like "5/10")
+- **Context Text Area**: "What's happening Today (optional)" for situational description
+- **Trigger Dropdown**: "What triggered this? (Optional)" with categorized trigger options
+- **Submit Button**: "Log Emotion" to save the detailed note
 
 **Request Body**:
 ```typescript
 {
   type: 'detailed';
-  moodRating: number;         // 1-10 overall mood scale
-  emotions?: Array<{          // Specific emotions with intensities
-    name: string;             // Emotion name (anxiety, peace, excitement, etc.)
-    intensity: number;        // 1-10 intensity scale
-  }>;
-  triggers?: string;          // What caused this emotional state
-  notes?: string;             // Free-form reflection and insights
-  context?: string;           // Situational context (work, home, social, etc.)
+  emotion: string;            // Selected emotion from dropdown (required)
+  intensity: number;          // 1-10 intensity scale from slider (required)
+  context?: string;           // "What's happening Today" - optional description
+  trigger?: string;           // "What triggered this" - selected trigger option
   timestamp?: string;         // Optional: ISO timestamp (defaults to now)
 }
 ```
@@ -2582,34 +2540,43 @@ Real-time emotional state tracking with multiple daily entries support: quick em
 ```json
 {
   "success": true,
-  "message": "Detailed note saved successfully",
+  "message": "Emotion logged successfully",
   "data": {
     "id": "cuid_note_id",
     "type": "detailed", 
-    "moodRating": 8,
-    "emotions": [
-      { "name": "peace", "intensity": 8 },
-      { "name": "gratitude", "intensity": 9 },
-      { "name": "anxiety", "intensity": 3 }
-    ],
-    "triggers": "Completed 30-minute meditation session, then received positive feedback at work",
-    "notes": "PAHM practice really helped me stay centered during the stressful meeting. Noticing how meditation creates lasting calm.",
-    "context": "work",
+    "emotion": "anxious",
+    "intensity": 5,
+    "intensityLabel": "Mild",        // Generated: "Mild" (1-3), "Moderate" (4-6), "Intense" (7-10)
+    "context": "Work presentation tomorrow and feeling unprepared",
+    "trigger": "work_stress",
     "timestamp": "2024-01-01T15:30:00Z",
     "analysis": {
-      "primaryEmotion": "peace",
-      "emotionalBalance": "positive",    // Based on overall emotion intensities
-      "triggerCategory": "practice_and_work", // Auto-categorized
-      "insightKeywords": ["meditation", "centered", "calm"] // Extracted from notes
+      "emotionCategory": "negative",     // "positive", "negative", "neutral"
+      "intensityLevel": "mild",          // "mild", "moderate", "intense"
+      "contextKeywords": ["work", "presentation", "unprepared"], // Extracted from context
+      "recommendedAction": "breathing_exercise" // Based on emotion + intensity
     }
   }
 }
 ```
 
-**Emotion Categories for Frontend**:
-- **Positive**: peace, joy, gratitude, excitement, love, contentment, confidence
-- **Negative**: anxiety, anger, sadness, fear, frustration, guilt, shame
-- **Neutral**: curiosity, focus, calm, alert, contemplative, balanced
+**Emotion Options for Dropdown**:
+- **Positive Emotions**: happy, peaceful, grateful, excited, loved, confident, content, joyful, calm, hopeful
+- **Negative Emotions**: anxious, angry, sad, fearful, frustrated, guilty, ashamed, overwhelmed, stressed, lonely
+- **Neutral Emotions**: curious, focused, alert, contemplative, balanced, thoughtful, reflective, present
+
+**Intensity Scale Labels**:
+- **1-3**: Mild (light background feeling)
+- **4-6**: Moderate (noticeable emotional presence) 
+- **7-10**: Intense (strong, prominent emotional state)
+
+**Trigger Options for Dropdown**:
+- **Work**: work_stress, work_success, work_conflict, work_deadline, work_meeting
+- **Relationships**: family_interaction, friend_connection, romantic_relationship, social_event, conflict_resolution
+- **Personal**: meditation_practice, exercise, health_concern, achievement, personal_growth
+- **Daily Life**: commute, weather, news, technology, routine_disruption
+- **Internal**: thoughts, memories, physical_sensation, spiritual_experience, realization
+- **Other**: financial_concern, time_pressure, decision_making, unexpected_event, creative_inspiration
 
 **Triggers**:
 - Deep emotional experiences
@@ -2707,114 +2674,6 @@ Real-time emotional state tracking with multiple daily entries support: quick em
 
 ---
 
-### **GET /api/notes/trends**
-**Purpose**: Analyze mood trends and emotional patterns over time  
-**Method**: GET  
-**Authentication**: Authenticated user required  
-**Database Table**: daily_notes
-
-**Frontend Integration**:
-- Mood trend charts and graphs
-- Emotional pattern dashboards
-- Progress tracking visualizations
-- Insights and recommendations display
-
-**Query Parameters**:
-```typescript
-?period=30d          // Analysis period: 7d, 30d, 90d, 1y
-?granularity=daily   // Data granularity: hourly, daily, weekly, monthly
-?emotions=true       // Include emotion trend analysis
-?triggers=true       // Include trigger pattern analysis
-?correlations=true   // Include mood-session correlations
-```
-
-**Success Response (200)**:
-```json
-{
-  "success": true,
-  "data": {
-    "period": "Last 30 days",
-    "summary": {
-      "totalEntries": 95,
-      "averageMood": 6.8,
-      "moodStandardDeviation": 1.4,
-      "trendDirection": "improving",  // "improving", "stable", "declining"
-      "stabilityScore": 0.75          // 0-1 scale (1 = very stable moods)
-    },
-    
-    "dailyTrends": [
-      {
-        "date": "2024-01-01",
-        "averageMood": 7.2,
-        "entryCount": 4,
-        "moodRange": { "min": 6, "max": 8 },
-        "dominantEmotions": ["peace", "gratitude"]
-      }
-      // ... 30 days of data
-    ],
-    
-    "weeklyPatterns": {
-      "bestDays": ["Sunday", "Saturday"],        // Highest average mood
-      "challengingDays": ["Monday", "Wednesday"], // Lowest average mood
-      "dayAverages": {
-        "Monday": 6.2,
-        "Tuesday": 6.8,
-        "Wednesday": 6.1,
-        "Thursday": 7.0,
-        "Friday": 7.3,
-        "Saturday": 7.8,
-        "Sunday": 8.1
-      }
-    },
-    
-    "emotionTrends": {
-      "risingEmotions": [
-        { "name": "peace", "changePercent": 15.2 },
-        { "name": "contentment", "changePercent": 8.7 }
-      ],
-      "decliningEmotions": [
-        { "name": "anxiety", "changePercent": -12.3 },
-        { "name": "stress", "changePercent": -7.9 }
-      ],
-      "stableEmotions": ["focus", "curiosity", "calm"]
-    },
-    
-    "triggerAnalysis": {
-      "positiveCorrelations": [
-        { "trigger": "meditation session", "moodImpact": +1.8 },
-        { "trigger": "nature walk", "moodImpact": +1.4 },
-        { "trigger": "family time", "moodImpact": +1.2 }
-      ],
-      "negativeCorrelations": [
-        { "trigger": "work deadline", "moodImpact": -1.5 },
-        { "trigger": "poor sleep", "moodImpact": -2.1 },
-        { "trigger": "conflict", "moodImpact": -1.8 }
-      ]
-    },
-    
-    "insights": [
-      "Your mood has improved by 0.8 points on average this month",
-      "Meditation sessions consistently improve mood by 1-2 points",
-      "Weekends show 25% higher mood ratings than weekdays",
-      "Anxiety levels have decreased by 12% compared to last month"
-    ],
-    
-    "recommendations": [
-      "Continue daily meditation practice - showing strong positive correlation",
-      "Consider meditation on Monday/Wednesday when mood tends to be lower",
-      "Note the positive impact of nature activities on emotional wellbeing"
-    ]
-  }
-}
-```
-
-**Triggers**:
-- Mood trends page loading
-- Weekly/monthly mood reports
-- Emotional pattern analysis
-- Progress dashboard insights
-
----
 
 ### **DELETE /api/notes/[noteId]**
 **Purpose**: Delete specific daily note entry  
@@ -3074,181 +2933,6 @@ Comprehensive progress tracking across all user activities: session progress, st
 
 ---
 
-## 📝 DAILY NOTES & MOOD APIs
-
-### **Real-time Emotional Tracking**
-Base URL: `/api/notes`
-
-#### **POST /api/notes/emoji**
-Submit quick emoji-based mood note (multiple entries per day).
-
-**Request Body:**
-```json
-{
-  "type": "emoji",
-  "moodRating": 7,
-  "timestamp": "2024-01-01T18:00:00Z"
-}
-```
-
-**Business Rules:**
-- Multiple entries per day allowed
-- Instant emotion recording
-- Auto-timestamped for chronological order
-
-#### **POST /api/notes/detailed**
-Submit detailed emotional note (multiple entries per day).
-
-**Request Body:**
-```json
-{
-  "type": "detailed",
-  "moodRating": 8,
-  "emotions": [
-    {"name": "anxiety", "intensity": 6},
-    {"name": "peace", "intensity": 8}
-  ],
-  "triggers": "Work deadline pressure, then completed meditation",
-  "notes": "Initially anxious about meeting, but PAHM practice helped me find calm"
-}
-```
-
-**Business Rules:**
-- Multiple detailed entries per day supported
-- Real-time emotional state capture
-- Complex emotion tracking with intensities
-
-#### **GET /api/notes/history**
-Get chronological notes history with filtering and pagination.
-
-**Query Parameters:**
-- `date`: Filter by specific date
-- `dateRange`: Filter by date range
-- `type`: Filter by note type (emoji/detailed)
-- `limit`: Number of entries to return
-- `offset`: Pagination offset
-
-#### **GET /api/notes/trends**
-Get mood trends and emotional patterns analysis.
-
-#### **DELETE /api/notes/:id**
-Delete specific note entry.
-
----
-
-## 😊 HAPPINESS SCORE APIs
-
-### **Happiness Calculation**
-Base URL: `/api/happiness`
-
-#### **POST /api/happiness/calculate**
-Calculate/recalculate happiness score.
-
-**Business Rules:**
-- Requires completed questionnaire (all 6 steps)
-- Requires completed self-assessment (all 6 categories)
-- Practice sessions enhance but don't enable calculation
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "happinessScore": 72,
-    "userLevel": "Developing Seeker",
-    "components": {
-      "currentState": 65,
-      "attachmentBased": 58,
-      "pahmDevelopment": 45,
-      "lifestyle": 70,
-      "emotional": 75,
-      "social": 80,
-      "mindfulness": 85,
-      "progress": 60
-    },
-    "calculatedAt": "2024-01-01T12:00:00Z"
-  }
-}
-```
-
-#### **GET /api/happiness/history**
-Get happiness score history and progression.
-
-#### **GET /api/happiness/breakdown**
-Get detailed breakdown of happiness score components.
-
-#### **GET /api/happiness/trends**
-Get happiness trends analysis over time.
-
----
-
-## 🔧 ADMIN APIs
-
-### **Admin Management**
-Base URL: `/api/admin`
-**Authentication**: Admin-level access required
-
-#### **POST /api/admin/auth/login**
-Admin-specific login with enhanced security.
-
-#### **GET /api/admin/users**
-Get list of all users with pagination and filtering.
-
-**Query Parameters:**
-- `page`: Page number
-- `limit`: Users per page
-- `search`: Search by name/email
-- `status`: Filter by user status
-
-#### **GET /api/admin/users/[userId]**
-Get detailed information for a specific user.
-
-#### **PUT /api/admin/users/[userId]**
-Update user information (admin privileges).
-
-#### **DELETE /api/admin/users/[userId]**
-Delete user account (admin action).
-
-#### **POST /api/admin/users/bulk**
-Bulk operations on multiple users.
-
-#### **GET /api/admin/stats**
-Get system-wide statistics.
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "totalUsers": 1250,
-    "activeUsers": 890,
-    "totalSessions": 15670,
-    "averageHappinessScore": 68.5,
-    "completionRates": {
-      "questionnaire": 0.85,
-      "selfAssessment": 0.78,
-      "stage1": 0.65
-    }
-  }
-}
-```
-
-#### **GET /api/admin/analytics/users**
-Get user engagement analytics.
-
-#### **GET /api/admin/analytics/sessions**
-Get session completion and usage analytics.
-
-#### **GET /api/admin/analytics/happiness**
-Get happiness score analytics (aggregated, anonymized).
-
-#### **GET /api/admin/system/monitor**
-Get system monitoring data.
-
-#### **POST /api/admin/sessions/manage**
-Session management tools for testing and debugging.
-
----
 
 ## 📊 API RESPONSE STANDARDS & CONVENTIONS
 

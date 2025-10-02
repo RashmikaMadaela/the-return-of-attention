@@ -295,10 +295,16 @@ model DailyNote {
   // Quick emoji entry
   moodRating  Int?     // 1-10 scale
   
-  // Detailed entry
-  emotions    Json?    // Array of emotion objects with intensity
-  triggers    String?  // What caused this emotional state
-  notes       String?  // Free-form reflection
+  // Detailed entry fields (based on UI)
+  emotion     String?  // Selected emotion from dropdown (e.g., "happy", "anxious", "peaceful")
+  intensity   Int?     // 1-10 intensity scale (slider value)
+  context     String?  // "What's happening Today" - free text description
+  trigger     String?  // "What triggered this" - selected from dropdown options
+  notes       String?  // Additional free-form reflection (if needed)
+  
+  // Legacy support for existing data structure
+  emotions    Json?    // Array of emotion objects with intensity (deprecated, use emotion + intensity)
+  triggers    String?  // What caused this emotional state (deprecated, use trigger)
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

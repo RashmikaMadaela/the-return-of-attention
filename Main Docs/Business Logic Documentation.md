@@ -430,27 +430,36 @@ function assignUserLevel(score: number): string {
 
 ### **Daily Notes Collection**
 ```
-Emotion Trigger → Real-time Entry → Note Entry → Pattern Analysis → Happiness Update
+Emotion Trigger → Structured Entry → Emotion Analysis → Pattern Analysis → Happiness Update
 ```
 
 **Note Types:**
 1. **Quick Emoji**: Simple mood rating (1-10 scale)
-2. **Detailed Notes**: Comprehensive emotional tracking
+2. **Detailed Log**: Structured emotional tracking (matches UI form)
 
-**Detailed Notes Components:**
-- **Mood Rating**: 1-10 scale
-- **Emotion Categories**: Joy, Peace, Anxiety, Sadness, Anger, etc.
-- **Intensity Level**: 1-10 scale per emotion
-- **Trigger Identification**: What caused this emotional state
-- **Notes**: Free-form reflection text
+**Detailed Log Components (UI Structure):**
+- **Emotion Selection**: Single emotion from dropdown (required)
+- **Intensity Slider**: 1-10 scale with labels (Mild/Moderate/Intense)
+- **Context Description**: "What's happening Today" - optional situational text
+- **Trigger Selection**: "What triggered this" - optional dropdown selection
+- **Auto-Analysis**: Emotion category, intensity level, recommended actions
+
+**UI Form Fields:**
+- **Emotion Dropdown**: "How are you feeling?" with categorized options
+- **Intensity Slider**: Shows current value (e.g., "5/10") with Mild→Intense scale
+- **Context Text Area**: Optional description of current situation
+- **Trigger Dropdown**: Optional selection of what caused the emotion
+- **Submit Button**: "Log Emotion" saves the structured entry
 
 **Business Rules:**
-- Multiple entries per day allowed (instant emotion recording)
+- Multiple entries per day allowed (real-time emotion tracking)
+- Single emotion focus per entry (simplified from multi-emotion system)
+- Auto-categorization into positive/negative/neutral emotions
+- Intensity-based recommended actions (breathing, meditation, awareness)
 - Each entry timestamped for chronological tracking
-- Historical entries viewable with timeline
-- Data feeds into happiness calculation
-- Trend analysis for progress tracking
-- Real-time emotional state capture
+- Historical entries viewable with filtering and analysis
+- Data feeds into happiness calculation reflection component
+- Trend analysis for emotional pattern recognition
 
 ---
 
