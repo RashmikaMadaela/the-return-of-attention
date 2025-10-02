@@ -369,7 +369,7 @@ model MindRecoveryExercise {
   description  String @db.Text
   purpose      String @db.Text
   bestTime     String
-  duration     Int    @default(5) // Always 5 minutes
+  duration     Int    // Specific durations: Morning Recharge/Emotional Reset/Work-Home Transition: 5 min, Mid-Day Reset: 3 min, Bedtime Wind Down: 8 min
   isActive     Boolean @default(true)
   sortOrder    Int    @default(0)
   

@@ -256,6 +256,18 @@ enum SessionStatus {
   ABANDONED = 'abandoned'
 }
 
+// Session configuration interface
+interface SessionConfig {
+  posture: 'sitting' | 'lying' | 'walking' | 'custom';
+  duration: number; // in minutes (adjustable for meditation, fixed for mind recovery: Morning Recharge/Emotional Reset/Work-Home Transition: 5 min, Mid-Day Reset: 3 min, Bedtime Wind Down: 8 min)
+  audioOptions: {
+    guidedVoiceOver: boolean;
+    bellRings: boolean;
+    volume: number; // 0-100
+  };
+  durationAdjustable: boolean; // false for mind recovery exercises
+}
+
 // Track session progress
 interface SessionProgress {
   sessionId: string;
@@ -265,12 +277,46 @@ interface SessionProgress {
   endTime?: Date;
   duration: number; // in seconds
   status: SessionStatus;
-  posture?: string;
+  config: SessionConfig;
   completion: number; // 0-100%
 }
 ```
 
-#### **2. PAHM Matrix Implementation**
+#### **2. Session Configuration Validation**
+```typescript
+// Session configuration validation
+const validateSessionConfig = (sessionType: string, config: SessionConfig): boolean => {
+  // Mind recovery exercises have fixed durations:
+  // Morning Recharge: 5 min, Mid-Day Reset: 3 min, Emotional Reset: 5 min
+  // Work-Home Transition: 5 min, Bedtime Wind Down: 8 min
+  if (sessionType === 'mind_recovery') {
+    return config.duration === 5 && !config.durationAdjustable;
+  }
+  
+  // Meditation sessions have minimum duration requirements
+  const stageMinimums = {
+    1: 10, // Stage 1: 10+ minutes
+    2: 30, // Stage 2-6: 30+ minutes
+    3: 30,
+    4: 30,
+    5: 30,
+    6: 30
+  };
+  
+  return config.duration >= stageMinimums[stageNumber] && config.durationAdjustable;
+};
+
+// Audio options validation
+const validateAudioOptions = (audioOptions: SessionConfig['audioOptions']): boolean => {
+  return (
+    typeof audioOptions.guidedVoiceOver === 'boolean' &&
+    typeof audioOptions.bellRings === 'boolean' &&
+    audioOptions.volume >= 0 && audioOptions.volume <= 100
+  );
+};
+```
+
+#### **3. PAHM Matrix Implementation**
 ```typescript
 // PAHM click tracking
 interface PAHMClick {

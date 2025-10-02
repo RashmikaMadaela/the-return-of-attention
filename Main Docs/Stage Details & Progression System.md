@@ -12,7 +12,12 @@ This document details the complete stage progression system for "The Return of A
 
 **Duration Rules**:
 - **Meditation Sessions**: Minimum duration specified per stage (user can extend via slider)
-- **Mind Recovery Exercises**: Fixed 5-minute duration (non-adjustable)
+- **Mind Recovery Exercises**: Fixed durations (non-adjustable):
+  - Morning Recharge: 5 minutes
+  - Mid-Day Reset: 3 minutes
+  - Emotional Reset: 5 minutes
+  - Work-Home Transition: 5 minutes
+  - Bedtime Wind Down: 8 minutes
 
 ---
 
@@ -48,12 +53,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
 ### **Sub-Stages Breakdown**
 
 #### **T1 - Initial Introduction**
-- **Minimum Duration**: 10 minutes per session (user can extend via slider)
+- **Minimum Duration**: 10 minutes per session (user-adjustable via duration slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 3 sessions
 - **Total Minimum Time**: 0.50 hours (30 minutes)
 - **Focus**: Basic posture and breathing awareness
-- **Duration Control**: Time slider allows extension beyond 10 minutes
+- **Session Configuration**: Posture selection, duration slider (10+ minutes), audio options (guided voice-over, bell rings)
 - **Skills Developed**: 
   - Comfortable sitting position
   - Basic breath awareness
@@ -61,12 +66,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
   - Introduction to meditation fundamentals
 
 #### **T2 - Building Consistency**
-- **Minimum Duration**: 15 minutes per session (user can extend via slider)
+- **Minimum Duration**: 15 minutes per session (user-adjustable via duration slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 4 sessions
 - **Total Minimum Time**: 1.00 hour
 - **Focus**: Extending stillness duration
-- **Duration Control**: Time slider allows extension beyond 15 minutes
+- **Session Configuration**: Posture selection, duration slider (15+ minutes), audio options (guided voice-over, bell rings)
 - **Skills Developed**:
   - Sustained attention for longer periods
   - Posture stability
@@ -74,12 +79,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
   - Comfort with extended sitting
 
 #### **T3 - Deepening Practice**
-- **Minimum Duration**: 20 minutes per session (user can extend via slider)
+- **Minimum Duration**: 20 minutes per session (user-adjustable via duration slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 6 sessions
 - **Total Minimum Time**: 2.00 hours
 - **Focus**: Deeper stillness and awareness
-- **Duration Control**: Time slider allows extension beyond 20 minutes
+- **Session Configuration**: Posture selection, duration slider (20+ minutes), audio options (guided voice-over, bell rings)
 - **Skills Developed**:
   - Enhanced focus capability
   - Body awareness
@@ -87,12 +92,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
   - Observation without judgment
 
 #### **T4 - Advanced Preparation**
-- **Minimum Duration**: 25 minutes per session (user can extend via slider)
+- **Minimum Duration**: 25 minutes per session (user-adjustable via duration slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 6 sessions
 - **Total Minimum Time**: 2.50 hours
 - **Focus**: Preparation for PAHM methodology
-- **Duration Control**: Time slider allows extension beyond 25 minutes
+- **Session Configuration**: Posture selection, duration slider (25+ minutes), audio options (guided voice-over, bell rings)
 - **Skills Developed**:
   - Extended concentration
   - Self-observation skills
@@ -100,12 +105,12 @@ The Seeker stage introduces users to the fundamental practice of physical stilln
   - Readiness for attention tracking
 
 #### **T5 - PAHM Readiness**
-- **Minimum Duration**: 30 minutes per session (user can extend via slider)
+- **Minimum Duration**: 30 minutes per session (user-adjustable via duration slider)
 - **Session Type**: Timer-only meditation
 - **Minimum Sessions**: 10 sessions
 - **Total Minimum Time**: 5.00 hours
 - **Focus**: Final preparation for PAHM Matrix introduction
-- **Duration Control**: Time slider allows extension beyond 30 minutes
+- **Session Configuration**: Posture selection, duration slider (30+ minutes), audio options (guided voice-over, bell rings)
 - **Skills Developed**:
   - Full 30-minute stillness capability
   - Mental clarity and focus
@@ -183,11 +188,11 @@ Pure awareness in the here and now. This is mindfulness where attention is ancho
 - **Worry**: Aversion to future possibilities, anxiety, fear, catastrophizing
 
 ### **Practice Details**
-- **Minimum Duration**: 30 minutes per session (user can extend via slider)
+- **Minimum Duration**: 30 minutes per session (user-adjustable via duration slider)
 - **Session Type**: Timer + PAHM Matrix tracking
 - **Minimum Sessions Required**: 30 sessions
 - **Minimum Hours to Complete**: 15 hours
-- **Duration Control**: Time slider allows extension beyond 30 minutes
+- **Session Configuration**: Posture selection, duration slider (30+ minutes), audio options (guided voice-over, bell rings)
 - **Total Stage Time**: 15.00 hours minimum
 
 ### **How to Practice with PAHM Matrix**

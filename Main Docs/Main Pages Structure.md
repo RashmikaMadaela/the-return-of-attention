@@ -177,15 +177,29 @@ This document outlines all the main pages that need to be created for "The Retur
 - Estimated duration
 - Session type explanation
 - Environment setup tips
-- "Begin Session" button
+- "Configure Session" button
 
-### 16. **Posture Selection Page**
-- Visual guides for different postures:
-  - Sitting position with instructions
-  - Lying position with instructions
-  - Walking position with instructions
-- Posture confirmation
-- Comfort and safety tips
+### 16. **Session Configuration Menu Page**
+- **Posture Selection**: Visual guides with instructions
+  - Sitting position (recommended)
+  - Lying position (alternative)
+  - Walking position (advanced)
+  - Custom position (user-defined)
+- **Duration Slider**: Adjust session length (meditation sessions only)
+  - Stage 1: 10+ minutes minimum (adjustable)
+  - Stages 2-6: 30+ minutes minimum (adjustable)
+  - Mind Recovery: Fixed durations (NO slider - fixed duration only):
+    - Morning Recharge: 5 minutes
+    - Mid-Day Reset: 3 minutes
+    - Emotional Reset: 5 minutes
+    - Work-Home Transition: 5 minutes
+    - Bedtime Wind Down: 8 minutes
+- **Audio Options**: Customize session audio
+  - Enable/disable guided voice-over
+  - Enable/disable bell rings (session start/end/intervals)
+  - Volume control slider (0-100%)
+- **Session Confirmation**: Review settings and start session
+- "Begin Session" button
 
 ### 17. **Session Interface Pages**
 

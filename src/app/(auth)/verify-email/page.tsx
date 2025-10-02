@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'already-verified'>('loading')
   const [message, setMessage] = useState('')
@@ -57,11 +57,11 @@ export default function VerifyEmailPage() {
     switch (status) {
       case 'loading':
         return (
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mb-4"></div>
+          <div className="w-16 h-16 mb-4 border-b-2 border-indigo-600 rounded-full animate-spin"></div>
         )
       case 'success':
         return (
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+          <div className="flex items-center justify-center w-16 h-16 mb-4 bg-green-100 rounded-full">
             <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
@@ -69,7 +69,7 @@ export default function VerifyEmailPage() {
         )
       case 'already-verified':
         return (
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+          <div className="flex items-center justify-center w-16 h-16 mb-4 bg-blue-100 rounded-full">
             <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -77,7 +77,7 @@ export default function VerifyEmailPage() {
         )
       case 'error':
         return (
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+          <div className="flex items-center justify-center w-16 h-16 mb-4 bg-red-100 rounded-full">
             <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -114,14 +114,14 @@ export default function VerifyEmailPage() {
 
   return (
     <div className={`min-h-screen flex items-center justify-center p-4 ${getBackgroundColor()}`}>
-      <div className="max-w-md w-full space-y-8 text-center">
+      <div className="w-full max-w-md space-y-8 text-center">
         <div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Email Verification
           </h2>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="p-8 bg-white rounded-lg shadow-md">
           <div className="flex flex-col items-center">
             {getStatusIcon()}
             
@@ -133,24 +133,24 @@ export default function VerifyEmailPage() {
             </h3>
 
             {message && (
-              <p className="text-gray-600 mb-6 text-center">
+              <p className="mb-6 text-center text-gray-600">
                 {message}
               </p>
             )}
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6 w-full">
-                <p className="text-sm text-red-600 text-center">
+              <div className="w-full p-4 mb-6 border border-red-200 rounded-md bg-red-50">
+                <p className="text-sm text-center text-red-600">
                   {error}
                 </p>
               </div>
             )}
 
-            <div className="space-y-4 w-full">
+            <div className="w-full space-y-4">
               {(status === 'success' || status === 'already-verified') && (
                 <a
                   href="/signin"
-                  className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition-colors inline-block text-center"
+                  className="inline-block w-full px-4 py-3 text-center text-white transition-colors bg-indigo-600 rounded-md hover:bg-indigo-700"
                 >
                   Sign In to Your Account
                 </a>
@@ -160,13 +160,13 @@ export default function VerifyEmailPage() {
                 <div className="space-y-3">
                   <a
                     href="/register"
-                    className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition-colors inline-block text-center"
+                    className="inline-block w-full px-4 py-3 text-center text-white transition-colors bg-indigo-600 rounded-md hover:bg-indigo-700"
                   >
                     Register New Account
                   </a>
                   <a
                     href="/resend-verification"
-                    className="w-full bg-gray-600 text-white py-3 px-4 rounded-md hover:bg-gray-700 transition-colors inline-block text-center"
+                    className="inline-block w-full px-4 py-3 text-center text-white transition-colors bg-gray-600 rounded-md hover:bg-gray-700"
                   >
                     Resend Verification Email
                   </a>
@@ -175,7 +175,7 @@ export default function VerifyEmailPage() {
 
               <a
                 href="/"
-                className="w-full text-gray-600 hover:text-gray-900 py-2 text-center inline-block"
+                className="inline-block w-full py-2 text-center text-gray-600 hover:text-gray-900"
               >
                 ← Back to Home
               </a>
@@ -185,8 +185,8 @@ export default function VerifyEmailPage() {
 
         {/* Instructions for testing */}
         {status === 'loading' && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-left">
-            <h4 className="font-semibold text-yellow-800 mb-2">🧪 Testing Mode</h4>
+          <div className="p-4 text-left border border-yellow-200 rounded-lg bg-yellow-50">
+            <h4 className="mb-2 font-semibold text-yellow-800">🧪 Testing Mode</h4>
             <p className="text-sm text-yellow-700">
               If you don't have Resend configured, check your terminal console for the verification link.
             </p>
@@ -194,5 +194,26 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50">
+        <div className="w-full max-w-md space-y-8 text-center">
+          <div className="p-8 bg-white rounded-lg shadow-md">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 mb-4 border-b-2 border-indigo-600 rounded-full animate-spin"></div>
+              <h3 className="mb-4 text-lg font-semibold text-gray-800">
+                Loading...
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   )
 }

@@ -200,7 +200,12 @@ Stage Requirements → Session Practice → Progress Tracking → Stage Completi
 **Business Rules:**
 - **Minimum Duration**: 30-minute minimum sessions with user extension capability
 - **Duration Control**: Time slider allows users to extend beyond minimum requirements
-- **Fixed Mind Recovery**: 5-minute fixed duration for mind recovery exercises (non-adjustable)
+- **Fixed Mind Recovery**: Fixed durations for mind recovery exercises (non-adjustable):
+  - Morning Recharge: 5 minutes
+  - Mid-Day Reset: 3 minutes
+  - Emotional Reset: 5 minutes
+  - Work-Home Transition: 5 minutes
+  - Bedtime Wind Down: 8 minutes
 - Minimum session count per stage enforced
 - Previous stage completion required for unlock
 - PAHM click data recorded for each session
@@ -212,19 +217,32 @@ Stage Requirements → Session Practice → Progress Tracking → Stage Completi
 
 ### **Session Start Process**
 ```
-Session Preparation → Posture Selection → Timer + Matrix Interface → Practice → Session Completion
+Session Preparation → Session Configuration Menu → Timer + Matrix Interface → Practice → Session Completion
 ```
 
 **Session Preparation:**
 - Display session information (stage, duration, type)
 - Show session objectives and guidance
-- Present posture selection options
+- Present session configuration options
 
-**Posture Selection:**
-- Sitting position (recommended)
-- Lying position (alternative)
-- Walking position (advanced)
-- Custom position (user defined)
+**Session Configuration Menu:**
+- **Posture Selection**: Choose meditation position
+  - Sitting position (recommended)
+  - Lying position (alternative)
+  - Walking position (advanced)
+  - Custom position (user defined)
+- **Duration Configuration**: Adjust session length
+  - Meditation Sessions: Duration slider (minimum per stage + user extension)
+  - Mind Recovery Exercises: Fixed durations (NO duration slider):
+    - Morning Recharge: 5 minutes
+    - Mid-Day Reset: 3 minutes
+    - Emotional Reset: 5 minutes
+    - Work-Home Transition: 5 minutes
+    - Bedtime Wind Down: 8 minutes
+- **Audio Options**: Customize session audio experience
+  - Guided voice-over: Enable/disable meditation guidance
+  - Bell rings: Enable/disable session start/end/interval bells
+  - Volume control: Audio level adjustment (0-100%)
 
 ### **PAHM Matrix Interaction Rules**
 ```
@@ -455,7 +473,7 @@ Stage Completion Check → PAHM Learning Check → Mind Recovery Unlock → Exer
 - Does not count toward stage progression requirements
 
 ### **Mind Recovery Exercise Types**
-All exercises use **5-minute timer + PAHM Matrix interface**:
+All exercises use **Fixed duration timer + PAHM Matrix interface**:
 
 1. **Morning Recharge** 
    - **Purpose**: Start day with clarity and focus
@@ -465,7 +483,7 @@ All exercises use **5-minute timer + PAHM Matrix interface**:
 
 2. **Mid-Day Reset**
    - **Purpose**: Quick refresh to maintain focus
-   - **Duration**: 5 minutes  
+   - **Duration**: 3 minutes  
    - **Session Type**: Quick PAHM Matrix
    - **Best Time**: Lunch break, afternoon
 
@@ -480,6 +498,12 @@ All exercises use **5-minute timer + PAHM Matrix interface**:
    - **Duration**: 5 minutes
    - **Session Type**: Quick PAHM Matrix
    - **Best Time**: End of workday
+
+5. **Bedtime Wind Down**
+   - **Purpose**: Gentle preparation for restful sleep
+   - **Duration**: 8 minutes
+   - **Session Type**: Quick PAHM Matrix
+   - **Best Time**: Before bedtime
 
 ### **Exercise Recommendation Logic**
 ```typescript
@@ -535,8 +559,8 @@ Exercise Selection → Session Preparation → 5-Minute Timer + Matrix → Compl
 ```typescript
 interface MindRecoverySession {
   type: 'mind_recovery';
-  exercise: 'morning_recharge' | 'mid_day_reset' | 'emotional_reset' | 'work_home_transition';
-  duration: 5; // Fixed 5 minutes
+  exercise: 'morning_recharge' | 'mid_day_reset' | 'emotional_reset' | 'work_home_transition' | 'bedtime_wind_down';
+  duration: 3 | 5 | 8; // Fixed durations: 3 min (Mid-Day Reset), 5 min (Morning Recharge/Emotional Reset/Work-Home Transition), 8 min (Bedtime Wind Down)
   timer: {
     display: 'countdown';
     alerts: 'start' | 'end';
@@ -544,7 +568,7 @@ interface MindRecoverySession {
   pahmMatrix: {
     grid: 3x3Matrix;
     positions: PAHMPositions;
-    quickMode: true; // Indicates 5-minute session
+    quickMode: true; // Indicates quick recovery session
   };
   tracking: {
     totalClicks: number;
@@ -619,7 +643,7 @@ Health Check → Metric Collection → Threshold Analysis → Alert Generation �
 - **Email Format**: RFC 5322 compliant
 - **Password Strength**: Minimum 8 characters, mixed case recommended
 - **Age Range**: 13-120 years
-- **Session Duration**: 5 minutes fixed (Mind Recovery) or 10-30+ minutes minimum (Stage sessions with user extension)
+- **Session Duration**: Fixed durations for Mind Recovery (Morning Recharge/Emotional Reset/Work-Home Transition: 5 min, Mid-Day Reset: 3 min, Bedtime Wind Down: 8 min) or 10-30+ minutes minimum (Stage sessions with user extension)
 - **Quality Ratings**: 1-10 scale only
 - **PAHM Clicks**: Valid matrix positions only
 
@@ -725,7 +749,7 @@ Health Check → Metric Collection → Threshold Analysis → Alert Generation �
 
 ### **Key Calculations**
 - **Stage 1 Total**: 29 sessions, 11.5 hours minimum
-- **Mind Recovery**: 5-minute quick PAHM Matrix exercises
+- **Mind Recovery**: Quick PAHM Matrix exercises with specific durations (Morning Recharge/Emotional Reset/Work-Home Transition: 5 min, Mid-Day Reset: 3 min, Bedtime Wind Down: 8 min)
 - **Total Journey**: 115.5+ hours across 6 stages
 - **Happiness Score**: 0-100 with 8 weighted components
 - **PAHM Weight**: 25% (highest single component)

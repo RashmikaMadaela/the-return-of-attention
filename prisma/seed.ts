@@ -134,6 +134,7 @@ async function main() {
       description: 'Start your day with clarity and focus through gentle PAHM Matrix awareness practice.',
       purpose: 'Begin the day with mental clarity, set positive intentions, and establish mindful awareness.',
       bestTime: 'Morning routine (6-10 AM)',
+      duration: 5,
       sortOrder: 1
     },
     {
@@ -142,6 +143,7 @@ async function main() {
       description: 'Quick refresh to maintain focus and energy throughout your busy day.',
       purpose: 'Restore mental energy, refocus attention, and maintain emotional balance during daily activities.',
       bestTime: 'Lunch break or afternoon (12-3 PM)',
+      duration: 3,
       sortOrder: 2
     },
     {
@@ -150,6 +152,7 @@ async function main() {
       description: 'Settle emotions and find balance when experiencing emotional turbulence.',
       purpose: 'Process difficult emotions, restore emotional equilibrium, and develop resilience.',
       bestTime: 'During emotional challenges (anytime)',
+      duration: 5,
       sortOrder: 3
     },
     {
@@ -158,6 +161,7 @@ async function main() {
       description: 'Shift mindfully from work mode to personal time, creating healthy boundaries.',
       purpose: 'Release work stress, transition mindfully between roles, and be present for personal life.',
       bestTime: 'End of workday (5-7 PM)',
+      duration: 5,
       sortOrder: 4
     },
     {
@@ -166,6 +170,7 @@ async function main() {
       description: 'Gentle preparation for restful sleep through calming PAHM Matrix awareness practice.',
       purpose: 'Release the day\'s tensions, quiet the mind, and prepare for peaceful, restorative sleep.',
       bestTime: 'Before bedtime (8-11 PM)',
+      duration: 8,
       sortOrder: 5
     }
   ]
