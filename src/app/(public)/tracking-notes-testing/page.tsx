@@ -17,24 +17,14 @@ export default function TrackingNotesTestingPage() {
 
   // State for form inputs
   const [emojiNoteData, setEmojiNoteData] = useState({
-    moodRating: 7,
-    emotion: 'happy',
-    intensity: 6,
-    context: 'Had a great meditation session today',
-    trigger: 'practice',
-    notes: 'Feeling more aware and present'
+    moodRating: 7
   });
 
   const [detailedNoteData, setDetailedNoteData] = useState({
     emotion: 'peaceful',
     intensity: 8,
     context: 'Deep meditation experience with clear awareness',
-    trigger: 'meditation',
-    notes: 'Experienced profound stillness and clarity',
-    emotions: [
-      { emotion: 'peaceful', intensity: 8 },
-      { emotion: 'grateful', intensity: 7 }
-    ]
+    trigger: 'meditation'
   });
 
   const [happinessData, setHappinessData] = useState({
@@ -138,7 +128,7 @@ export default function TrackingNotesTestingPage() {
             {/* Emoji Note Form */}
             <div className="bg-gray-50 p-4 rounded-lg mb-4">
               <h4 className="font-semibold mb-3">Create/Update Emoji Note</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Mood Rating (1-10)</label>
                   <input
@@ -148,71 +138,7 @@ export default function TrackingNotesTestingPage() {
                     value={emojiNoteData.moodRating}
                     onChange={(e) => setEmojiNoteData(prev => ({ ...prev, moodRating: Number(e.target.value) }))}
                     className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Emotion</label>
-                  <select
-                    value={emojiNoteData.emotion}
-                    onChange={(e) => setEmojiNoteData(prev => ({ ...prev, emotion: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
-                  >
-                    <option value="happy">Happy</option>
-                    <option value="sad">Sad</option>
-                    <option value="anxious">Anxious</option>
-                    <option value="peaceful">Peaceful</option>
-                    <option value="excited">Excited</option>
-                    <option value="calm">Calm</option>
-                    <option value="frustrated">Frustrated</option>
-                    <option value="grateful">Grateful</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Intensity (1-10)</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="10"
-                    value={emojiNoteData.intensity}
-                    onChange={(e) => setEmojiNoteData(prev => ({ ...prev, intensity: Number(e.target.value) }))}
-                    className="w-full px-3 py-2 border rounded-lg"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Trigger</label>
-                  <select
-                    value={emojiNoteData.trigger}
-                    onChange={(e) => setEmojiNoteData(prev => ({ ...prev, trigger: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
-                  >
-                    <option value="practice">Meditation Practice</option>
-                    <option value="work">Work</option>
-                    <option value="relationships">Relationships</option>
-                    <option value="health">Health</option>
-                    <option value="finances">Finances</option>
-                    <option value="weather">Weather</option>
-                    <option value="news">News</option>
-                    <option value="nature">Nature</option>
-                  </select>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Context (What's happening?)</label>
-                  <input
-                    type="text"
-                    value={emojiNoteData.context}
-                    onChange={(e) => setEmojiNoteData(prev => ({ ...prev, context: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
-                    placeholder="Describe what's happening today..."
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Additional Notes</label>
-                  <textarea
-                    value={emojiNoteData.notes}
-                    onChange={(e) => setEmojiNoteData(prev => ({ ...prev, notes: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
-                    rows={2}
-                    placeholder="Any additional thoughts or reflections..."
+                    placeholder="Rate your mood from 1 (poor) to 10 (excellent)"
                   />
                 </div>
               </div>
@@ -272,6 +198,25 @@ export default function TrackingNotesTestingPage() {
                     className="w-full px-3 py-2 border rounded-lg"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Trigger</label>
+                  <select
+                    value={detailedNoteData.trigger}
+                    onChange={(e) => setDetailedNoteData(prev => ({ ...prev, trigger: e.target.value }))}
+                    className="w-full px-3 py-2 border rounded-lg"
+                  >
+                    <option value="meditation">Meditation Practice</option>
+                    <option value="work">Work</option>
+                    <option value="relationships">Relationships</option>
+                    <option value="health">Health</option>
+                    <option value="finances">Finances</option>
+                    <option value="weather">Weather</option>
+                    <option value="news">News</option>
+                    <option value="nature">Nature</option>
+                    <option value="learning">Learning</option>
+                    <option value="exercise">Exercise</option>
+                  </select>
+                </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">Context (What's happening?)</label>
                   <textarea
@@ -282,16 +227,7 @@ export default function TrackingNotesTestingPage() {
                     placeholder="Describe what's happening in detail..."
                   />
                 </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium mb-1">Additional Reflections</label>
-                  <textarea
-                    value={detailedNoteData.notes}
-                    onChange={(e) => setDetailedNoteData(prev => ({ ...prev, notes: e.target.value }))}
-                    className="w-full px-3 py-2 border rounded-lg"
-                    rows={3}
-                    placeholder="Deeper reflections and insights..."
-                  />
-                </div>
+
               </div>
             </div>
 

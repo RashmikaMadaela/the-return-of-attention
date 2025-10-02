@@ -7,11 +7,6 @@ import { prisma } from '@/lib/prisma';
 // Validation schema for emoji note submission
 const emojiNoteSchema = z.object({
   moodRating: z.number().min(1).max(10), // 1-10 mood rating scale
-  emotion: z.string().optional(), // Primary emotion (happy, sad, anxious, etc.)
-  intensity: z.number().min(1).max(10).optional(), // Emotion intensity 1-10
-  context: z.string().max(1000).optional(), // What's happening today
-  trigger: z.string().optional(), // What triggered this mood
-  notes: z.string().max(500).optional(), // Additional notes
 });
 
 /**
@@ -56,7 +51,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { moodRating, emotion, intensity, context, trigger, notes } = validation.data;
+    const { moodRating } = validation.data;
 
     // Check if emoji note already exists for today
     const today = new Date();
@@ -83,11 +78,6 @@ export async function POST(request: NextRequest) {
         where: { id: existingNote.id },
         data: {
           moodRating,
-          emotion: emotion || null,
-          intensity: intensity || null,
-          context: context || null,
-          trigger: trigger || null,
-          notes: notes || null,
           updatedAt: new Date()
         }
       });
@@ -98,11 +88,6 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           type: 'emoji',
           moodRating,
-          emotion: emotion || null,
-          intensity: intensity || null,
-          context: context || null,
-          trigger: trigger || null,
-          notes: notes || null
         }
       });
     }

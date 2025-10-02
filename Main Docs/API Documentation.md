@@ -2483,7 +2483,7 @@ Real-time emotional state tracking with multiple daily entries support: quick em
   "message": "Mood logged successfully",
   "data": {
     "id": "cuid_note_id",
-    "type": "emoji",
+    "type": " ",
     "moodRating": 7,
     "timestamp": "2024-01-01T18:00:00Z",
     "moodLabel": "Good",      // Generated label: Very Low/Low/Fair/Good/Great/Excellent

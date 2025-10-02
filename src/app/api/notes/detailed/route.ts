@@ -8,13 +8,8 @@ import { prisma } from '@/lib/prisma';
 const detailedNoteSchema = z.object({
   emotion: z.string().min(1, 'Emotion is required'), // Primary emotion (happy, sad, anxious, etc.)
   intensity: z.number().min(1).max(10), // Emotion intensity 1-10
-  context: z.string().min(1, 'Context is required').max(1000), // What's happening today
-  trigger: z.string().optional(), // What triggered this mood
-  notes: z.string().max(2000).optional(), // Additional reflections
-  emotions: z.array(z.object({
-    emotion: z.string(),
-    intensity: z.number().min(1).max(10)
-  })).optional(), // Multiple emotions with intensities
+  context: z.string().max(1000).optional(), // What's happening today (optional)
+  trigger: z.string().optional(), // What triggered this mood (optional)
 });
 
 /**
@@ -59,7 +54,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { emotion, intensity, context, trigger, notes, emotions } = validation.data;
+    const { emotion, intensity, context, trigger } = validation.data;
 
     // Create detailed note
     const dailyNote = await prisma.dailyNote.create({
@@ -68,10 +63,8 @@ export async function POST(request: NextRequest) {
         type: 'detailed',
         emotion,
         intensity,
-        context,
+        context: context || null,
         trigger: trigger || null,
-        notes: notes || null,
-        emotions: emotions || undefined
       }
     });
 
@@ -85,7 +78,7 @@ export async function POST(request: NextRequest) {
         context: dailyNote.context,
         trigger: dailyNote.trigger,
         notes: dailyNote.notes,
-        emotions: dailyNote.emotions ? JSON.parse(dailyNote.emotions as string) : null,
+        emotions: dailyNote.emotions,
         createdAt: dailyNote.createdAt,
         updatedAt: dailyNote.updatedAt
       }
@@ -177,11 +170,8 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Parse emotions JSON for each note
-    const parsedNotes = detailedNotes.map(note => ({
-      ...note,
-      emotions: note.emotions ? JSON.parse(note.emotions as string) : null
-    }));
+    // Notes already have emotions parsed by Prisma
+    const parsedNotes = detailedNotes;
 
     // Get total count for pagination
     const totalCount = await prisma.dailyNote.count({
@@ -277,7 +267,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const { emotion, intensity, context, trigger, notes, emotions } = validation.data;
+    const { emotion, intensity, context, trigger } = validation.data;
 
     // Update the note
     const updatedNote = await prisma.dailyNote.update({
@@ -285,10 +275,8 @@ export async function PUT(request: NextRequest) {
       data: {
         ...(emotion !== undefined && { emotion }),
         ...(intensity !== undefined && { intensity }),
-        ...(context !== undefined && { context }),
+        ...(context !== undefined && { context: context || null }),
         ...(trigger !== undefined && { trigger: trigger || null }),
-        ...(notes !== undefined && { notes: notes || null }),
-        ...(emotions !== undefined && { emotions: emotions || undefined }),
         updatedAt: new Date()
       }
     });
@@ -303,7 +291,7 @@ export async function PUT(request: NextRequest) {
         context: updatedNote.context,
         trigger: updatedNote.trigger,
         notes: updatedNote.notes,
-        emotions: updatedNote.emotions ? JSON.parse(updatedNote.emotions as string) : null,
+        emotions: updatedNote.emotions,
         createdAt: updatedNote.createdAt,
         updatedAt: updatedNote.updatedAt
       }
