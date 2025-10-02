@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
             // For Stage 1, check if all sub-stages are completed
             const subStagesArray = Array.isArray(previousStage.subStages) ? previousStage.subStages : [];
             isUnlocked = subStagesArray.every((subStage: any) =>
-              previousStage.userProgress.some(p => p.subStage === subStage.id && p.isCompleted)
+              previousStage.userProgress.some(p => p.subStage === (subStage.id || subStage.name) && p.isCompleted)
             );
           } else {
             isUnlocked = previousStage.userProgress.some(p => p.isCompleted);
@@ -70,13 +70,14 @@ export async function GET(request: NextRequest) {
         const subStagesArray = Array.isArray(stage.subStages) ? stage.subStages : [];
         
         subStagesProgress = subStagesArray.map((subStage: any, index: number) => {
-          const progress = stage.userProgress.find(p => p.subStage === subStage.id);
-          const subStageSessions = stage.sessions.filter(s => s.subStage === subStage.id);
+          const subStageId = subStage.id || subStage.name;
+          const progress = stage.userProgress.find(p => p.subStage === subStageId);
+          const subStageSessions = stage.sessions.filter(s => s.subStage === subStageId);
           
           // Check if this sub-stage is unlocked
           const isSubStageUnlocked = index === 0 || // First sub-stage is always unlocked
             subStagesArray.slice(0, index).every((prevSubStage: any) =>
-              stage.userProgress.some(p => p.subStage === prevSubStage.id && p.isCompleted)
+              stage.userProgress.some(p => p.subStage === (prevSubStage.id || prevSubStage.name) && p.isCompleted)
             );
 
           const sessionsCompleted = progress?.sessionsCompleted || 0;
@@ -86,7 +87,7 @@ export async function GET(request: NextRequest) {
           const subStageProgress = Math.min(100, Math.max(sessionsProgress, hoursProgress));
 
           return {
-            id: subStage.id,
+            id: subStageId,
             name: subStage.name,
             description: subStage.description,
             minSessions: subStage.minSessions,

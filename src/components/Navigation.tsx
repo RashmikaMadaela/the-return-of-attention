@@ -32,7 +32,13 @@ export function Navigation() {
                 href="/api-testing" 
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
-                API Testing
+                Auth APIs
+              </Link>
+              <Link 
+                href="/meditation-apis-testing" 
+                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Meditation APIs
               </Link>
               <Link 
                 href="/email-verification-test" 
