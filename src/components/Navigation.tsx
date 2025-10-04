@@ -2,9 +2,11 @@
 
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
+import { useState } from 'react'
 
 export function Navigation() {
   const { data: session, status } = useSession()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   if (status === 'loading') {
     return (
@@ -18,88 +20,174 @@ export function Navigation() {
     )
   }
 
-  return (
-    <nav className="bg-white shadow-sm border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-8">
+  // Landing page navigation (for non-authenticated users)
+  if (!session) {
+    return (
+      <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
             <Link href="/" className="text-xl font-bold text-gray-900">
-              Return of Attention
+              The Return of Attention
             </Link>
             
-            <div className="flex space-x-4">
-              <Link 
-                href="/api-testing" 
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/signin"
+                className="bg-slate-100 text-slate-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-slate-200 transition-colors"
               >
-                Auth APIs
+                Login
               </Link>
-              <Link 
-                href="/meditation-apis-testing" 
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+              <Link
+                href="/register"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
               >
-                Meditation APIs
+                Register
               </Link>
-              <Link 
-                href="/tracking-notes-testing" 
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Tracking APIs
-              </Link>
-              <Link 
-                href="/email-verification-test" 
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Email Test
-              </Link>
-              <Link 
-                href="/admin-login" 
-                className="text-orange-600 hover:text-orange-800 px-3 py-2 rounded-md text-sm font-medium border border-orange-200 hover:border-orange-300"
-              >
-                🛡️ Admin
-              </Link>
-              {session && (
-                <Link 
-                  href="/dashboard" 
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Dashboard
-                </Link>
-              )}
             </div>
           </div>
+        </div>
+      </nav>
+    )
+  }
 
+  // Main app navigation (for authenticated users)
+  return (
+    <nav className="bg-white shadow-sm border-b sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link href="/dashboard" className="text-xl font-bold text-gray-900 truncate">
+            Return of Attention
+          </Link>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-1">
+            <Link 
+              href="/dashboard" 
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Home
+            </Link>
+            <Link 
+              href="/mind-recovery" 
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Mind Recovery
+            </Link>
+            <Link 
+              href="/daily-notes" 
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Daily Notes
+            </Link>
+            <Link 
+              href="/analytics" 
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              My Analytics
+            </Link>
+            <Link 
+              href="/learn" 
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Learn
+            </Link>
+            <Link 
+              href="/wisdom" 
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Wisdom Guide
+            </Link>
+          </div>
+
+          {/* User Menu */}
           <div className="flex items-center space-x-4">
-            {session ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">
-                  Welcome, {session.user?.name || session.user?.email}
+            {/* User Avatar/Menu */}
+            <div className="flex items-center space-x-3">
+              <span className="hidden sm:block text-sm text-gray-600">
+                {session.user?.name || session.user?.email}
+              </span>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <span className="text-blue-600 text-sm font-medium">
+                  {(session.user?.name || session.user?.email || 'U')[0].toUpperCase()}
                 </span>
-                <button
-                  onClick={() => signOut()}
-                  className="bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-700"
-                >
-                  Sign Out
-                </button>
               </div>
-            ) : (
-              <div className="flex space-x-4">
-                <Link
-                  href="/signin"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
-                >
-                  Register
-                </Link>
-              </div>
-            )}
+              <button
+                onClick={() => signOut()}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                title="Sign Out"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Mobile menu button */}
+            <button
+              className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-600"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              <Link 
+                href="/dashboard" 
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link 
+                href="/mind-recovery" 
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Mind Recovery
+              </Link>
+              <Link 
+                href="/daily-notes" 
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Daily Notes
+              </Link>
+              <Link 
+                href="/analytics" 
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                My Analytics
+              </Link>
+              <Link 
+                href="/learn" 
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Learn
+              </Link>
+              <Link 
+                href="/wisdom" 
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Wisdom Guide
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   )

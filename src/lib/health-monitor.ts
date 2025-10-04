@@ -227,7 +227,7 @@ class HealthMonitor {
   }
 
   // Middleware to track requests
-  static trackRequest(handler: Function) {
+  static trackRequest(handler: (...args: any[]) => Promise<any>) {
     return async (request: NextRequest, ...args: any[]) => {
       const start = Date.now();
       let isError = false;

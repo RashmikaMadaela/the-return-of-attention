@@ -34,6 +34,7 @@
   "description": "The Return of Attention - A PAHM methodology meditation web application",
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
+    "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.16.2",
     "@supabase/supabase-js": "^2.57.4",
     "@types/node": "^24.5.2",
