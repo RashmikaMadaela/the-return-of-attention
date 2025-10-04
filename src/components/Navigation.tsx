@@ -52,6 +52,12 @@ export function Navigation() {
               >
                 Email Test
               </Link>
+              <Link 
+                href="/admin-login" 
+                className="text-orange-600 hover:text-orange-800 px-3 py-2 rounded-md text-sm font-medium border border-orange-200 hover:border-orange-300"
+              >
+                🛡️ Admin
+              </Link>
               {session && (
                 <Link 
                   href="/dashboard" 
