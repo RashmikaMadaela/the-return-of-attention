@@ -1,154 +1,97 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { happinessCalculationSchema, validateRequestBody } from '@/lib/validation'
+import { getAuthenticatedUser } from '@/lib/auth/middleware'
+import { handleApiError, createSuccessResponse } from '@/lib/errors'
+import { calculateHappinessScore } from '@/lib/business-logic'
 
-// Happiness score calculation schema (PAHM system)
-const HappinessCalculationSchema = z.object({
-  currentStateScore: z.number().min(0).max(100),
-  attachmentScore: z.number().min(0).max(100),
-  pahmScore: z.number().min(0).max(100),
-  practiceScore: z.number().min(0).max(100),
-  progressScore: z.number().min(0).max(100),
-  consistencyScore: z.number().min(0).max(100),
-  reflectionScore: z.number().min(0).max(100),
-  dailyLifeScore: z.number().min(0).max(100),
-  questionnaireBased: z.boolean().default(false),
-  selfAssessmentBased: z.boolean().default(false),
-  practiceEnhanced: z.boolean().default(false),
-});
-
+/**
+ * POST /api/happiness
+ * Calculate and save happiness score using PAHM methodology
+ */
 export async function POST(request: NextRequest) {
   try {
-    // Get user session
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+    // Authenticate user
+    const user = await getAuthenticatedUser(request)
+
+    // Validate request body
+    const body = await request.json()
+    const validation = validateRequestBody(happinessCalculationSchema, body)
+    
+    if (!validation.success) {
+      return NextResponse.json({
+        success: false,
+        message: 'Validation failed',
+        errors: validation.errors
+      }, { status: 400 })
     }
 
-    // Parse request body
-    const body = await request.json();
-    
-    // Validate happiness score data
-    const validatedData = HappinessCalculationSchema.parse(body);
-
     // Calculate final score using PAHM weighted system
-    const calculateFinalScore = (data: typeof validatedData) => {
-      const weights = {
-        currentStateScore: 0.12,   // 12%
-        attachmentScore: 0.20,     // 20%
-        pahmScore: 0.25,          // 25%
-        practiceScore: 0.15,      // 15%
-        progressScore: 0.10,      // 10%
-        consistencyScore: 0.08,   // 8%
-        reflectionScore: 0.05,    // 5%
-        dailyLifeScore: 0.05,     // 5%
-      };
-
-      return (
-        data.currentStateScore * weights.currentStateScore +
-        data.attachmentScore * weights.attachmentScore +
-        data.pahmScore * weights.pahmScore +
-        data.practiceScore * weights.practiceScore +
-        data.progressScore * weights.progressScore +
-        data.consistencyScore * weights.consistencyScore +
-        data.reflectionScore * weights.reflectionScore +
-        data.dailyLifeScore * weights.dailyLifeScore
-      );
-    };
-
-    const finalScore = calculateFinalScore(validatedData);
+    const finalScore = (
+      validation.data.currentStateScore * 0.12 +
+      validation.data.attachmentScore * 0.20 +
+      validation.data.pahmScore * 0.25 +
+      validation.data.practiceScore * 0.15 +
+      validation.data.progressScore * 0.10 +
+      validation.data.consistencyScore * 0.08 +
+      validation.data.reflectionScore * 0.05 +
+      validation.data.dailyLifeScore * 0.05
+    )
 
     // Determine user level based on final score
     const getUserLevel = (score: number) => {
-      if (score >= 90) return 'Liberation Master';
-      if (score >= 80) return 'Advanced Practitioner';
-      if (score >= 70) return 'PAHM Expert';
-      if (score >= 60) return 'PAHM Intermediate';
-      if (score >= 50) return 'PAHM Beginner';
-      if (score >= 40) return 'PAHM Trainee';
-      if (score >= 30) return 'Aware Seeker';
-      return 'Seeker';
-    };
+      if (score >= 90) return 'Liberation Master'
+      if (score >= 80) return 'Advanced Practitioner'
+      if (score >= 70) return 'PAHM Expert'
+      if (score >= 60) return 'PAHM Intermediate'
+      if (score >= 50) return 'PAHM Beginner'
+      if (score >= 40) return 'PAHM Trainee'
+      if (score >= 30) return 'Aware Seeker'
+      return 'Seeker'
+    }
 
-    const userLevel = getUserLevel(finalScore);
+    const userLevel = getUserLevel(finalScore)
 
     // Create happiness score record
     const happinessScore = await prisma.happinessScore.create({
       data: {
-        userId: session.user.id,
-        currentStateScore: validatedData.currentStateScore,
-        attachmentScore: validatedData.attachmentScore,
-        pahmScore: validatedData.pahmScore,
-        practiceScore: validatedData.practiceScore,
-        progressScore: validatedData.progressScore,
-        consistencyScore: validatedData.consistencyScore,
-        reflectionScore: validatedData.reflectionScore,
-        dailyLifeScore: validatedData.dailyLifeScore,
+        userId: user.id,
+        ...validation.data,
         finalScore,
-        userLevel,
-        questionnaireBased: validatedData.questionnaireBased,
-        selfAssessmentBased: validatedData.selfAssessmentBased,
-        practiceEnhanced: validatedData.practiceEnhanced,
+        userLevel
       }
-    });
+    })
 
-    return NextResponse.json({
-      success: true,
-      message: 'Happiness score calculated and saved successfully',
-      data: {
-        id: happinessScore.id,
-        finalScore: Number(happinessScore.finalScore),
-        userLevel: happinessScore.userLevel,
-        components: {
-          currentStateScore: Number(happinessScore.currentStateScore),
-          attachmentScore: Number(happinessScore.attachmentScore),
-          pahmScore: Number(happinessScore.pahmScore),
-          practiceScore: Number(happinessScore.practiceScore),
-          progressScore: Number(happinessScore.progressScore),
-          consistencyScore: Number(happinessScore.consistencyScore),
-          reflectionScore: Number(happinessScore.reflectionScore),
-          dailyLifeScore: Number(happinessScore.dailyLifeScore),
-        },
-        calculatedAt: happinessScore.calculatedAt,
-      }
-    });
+    return createSuccessResponse({
+      id: happinessScore.id,
+      finalScore: Number(happinessScore.finalScore),
+      userLevel: happinessScore.userLevel,
+      components: {
+        currentStateScore: Number(happinessScore.currentStateScore),
+        attachmentScore: Number(happinessScore.attachmentScore),
+        pahmScore: Number(happinessScore.pahmScore),
+        practiceScore: Number(happinessScore.practiceScore),
+        progressScore: Number(happinessScore.progressScore),
+        consistencyScore: Number(happinessScore.consistencyScore),
+        reflectionScore: Number(happinessScore.reflectionScore),
+        dailyLifeScore: Number(happinessScore.dailyLifeScore)
+      },
+      calculatedAt: happinessScore.calculatedAt
+    }, 'Happiness score calculated and saved successfully', 201)
 
   } catch (error) {
-    console.error('Happiness score calculation error:', error);
-
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Invalid happiness score data',
-          details: error.issues 
-        },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return handleApiError(error)
   }
 }
 
+/**
+ * GET /api/happiness
+ * Retrieve user's happiness score history with statistics
+ */
 export async function GET(request: NextRequest) {
   try {
-    // Get user session
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    // Authenticate user
+    const user = await getAuthenticatedUser(request)
 
     // Get query parameters
     const url = new URL(request.url);
@@ -172,7 +115,7 @@ export async function GET(request: NextRequest) {
     // Get happiness scores
     const scores = await prisma.happinessScore.findMany({
       where: {
-        userId: session.user.id,
+        userId: user.id,
         ...dateFilter,
       },
       select: {
@@ -226,35 +169,28 @@ export async function GET(request: NextRequest) {
       },
     } : null;
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        scores: scores.map(score => ({
-          ...score,
-          finalScore: Number(score.finalScore),
-          currentStateScore: Number(score.currentStateScore),
-          attachmentScore: Number(score.attachmentScore),
-          pahmScore: Number(score.pahmScore),
-          practiceScore: Number(score.practiceScore),
-          progressScore: Number(score.progressScore),
-          consistencyScore: Number(score.consistencyScore),
-          reflectionScore: Number(score.reflectionScore),
-          dailyLifeScore: Number(score.dailyLifeScore),
-        })),
-        statistics: stats,
-        period: {
-          days,
-          startDate: startDate || null,
-          endDate: endDate || null,
-        }
+    return createSuccessResponse({
+      scores: scores.map(score => ({
+        ...score,
+        finalScore: Number(score.finalScore),
+        currentStateScore: Number(score.currentStateScore),
+        attachmentScore: Number(score.attachmentScore),
+        pahmScore: Number(score.pahmScore),
+        practiceScore: Number(score.practiceScore),
+        progressScore: Number(score.progressScore),
+        consistencyScore: Number(score.consistencyScore),
+        reflectionScore: Number(score.reflectionScore),
+        dailyLifeScore: Number(score.dailyLifeScore),
+      })),
+      statistics: stats,
+      period: {
+        days,
+        startDate: startDate || null,
+        endDate: endDate || null,
       }
-    });
+    }, 'Happiness scores retrieved successfully')
 
   } catch (error) {
-    console.error('Get happiness scores error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return handleApiError(error)
   }
 }

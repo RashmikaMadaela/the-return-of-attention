@@ -1,40 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { hashPassword } from '@/lib/auth'
+import { registerSchema, validateRequestBody } from '@/lib/validation'
+import { handleApiError, createSuccessResponse, CommonErrors } from '@/lib/errors'
 import { generateVerificationToken, sendVerificationEmail } from '@/lib/email'
-
-// Registration validation schema
-const registerSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number'),
-  name: z.string().min(2, 'Name must be at least 2 characters').max(100, 'Name too long'),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-})
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validate input data
-    const validationResult = registerSchema.safeParse(body)
-    if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Validation failed',
-          details: validationResult.error.issues
-        },
-        { status: 400 }
-      )
+    // Validate input data using centralized validation
+    const validation = validateRequestBody(registerSchema, body)
+    if (!validation.success) {
+      return NextResponse.json({
+        success: false,
+        message: 'Validation failed',
+        errors: validation.errors
+      }, { status: 400 })
     }
 
-    const { email, password, name } = validationResult.data
+    const { email, password, name } = validation.data
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -42,13 +27,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingUser) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'User already exists with this email'
-        },
-        { status: 409 }
-      )
+      throw CommonErrors.userExists(email)
     }
 
     // Hash password
@@ -91,41 +70,15 @@ export async function POST(request: NextRequest) {
     console.log('Email verification skipped for testing purposes')
 
     // Return success response (don't include password or sensitive data)
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Account created successfully! You can now sign in immediately. (Email verification auto-enabled for testing)',
-        data: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          emailVerified: user.emailVerified,
-          isActive: user.isActive
-        }
-      },
-      { status: 201 }
-    )
+    return createSuccessResponse({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      emailVerified: user.emailVerified,
+      isActive: user.isActive
+    }, 'Account created successfully! You can now sign in immediately. (Email verification auto-enabled for testing)', 201)
 
   } catch (error) {
-    console.error('Registration error:', error)
-    
-    // Handle specific database errors
-    if (error instanceof Error && error.message.includes('Unique constraint')) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'User already exists with this email'
-        },
-        { status: 409 }
-      )
-    }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Internal server error. Please try again later.'
-      },
-      { status: 500 }
-    )
+    return handleApiError(error)
   }
 }

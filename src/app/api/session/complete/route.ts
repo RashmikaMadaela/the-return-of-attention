@@ -1,46 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
-import { Decimal } from '@prisma/client/runtime/library';
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { sessionCompleteSchema, validateRequestBody } from '@/lib/validation'
+import { getAuthenticatedUser } from '@/lib/auth/middleware'
+import { handleApiError, createSuccessResponse, CommonErrors } from '@/lib/errors'
+import { Decimal } from '@prisma/client/runtime/library'
 
-// Validation schema for session completion
-const sessionCompleteSchema = z.object({
-  sessionId: z.string().cuid('Invalid session ID format'),
-  qualityRating: z.number().int().min(1).max(10).optional(),
-  insights: z.string().max(1000).optional(),
-  pahmData: z.object({
-    patternNotes: z.string().max(500).optional(),
-    totalClicks: z.number().int().min(0).optional(),
-    clickData: z.array(z.object({
-      position: z.string(), // 'regret', 'past', 'nostalgia', etc.
-      timestamp: z.string(),
-      timeFromStart: z.number() // seconds from session start
-    })).optional()
-  }).optional()
-});
-
+/**
+ * POST /api/session/complete
+ * Complete a meditation session and update progress
+ */
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // Authenticate user
+    const user = await getAuthenticatedUser(request)
+
+    // Validate request body
+    const body = await request.json()
+    const validation = validateRequestBody(sessionCompleteSchema, body)
+    
+    if (!validation.success) {
+      return NextResponse.json({
+        success: false,
+        message: 'Validation failed',
+        errors: validation.errors
+      }, { status: 400 })
     }
 
-    // Parse and validate request body
-    const body = await request.json();
-    const validatedData = sessionCompleteSchema.parse(body);
+    const validatedData = validation.data
 
     // Find existing session and verify ownership
     const existingSession = await prisma.session.findFirst({
       where: {
         id: validatedData.sessionId,
-        userId: session.user.id,
+        userId: user.id,
         status: 'in_progress'
       },
       include: {
@@ -50,13 +42,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!existingSession) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Session not found or not in progress' 
-        },
-        { status: 404 }
-      );
+      throw CommonErrors.sessionNotFound()
     }
 
     // Calculate actual session duration (if different from planned)
@@ -110,7 +96,7 @@ export async function POST(request: NextRequest) {
 
         // Count clicks by position
         if (validatedData.pahmData.clickData) {
-          validatedData.pahmData.clickData.forEach(click => {
+          validatedData.pahmData.clickData.forEach((click: any) => {
             const position = click.position;
             if (position in clickCounts) {
               clickCounts[position as keyof typeof clickCounts]++;
@@ -135,7 +121,7 @@ export async function POST(request: NextRequest) {
       const progressUpdate = await tx.userStageProgress.upsert({
         where: {
           userId_stageId_subStage: {
-            userId: session.user.id,
+            userId: user.id,
             stageId: existingSession.stageId,
             subStage: existingSession.subStage || ''
           }
@@ -148,7 +134,7 @@ export async function POST(request: NextRequest) {
           updatedAt: completedAt,
         },
         create: {
-          userId: session.user.id,
+          userId: user.id,
           stageId: existingSession.stageId,
           stageNumber: existingSession.stageNumber,
           subStage: existingSession.subStage,
@@ -184,9 +170,7 @@ export async function POST(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Session completed successfully',
+    return createSuccessResponse({
       session: {
         id: result.session.id,
         stageNumber: result.session.stageNumber,
@@ -223,25 +207,9 @@ export async function POST(request: NextRequest) {
           anticipation: result.pahmSession.anticipationClicks,
         }
       } : null
-    });
+    }, 'Session completed successfully');
 
   } catch (error) {
-    console.error('Session completion error:', error);
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Validation failed',
-          details: error.issues
-        },
-        { status: 400 }
-      );
-    }
-
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    );
+    return handleApiError(error)
   }
 }

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { requireAuth, createErrorResponse, createSuccessResponse, checkRateLimit } from '@/lib/session'
-import { updateProfileSchema } from '@/lib/validations/user'
+import { updateProfileSchema, validateRequestBody } from '@/lib/validation'
+import { getAuthenticatedUser } from '@/lib/auth/middleware'
+import { handleApiError, createSuccessResponse, CommonErrors } from '@/lib/errors'
 
 /**
  * GET /api/user/profile
@@ -11,20 +10,12 @@ import { updateProfileSchema } from '@/lib/validations/user'
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check authentication
-    const authError = await requireAuth(request)
-    if (authError) return authError
-
-    // Rate limiting
-    const session = await getServerSession(authOptions)
-    const rateLimitResult = checkRateLimit(`profile_get_${session!.user.id}`, 30, 60000) // 30 requests per minute
-    if (!rateLimitResult.allowed) {
-      return createErrorResponse('Rate limit exceeded. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
-    }
+    // Authenticate user
+    const user = await getAuthenticatedUser(request)
 
     // Get user profile data
-    const user = await prisma.user.findUnique({
-      where: { id: session!.user.id },
+    const userProfile = await prisma.user.findUnique({
+      where: { id: user.id },
       select: {
         id: true,
         email: true,
@@ -53,12 +44,11 @@ export async function GET(request: NextRequest) {
         selfAssessments: {
           select: {
             id: true,
-            type: true,
             totalScore: true,
             createdAt: true
           },
           orderBy: { createdAt: 'desc' },
-          take: 3 // Last 3 assessments
+          take: 3
         },
         _count: {
           select: {
@@ -70,19 +60,19 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    if (!user) {
-      return createErrorResponse('User not found', 404, 'USER_NOT_FOUND')
+    if (!userProfile) {
+      throw CommonErrors.userNotFound()
     }
 
     // Calculate profile completion percentage
     const completionChecks = [
-      !!user.name,
-      !!user.profile?.age,
-      !!user.profile?.gender,
-      !!user.profile?.nationality,
-      !!user.profile?.country,
-      !!user.questionnaire?.isCompleted,
-      user.selfAssessments.length > 0
+      !!userProfile.name,
+      !!userProfile.profile?.age,
+      !!userProfile.profile?.gender,
+      !!userProfile.profile?.nationality,
+      !!userProfile.profile?.country,
+      !!userProfile.questionnaire?.isCompleted,
+      userProfile.selfAssessments.length > 0
     ]
     const profileCompletion = Math.round(
       (completionChecks.filter(Boolean).length / completionChecks.length) * 100
@@ -90,42 +80,34 @@ export async function GET(request: NextRequest) {
 
     const profileData = {
       user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        image: user.image,
-        emailVerified: user.emailVerified,
-        isActive: user.isActive,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
+        id: userProfile.id,
+        email: userProfile.email,
+        name: userProfile.name,
+        image: userProfile.image,
+        emailVerified: userProfile.emailVerified,
+        isActive: userProfile.isActive,
+        createdAt: userProfile.createdAt,
+        updatedAt: userProfile.updatedAt,
         profileCompletion
       },
-      personalInfo: user.profile ? {
-        age: user.profile.age,
-        gender: user.profile.gender,
-        nationality: user.profile.nationality,
-        country: user.profile.country,
-        createdAt: user.profile.createdAt,
-        updatedAt: user.profile.updatedAt
-      } : null,
+      personalInfo: userProfile.profile,
       assessmentStatus: {
-        questionnaireCompleted: !!user.questionnaire?.isCompleted,
-        questionnaireCompletedAt: user.questionnaire?.createdAt,
-        selfAssessments: user.selfAssessments,
-        totalSelfAssessments: user.selfAssessments.length
+        questionnaireCompleted: !!userProfile.questionnaire?.isCompleted,
+        questionnaireCompletedAt: userProfile.questionnaire?.createdAt,
+        selfAssessments: userProfile.selfAssessments,
+        totalSelfAssessments: userProfile.selfAssessments.length
       },
       statistics: {
-        totalSessions: user._count.sessions,
-        totalNotes: user._count.dailyNotes,
-        totalHappinessScores: user._count.happinessScores
+        totalSessions: userProfile._count.sessions,
+        totalNotes: userProfile._count.dailyNotes,
+        totalHappinessScores: userProfile._count.happinessScores
       }
     }
 
     return createSuccessResponse(profileData, 'Profile retrieved successfully')
 
   } catch (error) {
-    console.error('GET /api/user/profile error:', error)
-    return createErrorResponse('Internal server error', 500, 'INTERNAL_ERROR')
+    return handleApiError(error)
   }
 }
 
@@ -135,45 +117,26 @@ export async function GET(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
-    // Check authentication
-    const authError = await requireAuth(request)
-    if (authError) return authError
+    // Authenticate user
+    const user = await getAuthenticatedUser(request)
 
-    // Rate limiting
-    const session = await getServerSession(authOptions)
-    const rateLimitResult = checkRateLimit(`profile_update_${session!.user.id}`, 10, 60000) // 10 requests per minute
-    if (!rateLimitResult.allowed) {
-      return createErrorResponse('Rate limit exceeded. Please try again later.', 429, 'RATE_LIMIT_EXCEEDED')
-    }
-
-    // Parse and validate request body
+    // Validate request body
     const body = await request.json()
-    const validationResult = updateProfileSchema.safeParse(body)
-
-    if (!validationResult.success) {
-      const errors = validationResult.error.issues.map(err => ({
-        field: err.path.join('.'),
-        message: err.message
-      }))
-      return createErrorResponse('Validation failed', 400, 'VALIDATION_ERROR', { errors })
+    const validation = validateRequestBody(updateProfileSchema, body)
+    
+    if (!validation.success) {
+      return NextResponse.json({
+        success: false,
+        message: 'Validation failed',
+        errors: validation.errors
+      }, { status: 400 })
     }
 
-    const { name, image } = validationResult.data
-    const userId = session!.user.id
-
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, email: true }
-    })
-
-    if (!existingUser) {
-      return createErrorResponse('User not found', 404, 'USER_NOT_FOUND')
-    }
+    const { name, image } = validation.data
 
     // Update user profile
     const updatedUser = await prisma.user.update({
-      where: { id: userId },
+      where: { id: user.id },
       data: {
         ...(name !== undefined && { name }),
         ...(image !== undefined && { image }),
@@ -196,24 +159,21 @@ export async function PUT(request: NextRequest) {
     )
 
   } catch (error) {
-    console.error('PUT /api/user/profile error:', error)
-    
-    // Handle specific database errors
-    if (error instanceof Error) {
-      if (error.message.includes('Unique constraint')) {
-        return createErrorResponse('Email already exists', 409, 'EMAIL_EXISTS')
-      }
-    }
-
-    return createErrorResponse('Internal server error', 500, 'INTERNAL_ERROR')
+    return handleApiError(error)
   }
 }
 
 // Handle unsupported methods
 export async function POST() {
-  return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED')
+  return NextResponse.json({
+    success: false,
+    message: 'Method not allowed'
+  }, { status: 405 })
 }
 
 export async function DELETE() {
-  return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED')
+  return NextResponse.json({
+    success: false,
+    message: 'Method not allowed'
+  }, { status: 405 })
 }
