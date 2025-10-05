@@ -1,0 +1,243 @@
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import { Star } from 'lucide-react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+import { Navigation } from '@/components/Navigation'
+
+interface Session {
+  id: string
+  title: string
+  description: string
+  duration: number // in minutes
+  imageName: string
+  timeRange: { start: number; end: number }
+}
+
+interface AssessmentStatus {
+  overallStatus: {
+    hasCompletedOnboarding: boolean
+  }
+}
+
+interface StageProgress {
+  isCompleted: boolean
+}
+
+export default function MindRecoveryPage() {
+  const { data: session } = useSession()
+  const router = useRouter()
+  const [recommendedSession, setRecommendedSession] = useState('')
+  const [assessmentStatus, setAssessmentStatus] = useState<AssessmentStatus | null>(null)
+  const [stageProgress, setStageProgress] = useState<StageProgress[]>([])
+
+  const sessions: Session[] = [
+    {
+      id: 'morning',
+      title: 'Morning Recharge',
+      description: 'Start your day with clarity and focus',
+      duration: 5,
+      imageName: 'sunrise-meditation.jpg',
+      timeRange: { start: 5, end: 8 }
+    },
+    {
+      id: 'midday',
+      title: 'Mid Day Reset',
+      description: 'Quick refresh to maintain focus',
+      duration: 3,
+      imageName: 'midday-meditation.jpg',
+      timeRange: { start: 11, end: 13 }
+    },
+    {
+      id: 'emotional',
+      title: 'Emotional Reset',
+      description: 'Settle your emotions and find balance',
+      duration: 5,
+      imageName: 'emotional-balance.jpg',
+      timeRange: { start: 14, end: 17 }
+    },
+    {
+      id: 'transition',
+      title: 'Work-Home Transition',
+      description: 'Shift from work mode to personal time',
+      duration: 5,
+      imageName: 'work-transition.jpg',
+      timeRange: { start: 17, end: 19 }
+    },
+    {
+      id: 'bedtime',
+      title: 'Bedtime Wind Down',
+      description: 'Gentle preparation for restful sleep',
+      duration: 8,
+      imageName: 'bedtime-meditation.jpg',
+      timeRange: { start: 21, end: 26 } // 26 = 2am next day
+    }
+  ]
+
+  // Fetch user progress for navigation
+  useEffect(() => {
+    if (session?.user?.id) {
+      fetchAssessmentStatus()
+      fetchStageProgress()
+    }
+  }, [session])
+
+  const fetchAssessmentStatus = async () => {
+    try {
+      const response = await fetch('/api/assessment/status')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setAssessmentStatus(data.data)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch assessment status:', error)
+    }
+  }
+
+  const fetchStageProgress = async () => {
+    try {
+      const response = await fetch('/api/progress/stages')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.data.stages) {
+          setStageProgress(data.data.stages)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch stage progress:', error)
+    }
+  }
+
+  useEffect(() => {
+    const currentHour = new Date().getHours()
+    
+    for (const session of sessions) {
+      if (session.timeRange.end > 24) {
+        // Handle overnight sessions (like bedtime)
+        if (currentHour >= session.timeRange.start || currentHour <= (session.timeRange.end - 24)) {
+          setRecommendedSession(session.id)
+          return
+        }
+      } else {
+        if (currentHour >= session.timeRange.start && currentHour < session.timeRange.end) {
+          setRecommendedSession(session.id)
+          return
+        }
+      }
+    }
+    
+    // Default to morning if no match
+    setRecommendedSession('morning')
+  }, [])
+
+  const getButtonColor = (sessionId: string) => {
+    if (sessionId === recommendedSession) {
+      return 'bg-gradient-to-r from-yellow-400 to-blue-600'
+    }
+    return 'bg-blue-600 hover:bg-blue-700'
+  }
+
+  const getCardBackgroundImage = (imageName: string) => {
+    return {
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/${imageName}')`
+    }
+  }
+
+  const handleStartExercise = (sessionId: string) => {
+    const session = sessions.find(s => s.id === sessionId)
+    if (session) {
+      // Set fixed session settings for mind recovery
+      const mindRecoverySettings = {
+        stage: 'mind-recovery',
+        sessionType: sessionId,
+        duration: session.duration,
+        posture: 'comfortable-seated',
+        isFixedDuration: true,
+        title: session.title
+      }
+      
+      // Store settings and navigate to PAHM timer page
+      sessionStorage.setItem('sessionSettings', JSON.stringify(mindRecoverySettings))
+      router.push(`/pahm-timer?type=mind-recovery&session=${sessionId}`)
+    }
+  }
+
+  if (!session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 mx-auto border-b-2 border-indigo-600 rounded-full animate-spin"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700">
+      {/* Navigation */}
+      <Navigation stageProgress={{
+        hasCompletedStage1: stageProgress.length > 0 ? stageProgress[0]?.isCompleted || false : false,
+        hasCompletedOnboarding: assessmentStatus?.overallStatus?.hasCompletedOnboarding || false
+      }} />
+      
+      <div className="p-8 pt-24">
+        {/* Header */}
+        <div className="max-w-6xl mx-auto mb-12">
+          <div className="text-center text-white">
+            <h1 className="text-5xl font-bold mb-4 text-white">Take a Moment to Reset !</h1>
+            <p className="text-xl opacity-90 text-white">Choose a PAHM practice to reset and recover your mind</p>
+          </div>
+        </div>
+
+        {/* Training Cards Grid */}
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          {sessions.map((session) => (
+            <div
+              key={session.id}
+              className="bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all hover:scale-105"
+            >
+              {/* Card Image Header */}
+              <div 
+                className="bg-cover bg-center h-56 relative flex items-center justify-center"
+                style={getCardBackgroundImage(session.imageName)}
+              >
+                {session.id === recommendedSession && (
+                  <div className="absolute top-4 left-4 bg-yellow-400 text-black px-4 py-2 rounded-full flex items-center gap-2 font-semibold shadow-lg">
+                    <Star className="w-5 h-5 fill-current" />
+                    Recommended
+                  </div>
+                )}
+                <h2 className="text-white text-3xl font-bold text-center px-4 drop-shadow-lg">
+                  {session.title}
+                </h2>
+              </div>
+
+              {/* Card Content */}
+              <div className="p-8">
+                <p className="text-gray-800 text-center text-lg mb-6">
+                  {session.description}
+                </p>
+                
+                <div className="bg-gray-100 rounded-full px-6 py-2 text-center mb-6 inline-block w-full">
+                  <span className="text-gray-700 font-semibold">{session.duration} minutes</span>
+                </div>
+
+                <button
+                  onClick={() => handleStartExercise(session.id)}
+                  className={`w-full ${getButtonColor(session.id)} text-white font-bold py-4 px-6 rounded-xl text-lg transition-all hover:shadow-lg`}
+                >
+                  Start Exercise
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
