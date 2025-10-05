@@ -184,7 +184,7 @@ export default function DashboardPage() {
         hasCompletedOnboarding: !needsOnboarding 
       }} />
       
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 pt-20">
         <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
           
           {/* Hero Header with PAHM Matrix */}

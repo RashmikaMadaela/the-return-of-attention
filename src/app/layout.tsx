@@ -1,25 +1,41 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Lexend, Arimo } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const lexend = Lexend({
+  variable: "--font-lexend",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const arimo = Arimo({
+  variable: "--font-arimo",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
 
 export const metadata: Metadata = {
-  title: 'The Return of Attention - Meditation & Mindfulness App',
-  description: 'A comprehensive meditation and mindfulness web application built on the PAHM methodology. Develop sustained attention through progressive stages: Physical Stillness, Thought Patterns, Dot Tracking, Tool-Free Practice, Sustained Presence, and Integration & Teaching.',
+  title: "The Return of Attention - Practices for the Happiness that Stays",
+  description: "A simple, practical guide to happiness that actually stays. Progressive Attention & Happiness Meditation (PAHM) methodology.",
   keywords: ['meditation', 'mindfulness', 'PAHM', 'attention', 'happiness', 'mental training', 'awareness', 'presence'],
   authors: [{ name: 'A.C. Amarasinghe' }],
   openGraph: {
-    title: 'The Return of Attention - Meditation App',
-    description: 'Practices for the Happiness that Stays - A simple, practical guide to lasting happiness.',
+    title: 'The Return of Attention - Practices for the Happiness that Stays',
+    description: 'A simple, practical guide to happiness that actually stays.',
     type: 'website',
     siteName: 'The Return of Attention',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'The Return of Attention - Meditation App',
-    description: 'Practices for the Happiness that Stays - A simple, practical guide to lasting happiness.',
+    title: 'The Return of Attention - Practices for the Happiness that Stays',
+    description: 'A simple, practical guide to happiness that actually stays.',
   }
 }
 
@@ -30,7 +46,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${inter.variable} ${lexend.variable} ${arimo.variable} font-inter antialiased`}>
         <AuthProvider>
           {children}
         </AuthProvider>

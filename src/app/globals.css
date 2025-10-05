@@ -2,6 +2,10 @@
 
 /* Design System Tokens */
 :root {
+  /* External Repository Base Variables */
+  --background: #ffffff;
+  --foreground: #171717;
+  
   /* Primary Color System */
   --gradient-primary: linear-gradient(135deg, #4FACFE 0%, #00F2FE 100%);
   --gradient-primary-dark: linear-gradient(135deg, #3B8CD4 0%, #00D2E4 100%);
@@ -226,6 +230,35 @@ body {
   background-color: var(--white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* External Repository Body Styles */
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+/* Custom Scrollbar from External Repository */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Typography Components */
