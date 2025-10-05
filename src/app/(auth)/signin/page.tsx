@@ -124,19 +124,29 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="flex min-h-screen">
-        {/* Left Side - Welcome Content */}
-        <div className="relative hidden overflow-hidden lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:px-12 xl:px-20 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-indigo-600/10 to-purple-700/20"></div>
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0)`,
-            backgroundSize: '20px 20px'
-          }}></div>
+    <div className="w-full h-screen flex">
+      {/* Left Side - Welcome Section */}
+      <div className="w-[650px] h-full bg-cover bg-center relative" 
+           style={{ backgroundImage: "url('/images/meditation-background.jpg')" }}>
+        <div className="absolute inset-0 bg-black/30"></div>
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-8">
+          <h1 className="text-[48px] font-bold mb-4 text-center font-arimo">WELCOME</h1>
+          <h2 className="text-[48px] font-bold mb-8 text-center font-arimo">The Return Of Attention</h2>
+          
+          {/* White divider line */}
+          <div className="w-[543px] h-[9px] bg-white rounded-[26px] mb-12"></div>
+          
+          {/* Description text */}
+          <div className="max-w-[507px] text-center">
+            <p className="text-[27px] font-bold leading-[1.15] font-arimo">
+              "You are not your thoughts"<br/>
+              Practices for the Happiness that Stays<br/>
+              A simple, practical guide to happiness that actually stays
+            </p>
+          </div>
           
           {/* Back to Landing Button */}
-          <div className="absolute z-10 top-6 left-6">
+          <div className="absolute top-6 left-6">
             <Link
               href="/"
               className="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 border rounded-lg text-white/90 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 hover:text-white"
@@ -147,222 +157,119 @@ export default function SignInPage() {
               Back to Home
             </Link>
           </div>
-          
-          <div className="relative z-10 max-w-xl">
-            {/* Brand Badge */}
-            <div className="inline-flex items-center px-4 py-2 mb-8 text-sm font-medium text-white border rounded-full bg-white/20 backdrop-blur-sm border-white/30">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              Welcome Back to Your Journey
-            </div>
-            
-            <div className="mb-12">
-              <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight text-white">
-                Continue Your
-                <span className="block text-indigo-100">Mindful Path</span>
-              </h1>
-              <p className="text-xl leading-relaxed text-indigo-100">
-                Welcome back! Access your personalized dashboard and continue your transformative journey through mindful attention practices.
-              </p>
-            </div>
-            
-            <div className="space-y-8">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div className="pt-1">
-                  <h3 className="mb-2 text-lg font-semibold text-white">Track Your Progress</h3>
-                  <p className="text-indigo-100">Monitor your journey through each meditation stage and celebrate your achievements</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-purple-400 to-purple-500 rounded-2xl">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div className="pt-1">
-                  <h3 className="mb-2 text-lg font-semibold text-white">Daily Check-ins</h3>
-                  <p className="text-indigo-100">Record your emotional state and mindfulness insights with our simple tracking tools</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-2xl">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div className="pt-1">
-                  <h3 className="mb-2 text-lg font-semibold text-white">PAHM Matrix</h3>
-                  <p className="text-indigo-100">Practice attention awareness with our interactive matrix and track your mental states</p>
-                </div>
-              </div>
-            </div>
-            
-
-          </div>
         </div>
+      </div>
 
-        {/* Right Side - Sign In Form */}
-        <div className="flex flex-col justify-center flex-1 px-6 py-12 lg:px-8 xl:px-12">
-          <div className="w-full max-w-lg mx-auto">
-            {/* Mobile Back Button */}
-            <div className="flex items-center justify-between mb-6 lg:hidden">
-              <Link
-                href="/"
-                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 transition-all duration-200 bg-gray-100 rounded-lg hover:bg-gray-200"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                </svg>
-                Back
-              </Link>
-              <div className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-100 rounded-full">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                Welcome Back
-              </div>
-            </div>
-            
-            <div className="mb-8 text-center lg:text-left">
-              <h2 className="mb-3 text-3xl font-bold tracking-tight text-gray-900">
-                Sign In
-              </h2>
-              <p className="text-lg text-gray-600">
-                Access your mindfulness dashboard
-              </p>
+      {/* Right Side - Sign In Form */}
+      <div className="flex-1 bg-white flex flex-col items-center justify-center px-16">
+        <div className="w-full max-w-[400px]">
+          {/* Sign In Title */}
+          <h1 className="text-[36px] font-normal text-black text-center mb-12 font-arimo">
+            Sign In
+          </h1>
+
+          {/* Form Fields */}
+          <div className="space-y-6">
+            {/* Email Field */}
+            <div className="relative">
+              <div className="w-[6px] h-[52px] bg-[#AB77FF]/60 absolute left-0 top-0"></div>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={credentials.email}
+                onChange={handleChange}
+                required
+                className="w-full h-[52px] bg-[#ECECEC] pl-8 pr-4 text-[26px] font-arimo placeholder-black/30 focus:outline-none focus:ring-2 focus:ring-[#AB77FF]"
+              />
             </div>
 
-            {error && (
-              <div className="p-6 mb-6 border border-red-200 shadow-sm rounded-2xl bg-gradient-to-r from-red-50 to-pink-50">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <div className="flex items-center justify-center w-8 h-8 bg-red-100 rounded-full">
-                      <svg className="w-5 h-5 text-red-600" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <div className="text-sm font-medium text-red-800">{error}</div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="p-8 border shadow-xl bg-white/70 backdrop-blur-lg rounded-3xl border-white/20">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-900">
-                    Email Address
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    value={credentials.email}
-                    onChange={handleChange}
-                    className="block w-full px-4 py-3.5 text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm"
-                    placeholder="Enter your email"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-900">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={credentials.password}
-                    onChange={handleChange}
-                    className="block w-full px-4 py-3.5 text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm"
-                    placeholder="Enter your password"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      name="remember-me"
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="w-5 h-5 text-indigo-600 border-gray-300 rounded-lg focus:ring-indigo-500 focus:ring-2"
-                    />
-                    <label htmlFor="remember-me" className="ml-3 text-sm font-medium text-gray-700">
-                      Remember me
-                    </label>
-                  </div>
-
-                  <div className="text-sm">
-                    <Link href="/reset-password" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-500">
-                      Forgot password?
-                    </Link>
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex w-full items-center justify-center px-4 py-4 text-base font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-xl shadow-lg hover:from-indigo-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  {loading ? (
-                    <>
-                      <svg className="w-5 h-5 mr-3 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Signing In...
-                    </>
-                  ) : (
-                    <>
-                      Sign In
-                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                      </svg>
-                    </>
-                  )}
-                </button>
-              </form>
+            {/* Password Field */}
+            <div className="relative">
+              <div className="w-[6px] h-[52px] bg-[#AB77FF]/60 absolute left-0 top-0"></div>
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={credentials.password}
+                onChange={handleChange}
+                required
+                className="w-full h-[52px] bg-[#ECECEC] pl-8 pr-4 text-[26px] font-arimo placeholder-black/30 focus:outline-none focus:ring-2 focus:ring-[#AB77FF]"
+              />
             </div>
+          </div>
 
-            <div className="mt-8">
+          {/* Remember Me & Forgot Password */}
+          <div className="flex justify-between items-center mt-6 mb-8">
+            <div className="flex items-center">
               <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200" />
-                </div>
-                <div className="relative flex justify-center text-sm font-medium leading-6">
-                  <span className="px-6 text-gray-600 bg-gradient-to-br from-indigo-50 via-white to-purple-50">New to our platform?</span>
-                </div>
+                <input
+                  type="checkbox"
+                  id="remember"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-[15px] h-[15px] bg-white border border-gray-300 shadow-inner appearance-none checked:bg-[#24A0ED] checked:border-[#24A0ED] focus:outline-none"
+                />
+                {rememberMe && (
+                  <svg className="absolute top-0 left-0 w-[15px] h-[15px] text-white pointer-events-none" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                )}
               </div>
-
-              <div className="mt-6">
-                <Link
-                  href="/register"
-                  className="flex items-center justify-center w-full px-4 py-3 text-sm font-semibold text-gray-700 transition-all duration-200 bg-white border border-gray-200 shadow-sm rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-500/10"
-                >
-                  Create Account
-                </Link>
-              </div>
+              <label htmlFor="remember" className="ml-3 text-[15px] font-normal text-black font-arimo">
+                Remember me
+              </label>
             </div>
+            <Link 
+              href="/reset-password"
+              className="text-[15px] font-normal text-[#24A0ED] font-arimo hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="text-red-500 text-sm mb-4 text-center">
+              {error}
+            </div>
+          )}
+
+          {/* Sign In Button */}
+          <form onSubmit={handleSubmit}>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-[211px] h-[48px] bg-[#24A0ED] text-white text-[26px] font-normal font-arimo rounded-[25px] mx-auto block mb-8 shadow-lg transition-all duration-300 hover:bg-[#1e8bc3] hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'SIGNING IN...' : 'SIGN IN'}
+            </button>
+          </form>
+
+          {/* Or sign in with */}
+          <p className="text-[16px] font-normal text-black text-center mb-4 font-arimo">
+            Or sign in with
+          </p>
+
+          {/* Google Sign In Button */}
+          <button 
+            onClick={() => signIn('google', { callbackUrl: searchParams.get('callbackUrl') || '/dashboard' })}
+            className="w-full h-[47px] bg-[#FCF8F8] border border-gray-200 rounded flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="w-[41px] h-[39px] mr-4 bg-cover bg-center" 
+                 style={{ backgroundImage: "url('/images/google-logo.png')" }}></div>
+            <span className="text-[20px] font-normal text-black font-arimo">Continue with Google</span>
+          </button>
+
+          {/* Sign Up Link */}
+          <div className="text-center mt-8">
+            <span className="text-[15px] font-normal text-black font-arimo">
+              Don't have an account ?{' '}
+            </span>
+            <Link 
+              href="/register"
+              className="text-[15px] font-normal text-[#24A0ED] font-arimo hover:underline">
+              Sign Up
+            </Link>
           </div>
         </div>
       </div>
