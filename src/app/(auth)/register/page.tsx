@@ -90,29 +90,19 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="w-full h-screen flex">
-      {/* Left Side - Welcome Section */}
-      <div className="w-[650px] h-full bg-cover bg-center relative" 
-           style={{ backgroundImage: "url('/images/meditation-background.jpg')" }}>
-        <div className="absolute inset-0 bg-black/30"></div>
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-white px-8">
-          <h1 className="text-[48px] font-bold mb-4 text-center font-arimo">WELCOME</h1>
-          <h2 className="text-[48px] font-bold mb-8 text-center font-arimo">The Return Of Attention</h2>
-          
-          {/* White divider line */}
-          <div className="w-[543px] h-[9px] bg-white rounded-[26px] mb-12"></div>
-          
-          {/* Description text */}
-          <div className="max-w-[507px] text-center">
-            <p className="text-[27px] font-bold leading-[1.15] font-arimo">
-              "You are not your thoughts"<br/>
-              Practices for the Happiness that Stays<br/>
-              A simple, practical guide to happiness that actually stays
-            </p>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="flex min-h-screen">
+        {/* Left Side - Welcome Content */}
+        <div className="relative hidden overflow-hidden lg:flex lg:flex-1 lg:flex-col lg:justify-center lg:px-12 xl:px-20 bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-700">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 via-indigo-600/10 to-purple-700/20"></div>
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0)`,
+            backgroundSize: '20px 20px'
+          }}></div>
           
           {/* Back to Landing Button */}
-          <div className="absolute top-6 left-6">
+          <div className="absolute z-10 top-6 left-6">
             <Link
               href="/"
               className="inline-flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 border rounded-lg text-white/90 bg-white/10 backdrop-blur-sm border-white/20 hover:bg-white/20 hover:text-white"
@@ -123,16 +113,98 @@ export default function RegisterPage() {
               Back to Home
             </Link>
           </div>
-        </div>
-      </div>
+          
+          <div className="relative z-10 max-w-xl">
+            {/* Brand Badge */}
+            <div className="inline-flex items-center px-4 py-2 mb-8 text-sm font-medium text-white border rounded-full bg-white/20 backdrop-blur-sm border-white/30">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Begin Your Mindfulness Journey
+            </div>
+            
+            <div className="mb-12">
+              <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight text-white">
+                Transform Your
+                <span className="block text-indigo-100">Inner World</span>
+              </h1>
+              <p className="text-xl leading-relaxed text-indigo-100">
+                Join thousands discovering the power of mindful attention through our scientifically-backed 6-stage progressive system.
+              </p>
+            </div>
+            
+            <div className="space-y-8">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl">
+                    <span className="text-lg font-bold text-white">1</span>
+                  </div>
+                </div>
+                <div className="pt-1">
+                  <h3 className="mb-2 text-lg font-semibold text-white">Physical Stillness</h3>
+                  <p className="text-indigo-100">Master the foundation of meditation through mindful body awareness and breath control</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-purple-400 to-purple-500 rounded-2xl">
+                    <span className="text-lg font-bold text-white">2</span>
+                  </div>
+                </div>
+                <div className="pt-1">
+                  <h3 className="mb-2 text-lg font-semibold text-white">Thought Patterns</h3>
+                  <p className="text-indigo-100">Understand and skillfully observe your mental activities without judgment</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-2xl">
+                    <span className="text-lg font-bold text-white">3</span>
+                  </div>
+                </div>
+                <div className="pt-1">
+                  <h3 className="mb-2 text-lg font-semibold text-white">PAHM Matrix</h3>
+                  <p className="text-indigo-100">Interactive attention tracking across Past, Present, and Future states of mind</p>
+                </div>
+              </div>
+            </div>
+            
 
-      {/* Right Side - Sign Up Form */}
-      <div className="flex-1 bg-white flex flex-col items-center justify-center px-16">
-        <div className="w-full max-w-[400px]">
-          {/* Create Account Title */}
-          <h1 className="text-[36px] font-normal text-black text-center mb-12 font-arimo">
-            Create Account
-          </h1>
+          </div>
+        </div>
+
+        {/* Right Side - Registration Form */}
+        <div className="flex flex-col justify-center flex-1 px-6 py-12 lg:px-8 xl:px-12">
+          <div className="w-full max-w-lg mx-auto">
+            {/* Mobile Back Button */}
+            <div className="flex items-center justify-between mb-6 lg:hidden">
+              <Link
+                href="/"
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 transition-all duration-200 bg-gray-100 rounded-lg hover:bg-gray-200"
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+              </Link>
+              <div className="inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-700 bg-indigo-100 rounded-full">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Begin Your Journey
+              </div>
+            </div>
+            
+            <div className="mb-8 text-center lg:text-left">
+              <h2 className="mb-3 text-3xl font-bold tracking-tight text-gray-900">
+                Create Account
+              </h2>
+              <p className="text-lg text-gray-600">
+                Start your mindfulness transformation today
+              </p>
+            </div>
 
             {result && (
               <div className="p-6 mb-6 border border-green-200 shadow-sm rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50">
@@ -187,121 +259,137 @@ export default function RegisterPage() {
               </div>
             )}
 
-          {/* Form Fields */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
-            <div className="relative">
-              <div className="w-[6px] h-[52px] bg-[#AB77FF]/60 absolute left-0 top-0"></div>
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="w-full h-[52px] bg-[#ECECEC] pl-8 pr-4 text-[26px] font-arimo placeholder-black/30 focus:outline-none focus:ring-2 focus:ring-[#AB77FF]"
-              />
+            <div className="p-8 border shadow-xl bg-white/70 backdrop-blur-lg rounded-3xl border-white/20">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block mb-2 text-sm font-semibold text-gray-900">
+                    Full Name
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="block w-full px-4 py-3.5 text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block mb-2 text-sm font-semibold text-gray-900">
+                    Email Address
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="block w-full px-4 py-3.5 text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm"
+                    placeholder="Enter your email"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block mb-2 text-sm font-semibold text-gray-900">
+                    Password
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="block w-full px-4 py-3.5 text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm"
+                    placeholder="Create a strong password"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block mb-2 text-sm font-semibold text-gray-900">
+                    Confirm Password
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="block w-full px-4 py-3.5 text-gray-900 bg-white border border-gray-200 rounded-xl shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm"
+                    placeholder="Confirm your password"
+                  />
+                </div>
+
+                <div className="flex items-start">
+                  <input
+                    id="agreeToTerms"
+                    name="agreeToTerms"
+                    type="checkbox"
+                    checked={formData.agreeToTerms}
+                    onChange={handleChange}
+                    className="w-5 h-5 mt-0.5 text-indigo-600 border-gray-300 rounded-lg focus:ring-indigo-500 focus:ring-2"
+                  />
+                  <label htmlFor="agreeToTerms" className="ml-3 text-sm leading-6 text-gray-700">
+                    I agree to the{' '}
+                    <a href="/terms" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-500">
+                      Terms of Service
+                    </a>{' '}
+                    and{' '}
+                    <a href="/privacy" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-500">
+                      Privacy Policy
+                    </a>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex w-full items-center justify-center px-4 py-4 text-base font-semibold text-white bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-xl shadow-lg hover:from-indigo-700 hover:to-indigo-800 focus:outline-none focus:ring-4 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {loading ? (
+                    <>
+                      <svg className="w-5 h-5 mr-3 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creating Account...
+                    </>
+                  ) : (
+                    <>
+                      Create Account
+                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </>
+                  )}
+                </button>
+              </form>
             </div>
 
-            {/* Password Field */}
-            <div className="relative">
-              <div className="w-[6px] h-[52px] bg-[#AB77FF]/60 absolute left-0 top-0"></div>
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full h-[52px] bg-[#ECECEC] pl-8 pr-4 text-[26px] font-arimo placeholder-black/30 focus:outline-none focus:ring-2 focus:ring-[#AB77FF]"
-              />
-            </div>
-
-            {/* Confirm Password Field */}
-            <div className="relative">
-              <div className="w-[6px] h-[52px] bg-[#AB77FF]/60 absolute left-0 top-0"></div>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="re-enter password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className="w-full h-[52px] bg-[#ECECEC] pl-8 pr-4 text-[26px] font-arimo placeholder-black/30 focus:outline-none focus:ring-2 focus:ring-[#AB77FF]"
-              />
-            </div>
-
-            {/* Terms Checkbox */}
-            <div className="flex items-center mt-8 mb-4">
+            <div className="mt-8">
               <div className="relative">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  name="agreeToTerms"
-                  checked={formData.agreeToTerms}
-                  onChange={handleChange}
-                  className="w-[15px] h-[15px] bg-white border border-gray-300 shadow-inner appearance-none checked:bg-[#24A0ED] checked:border-[#24A0ED] focus:outline-none"
-                />
-                {formData.agreeToTerms && (
-                  <svg className="absolute top-0 left-0 w-[15px] h-[15px] text-white pointer-events-none" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                )}
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200" />
+                </div>
+                <div className="relative flex justify-center text-sm font-medium leading-6">
+                  <span className="px-6 text-gray-600 bg-gradient-to-br from-indigo-50 via-white to-purple-50">Already have an account?</span>
+                </div>
               </div>
-              <label htmlFor="terms" className="ml-3 text-[15px] font-normal text-black font-arimo">
-                I agree to the Terms of Service & Privacy Policy
-              </label>
+
+              <div className="mt-6">
+                <Link
+                  href="/signin"
+                  className="flex items-center justify-center w-full px-4 py-3 text-sm font-semibold text-gray-700 transition-all duration-200 bg-white border border-gray-200 shadow-sm rounded-xl hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-500/10"
+                >
+                  Sign In Instead
+                </Link>
+              </div>
             </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="text-red-500 text-sm mb-4 text-center">
-                {error}
-              </div>
-            )}
-
-            {/* Success Message */}
-            {result && (
-              <div className="text-green-500 text-sm mb-4 text-center">
-                {result.message}
-              </div>
-            )}
-
-            {/* Sign Up Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-[211px] h-[48px] bg-[#24A0ED] text-white text-[26px] font-normal font-arimo rounded-[25px] mx-auto block mb-8 shadow-lg transition-all duration-300 hover:bg-[#1e8bc3] hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'CREATING...' : 'SIGN UP'}
-            </button>
-          </form>
-
-          {/* Or sign up with */}
-          <p className="text-[16px] font-normal text-black text-center mb-4 font-arimo">
-            Or sign up with
-          </p>
-
-          {/* Google Sign Up Button */}
-          <button 
-            onClick={() => signIn('google', { callbackUrl: '/personal-info' })}
-            className="w-full h-[47px] bg-[#FCF8F8] border border-gray-200 rounded flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div className="w-[41px] h-[39px] mr-4 bg-cover bg-center" 
-                 style={{ backgroundImage: "url('/images/google-logo.png')" }}></div>
-            <span className="text-[20px] font-normal text-black font-arimo">Continue with Google</span>
-          </button>
-
-          {/* Sign In Link */}
-          <div className="text-center mt-8">
-            <span className="text-[15px] font-normal text-black font-arimo">
-              Already have an account ?{' '}
-            </span>
-            <Link 
-              href="/signin"
-              className="text-[15px] font-normal text-[#24A0ED] font-arimo hover:underline">
-              Sign in
-            </Link>
           </div>
         </div>
       </div>

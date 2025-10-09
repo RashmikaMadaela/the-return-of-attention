@@ -1,24 +1,56 @@
-import React from 'react'
-import { clsx } from 'clsx'
+'use client'
 
-interface CardProps {
-  children: React.ReactNode
-  className?: string
-  variant?: 'default' | 'glass' | 'gradient'
+import { HTMLAttributes, forwardRef } from 'react'
+import { cn } from '@/lib/utils'
+
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: 'default' | 'elevated' | 'outline' | 'glass'
+  padding?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
+  hover?: boolean
 }
 
-export default function Card({ children, className, variant = 'default' }: CardProps) {
-  const baseClasses = 'rounded-2xl p-6'
-  
-  const variantClasses = {
-    default: 'bg-white/5 backdrop-blur-sm border border-white/10',
-    glass: 'bg-white/10 backdrop-blur-sm border border-white/20',
-    gradient: 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-white/10'
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ 
+    className, 
+    variant = 'default', 
+    padding = 'md',
+    hover = false,
+    children,
+    ...props 
+  }, ref) => {
+    const baseClasses = 'card'
+    const variantClasses = {
+      default: '',
+      elevated: 'shadow-lg',
+      outline: 'border-2',
+      glass: 'backdrop-blur-sm bg-opacity-80'
+    }
+    const paddingClasses = {
+      none: '',
+      sm: 'p-3',
+      md: 'p-4',
+      lg: 'p-6',
+      xl: 'p-8'
+    }
+
+    return (
+      <div
+        className={cn(
+          baseClasses,
+          variantClasses[variant],
+          paddingClasses[padding],
+          hover && 'hover:shadow-lg transition-shadow duration-200',
+          className
+        )}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </div>
+    )
   }
-  
-  return (
-    <div className={clsx(baseClasses, variantClasses[variant], className)}>
-      {children}
-    </div>
-  )
-}
+)
+
+Card.displayName = 'Card'
+
+export { Card }
