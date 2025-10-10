@@ -9,10 +9,10 @@ import { updatePersonalInfoSchema } from '@/lib/validations/user'
  * GET /api/user/personal-info
  * Retrieve current user's personal information
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Check authentication
-    const authError = await requireAuth(request)
+  const authError = await requireAuth(_request)
     if (authError) return authError
 
     // Rate limiting
@@ -75,7 +75,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Parse and validate request body
-    const body = await request.json()
+  const body = await request.json()
     const validationResult = updatePersonalInfoSchema.safeParse(body)
 
     if (!validationResult.success) {

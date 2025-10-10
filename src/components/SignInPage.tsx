@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 
 export default function SignInPage() {
   const router = useRouter()
@@ -9,19 +10,51 @@ export default function SignInPage() {
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({})
 
-  const handleSignIn = () => {
+  const [loading, setLoading] = useState(false)
+
+  const handleSignIn = async () => {
     setError('')
-    
-    // Validation
-    if (!email || !password) {
-      setError('Please fill in all fields')
+    setFieldErrors({})
+
+    const errs: { email?: string; password?: string } = {}
+    if (!email) errs.email = 'Email is required'
+    // basic email format
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = 'Enter a valid email'
+    if (!password) errs.password = 'Password is required'
+
+    if (Object.keys(errs).length) {
+      setFieldErrors(errs)
       return
     }
-    
-    // If all validation passes, redirect to home page
-    console.log('Sign in successful, redirecting to home page...')
-    router.push('/home')
+
+    setLoading(true)
+    try {
+      const res = await signIn('credentials', { redirect: false, email, password })
+      // res can be undefined if provider not found
+      if (!res) {
+        setError('Sign in failed')
+        setLoading(false)
+        return
+      }
+
+      // NextAuth sets res.error when credentials invalid
+      // Narrow by checking 'error' property exists on the returned value
+      if ((res as unknown) && typeof (res as any).error === 'string') {
+        setError((res as any).error || 'Invalid credentials')
+        setLoading(false)
+        return
+      }
+
+      // Success
+      router.push('/home')
+    } catch (err) {
+      console.error('Sign in error', err)
+      setError('An unexpected error occurred')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleSignUp = () => {
@@ -53,6 +86,7 @@ export default function SignInPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
             />
+            {fieldErrors.email && <div className="text-xs text-red-500 mt-1">{fieldErrors.email}</div>}
           </div>
 
           {/* Password Field */}
@@ -64,6 +98,7 @@ export default function SignInPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
             />
+            {fieldErrors.password && <div className="text-xs text-red-500 mt-1">{fieldErrors.password}</div>}
           </div>
         </div>
 
@@ -96,9 +131,10 @@ export default function SignInPage() {
         {/* Sign In Button */}
         <button
           onClick={handleSignIn}
-          className="w-full p-3 bg-blue-500 text-white rounded-full text-sm font-semibold transition-colors hover:bg-blue-600 mb-5"
+          disabled={loading}
+          className="w-full p-3 bg-blue-500 text-white rounded-full text-sm font-semibold transition-colors hover:bg-blue-600 mb-5 disabled:opacity-60"
         >
-          SIGN IN
+          {loading ? 'SIGNING IN...' : 'SIGN IN'}
         </button>
 
         {/* Divider */}

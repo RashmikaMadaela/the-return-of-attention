@@ -8,10 +8,10 @@ import { handleApiError, createSuccessResponse, CommonErrors } from '@/lib/error
  * GET /api/user/profile
  * Retrieve current user's profile information
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Authenticate user
-    const user = await getAuthenticatedUser(request)
+    const user = await getAuthenticatedUser(_request)
 
     // Get user profile data
     const userProfile = await prisma.user.findUnique({
@@ -115,13 +115,13 @@ export async function GET(request: NextRequest) {
  * PUT /api/user/profile
  * Update current user's basic profile information (name, image)
  */
-export async function PUT(request: NextRequest) {
+export async function PUT(_request: NextRequest) {
   try {
     // Authenticate user
-    const user = await getAuthenticatedUser(request)
+    const user = await getAuthenticatedUser(_request)
 
     // Validate request body
-    const body = await request.json()
+  const body = await _request.json()
     const validation = validateRequestBody(updateProfileSchema, body)
     
     if (!validation.success) {

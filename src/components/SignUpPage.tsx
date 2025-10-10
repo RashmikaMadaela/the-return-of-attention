@@ -2,37 +2,78 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 
 export default function SignUpPage() {
   const router = useRouter()
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string }>({})
+  const [loading, setLoading] = useState(false)
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     setError('')
-    
-    // Validation
-    if (!email || !password || !confirmPassword) {
-      setError('Please fill in all fields')
-      return
-    }
-    
-    if (password !== confirmPassword) {
-      setError('Passwords do not match!')
-      return
-    }
-    
+    setFieldErrors({})
+
+    const errs: { name?: string; email?: string; password?: string; confirmPassword?: string } = {}
+    if (!name) errs.name = 'Name is required'
+    if (!email) errs.email = 'Email is required'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = 'Enter a valid email'
+    if (!password) errs.password = 'Password is required'
+    else if (password.length < 8) errs.password = 'Password must be at least 8 characters'
+    if (!confirmPassword) errs.confirmPassword = 'Please confirm your password'
+    else if (password !== confirmPassword) errs.confirmPassword = 'Passwords do not match'
     if (!agreeToTerms) {
       setError('Please agree to the Terms of Service & Privacy Policy')
       return
     }
+
+    if (Object.keys(errs).length) {
+      setFieldErrors(errs)
+      return
+    }
     
-    // If all validation passes, redirect to personal info page
-    console.log('Sign up successful, redirecting to personal info page...')
-    router.push('/personal-info')
+    setLoading(true)
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, confirmPassword, name })
+      })
+
+      const data = await response.json()
+      if (!response.ok) {
+        setError(data?.message || 'Registration failed')
+        setLoading(false)
+        return
+      }
+
+      // Auto sign in after successful registration using NextAuth credentials
+      const signInRes = await signIn('credentials', {
+        redirect: false,
+        email,
+        password
+      })
+
+      if (signInRes && (signInRes as any).error) {
+        // signIn may return an object with an `error` property
+        setError((signInRes as any).error || 'Sign in failed after registration')
+        setLoading(false)
+        return
+      }
+
+      // Redirect to personal-info to collect profile
+      router.push('/personal-info')
+    } catch (err) {
+      console.error('Registration error', err)
+      setError('Registration failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleSignIn = () => {
@@ -50,6 +91,17 @@ export default function SignUpPage() {
         <h1 className="text-center text-3xl mb-8 text-gray-800 font-medium">Create Account</h1>
         
         <div className="space-y-5">
+          {/* Name Field */}
+          <div>
+            <input
+              type="text"
+              placeholder="Full name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
+            />
+            {fieldErrors.name && <div className="text-xs text-red-500 mt-1">{fieldErrors.name}</div>}
+          </div>
           {/* Email Field */}
           <div>
             <input
@@ -59,6 +111,7 @@ export default function SignUpPage() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
             />
+            {fieldErrors.email && <div className="text-xs text-red-500 mt-1">{fieldErrors.email}</div>}
           </div>
 
           {/* Password Field */}
@@ -70,6 +123,7 @@ export default function SignUpPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
             />
+            {fieldErrors.password && <div className="text-xs text-red-500 mt-1">{fieldErrors.password}</div>}
           </div>
 
           {/* Confirm Password Field */}
@@ -81,6 +135,7 @@ export default function SignUpPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
             />
+            {fieldErrors.confirmPassword && <div className="text-xs text-red-500 mt-1">{fieldErrors.confirmPassword}</div>}
           </div>
         </div>
 
@@ -108,9 +163,10 @@ export default function SignUpPage() {
         {/* Sign Up Button */}
         <button
           onClick={handleSignUp}
-          className="w-full p-3 bg-blue-500 text-white rounded-full text-sm font-semibold transition-colors hover:bg-blue-600 mb-5"
+          disabled={loading}
+          className="w-full p-3 bg-blue-500 text-white rounded-full text-sm font-semibold transition-colors hover:bg-blue-600 mb-5 disabled:opacity-60"
         >
-          SIGN UP
+          {loading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
         </button>
 
         {/* Divider */}
