@@ -246,51 +246,49 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #B1FAFF 0%, #5EFFFA 100%)' }}>
+    <div className="min-h-screen bg-gradient-to-b from-blue-400 to-blue-300">
       {/* Navigation */}
       <Navigation currentPage="home" />
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Header with background image and title */}
-        <div className="relative mb-4 sm:mb-8 rounded-[25px] overflow-hidden h-64 sm:h-80 lg:h-96 mt-20 sm:mt-24">
-          <Image
-            src="/png_images/dcds.png"
-            alt="The Return of Attention"
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <div className="text-center text-white">
-              <div className="flex flex-col sm:flex-row items-center justify-center mb-4 sm:mb-6 space-y-4 sm:space-y-0">
-                {/* 3x3 Matrix */}
-                <div className="grid grid-cols-3 gap-1 sm:gap-2 w-20 h-20 sm:w-32 sm:h-32 sm:mr-8">
-                  <div className="bg-orange-300 rounded-lg animate-pulse"></div>
-                  <div className="bg-teal-300 rounded-lg animate-pulse delay-100"></div>
-                  <div className="bg-purple-300 rounded-lg animate-pulse delay-200"></div>
-                  <div className="bg-yellow-400 rounded-lg animate-pulse delay-300"></div>
-                  <div className="bg-gray-200 rounded-lg animate-pulse delay-400"></div>
-                  <div className="bg-blue-300 rounded-lg animate-pulse delay-500"></div>
-                  <div className="bg-pink-300 rounded-lg animate-pulse delay-700"></div>
-                  <div className="bg-purple-200 rounded-lg animate-pulse delay-800"></div>
-                  <div className="bg-orange-200 rounded-lg animate-pulse delay-1000"></div>
-                </div>
-                <div className="hidden sm:block w-2 h-20 bg-white mx-4 sm:mx-8"></div>
-                <div className="text-center sm:text-left">
-                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-lexend mb-1 sm:mb-2">The Return</h1>
-                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-lexend mb-2 sm:mb-4">Of Attention</h1>
-                  <p className="text-sm sm:text-lg lg:text-xl font-lexend">Practices for the Happiness that Stays</p>
-                </div>
+      {/* Hero Section with Background */}
+      <div 
+        className="bg-cover bg-center bg-no-repeat pt-24" 
+        style={{ backgroundImage: "url('/png_images/dcds.png')" }}
+      >
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          <div className="flex items-center justify-center space-x-8">
+            <div className="bg-purple-400 p-8 rounded-2xl">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="w-12 h-12 bg-orange-300 rounded-xl animate-pulse"></div>
+                <div className="w-12 h-12 bg-teal-300 rounded-xl animate-pulse delay-100"></div>
+                <div className="w-12 h-12 bg-purple-300 rounded-xl animate-pulse delay-200"></div>
+                <div className="w-12 h-12 bg-yellow-300 rounded-xl animate-pulse delay-300"></div>
+                <div className="w-12 h-12 bg-gray-100 rounded-xl animate-pulse delay-400"></div>
+                <div className="w-12 h-12 bg-blue-200 rounded-xl animate-pulse delay-500"></div>
+                <div className="w-12 h-12 bg-orange-200 rounded-xl animate-pulse delay-700"></div>
+                <div className="w-12 h-12 bg-pink-200 rounded-xl animate-pulse delay-800"></div>
+                <div className="w-12 h-12 bg-purple-200 rounded-xl animate-pulse delay-1000"></div>
               </div>
+            </div>
+            
+            <div className="text-white">
+              <h1 className="text-5xl font-bold mb-2">The Return</h1>
+              <h1 className="text-5xl font-bold mb-4">Of Attention</h1>
+              <p className="text-xl">Practices for the Happiness that Stays</p>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Welcome Back Section */}
-        <div className="bg-gradient-to-r from-cyan-300 to-cyan-400 rounded-[25px] p-4 sm:p-6 lg:p-8 mb-4 sm:mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center shadow-lg space-y-4 sm:space-y-0">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+
+        {/* Welcome Card */}
+        <div className="bg-cyan-300 rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
           <div className="text-center sm:text-left">
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-black font-lexend mb-1 sm:mb-2">Welcome Back</h2>
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-black font-lexend mb-1 sm:mb-2">{userName}</h3>
-            <p className="text-black font-lexend text-sm sm:text-base lg:text-lg">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2">Welcome Back</h2>
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4">{userName}</h3>
+            <p className="text-sm sm:text-base lg:text-lg font-semibold">
               {assessmentsCompleted && hasHappinessScore 
                 ? "Your Journey to Happiness that Stays" 
                 : "Complete your assessments to begin your journey"}
@@ -300,15 +298,16 @@ export default function HomePage() {
           {/* Only show stats boxes when assessments are completed */}
           {assessmentsCompleted && hasHappinessScore && (
             <>
-              <div className="hidden sm:block w-1 h-20 bg-blue-600 mx-4"></div>
-              <div className="flex flex-row sm:flex-col gap-4 justify-center">
-                <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-[15px] font-lexend text-center min-w-[100px] sm:min-w-[120px]">
-                  <div className="text-xs sm:text-sm">Current Stage</div>
-                  <div className="text-xl sm:text-2xl font-bold">{currentStage.toString().padStart(2, '0')}</div>
+              <div className="hidden sm:block h-full w-1 bg-blue-500 mx-4 lg:mx-8"></div>
+              
+              <div className="space-y-3 sm:space-y-4">
+                <div className="bg-blue-500 text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]">
+                  <span className="font-semibold text-sm sm:text-base lg:text-lg">Current Stage</span>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl font-bold">{String(currentStage).padStart(2, '0')}</span>
                 </div>
-                <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-[15px] font-lexend text-center min-w-[100px] sm:min-w-[120px]">
-                  <div className="text-xs sm:text-sm">Happiness Points</div>
-                  <div className="text-xl sm:text-2xl font-bold">{happinessPoints}</div>
+                <div className="bg-blue-500 text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]">
+                  <span className="font-semibold text-sm sm:text-base lg:text-lg">Happiness Points</span>
+                  <span className="text-2xl sm:text-3xl lg:text-4xl font-bold">{happinessPoints}</span>
                 </div>
               </div>
             </>
