@@ -22,6 +22,7 @@ model User {
   image             String?
   emailVerified     DateTime?
   password          String?  // For email/password auth
+  role              String   @default("user") // 'admin' or 'user'
   isActive          Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
@@ -349,20 +350,8 @@ model HappinessScore {
 }
 
 // ============================================================================
-// ADMIN SYSTEM
+// ADMIN SYSTEM - Now handled by User.role field
 // ============================================================================
-
-model AdminUser {
-  id          String   @id @default(cuid())
-  userId      String   @unique // References main User
-  role        String   @default("admin") // 'admin', 'super_admin'
-  permissions Json     // Array of permissions
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("admin_users")
-}
 
 // ============================================================================
 // SYSTEM & CONFIGURATION

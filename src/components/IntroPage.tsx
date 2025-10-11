@@ -28,15 +28,15 @@ export default function IntroPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" suppressHydrationWarning={true}>
       {/* Navigation Bar - Transparent with backdrop blur */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="text-lg sm:text-xl font-semibold text-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" suppressHydrationWarning={true}>
+          <div className="flex justify-between items-center h-16" suppressHydrationWarning={true}>
+            <div className="text-lg sm:text-xl font-semibold text-gray-800" suppressHydrationWarning={true}>
               The Return of Attention
             </div>
-            <div className="flex gap-2 sm:gap-3">
+            <div className="flex gap-2 sm:gap-3" suppressHydrationWarning={true}>
               <button 
                 onClick={handleLogin}
                 className="px-3 sm:px-4 md:px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-xs sm:text-sm md:text-base">
@@ -57,6 +57,7 @@ export default function IntroPage() {
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat" 
           style={{ backgroundImage: "url('/png_images/ChatGPT Image Sep 25, 2025, 11_50_43 AM.png')" }}
+          suppressHydrationWarning={true}
         />
         <div className="relative max-w-4xl mx-auto text-center">
           {/* Animated Grid Icon */}
@@ -149,6 +150,7 @@ export default function IntroPage() {
         <div 
           className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-20" 
           style={{ backgroundImage: "url('/png_images/ChatGPT Image Sep 25, 2025, 11_50_43 AM.png')" }}
+          suppressHydrationWarning={true}
         />
         <div className="relative max-w-6xl mx-auto">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-8 sm:mb-12 text-gray-800">

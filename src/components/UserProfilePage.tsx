@@ -5,19 +5,36 @@ import { User, Mail, Calendar, MapPin, Globe } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 
+interface UserProfileData {
+  name: string
+  email: string
+  role: string
+  age?: number
+  gender?: string
+  nationality?: string
+  currentCountry?: string
+  happiness: number
+  sessions: number
+  userLevel: string
+  hours: number
+}
+
 export default function UserProfilePage() {
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
-  const [userProfile, setUserProfile] = useState({
-    name: 'User Name',
-    email: 'name@gmail.com',
-    age: 22,
-    gender: 'Male',
-    nationality: 'Sri Lanka',
-    currentCountry: 'Sri Lanka',
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [userProfile, setUserProfile] = useState<UserProfileData>({
+    name: '',
+    email: '',
+    role: 'user',
+    age: 0,
+    gender: '',
+    nationality: '',
+    currentCountry: '',
     happiness: 0,
     sessions: 0,
-    streak: 0,
+    userLevel: 'Seeker',
     hours: 0
   })
 
@@ -27,33 +44,78 @@ export default function UserProfilePage() {
   })
 
   const [editForm, setEditForm] = useState({
-    email: userProfile.email,
-    age: userProfile.age,
-    gender: userProfile.gender,
-    nationality: userProfile.nationality,
-    currentCountry: userProfile.currentCountry
+    name: '',
+    email: '',
+    age: 0,
+    gender: '',
+    nationality: '',
+    currentCountry: ''
   })
 
-  // Check assessment completion status on component mount
+  // Load user data from database on component mount
   useEffect(() => {
-    const questionnaireCompleted = localStorage.getItem('questionnaireCompleted') === 'true'
-    const selfAssessmentCompleted = localStorage.getItem('selfAssessmentCompleted') === 'true'
-    
-    setAssessmentStatus({
-      questionnaire: questionnaireCompleted,
-      selfAssessment: selfAssessmentCompleted
-    })
+    loadUserProfile()
   }, [])
+
+  const loadUserProfile = async () => {
+    try {
+      setIsLoading(true)
+      
+      // Load user data from API
+      const userResponse = await fetch('/api/user/profile-data')
+      const userData = await userResponse.json()
+
+      if (userData.success) {
+        setUserProfile({
+          name: userData.data.name,
+          email: userData.data.email,
+          role: userData.data.role,
+          age: userData.data.profile?.age || 0,
+          gender: userData.data.profile?.gender || '',
+          nationality: userData.data.profile?.nationality || '',
+          currentCountry: userData.data.profile?.country || '',
+          happiness: userData.data.happiness,
+          sessions: userData.data.sessions,
+          userLevel: userData.data.userLevel,
+          hours: userData.data.hours
+        })
+
+        // Update edit form with loaded data
+        setEditForm({
+          name: userData.data.name,
+          email: userData.data.email,
+          age: userData.data.profile?.age || 0,
+          gender: userData.data.profile?.gender || '',
+          nationality: userData.data.profile?.nationality || '',
+          currentCountry: userData.data.profile?.country || ''
+        })
+
+        // Set assessment status
+        setAssessmentStatus({
+          questionnaire: userData.data.questionnaireCompleted,
+          selfAssessment: userData.data.selfAssessmentCompleted
+        })
+      } else {
+        setError('Failed to load user profile')
+      }
+    } catch (err) {
+      console.error('Error loading user profile:', err)
+      setError('Failed to load user profile')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleEditToggle = () => {
     if (isEditing) {
       // Reset form to current profile data if canceling
       setEditForm({
+        name: userProfile.name,
         email: userProfile.email,
-        age: userProfile.age,
-        gender: userProfile.gender,
-        nationality: userProfile.nationality,
-        currentCountry: userProfile.currentCountry
+        age: userProfile.age || 0,
+        gender: userProfile.gender || '',
+        nationality: userProfile.nationality || '',
+        currentCountry: userProfile.currentCountry || ''
       })
     }
     setIsEditing(!isEditing)
@@ -66,23 +128,95 @@ export default function UserProfilePage() {
     }))
   }
 
+  const validateForm = () => {
+    const validationErrors: string[] = []
+
+    // Validate name
+    if (!editForm.name || editForm.name.trim().length < 2) {
+      validationErrors.push('Name must be at least 2 characters long')
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!editForm.email || !emailRegex.test(editForm.email)) {
+      validationErrors.push('Please enter a valid email address')
+    }
+
+    // Validate age
+    if (editForm.age < 13 || editForm.age > 120) {
+      validationErrors.push('Age must be between 13 and 120 years')
+    }
+
+    return validationErrors
+  }
+
   const handleSave = async () => {
     try {
-      // TODO: Update database with new information
-      console.log('Updating profile with:', editForm)
+      // Frontend validation
+      const validationErrors = validateForm()
+      if (validationErrors.length > 0) {
+        setError(validationErrors.join('. '))
+        return
+      }
+
+      setIsLoading(true)
+      setError('') // Clear any previous errors
       
-      // Update local state
-      setUserProfile(prev => ({
-        ...prev,
-        ...editForm
-      }))
-      
-      setIsEditing(false)
-      
-      // Here you would make an API call to update the database
-      // await updateUserProfile(editForm)
+      // Update user profile in database
+      const response = await fetch('/api/user/profile-data', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editForm)
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        // If email was changed, user needs to log in again
+        if (result.emailChanged) {
+          alert('Your email has been updated successfully. Please log in again with your new email.')
+          // Clear session data and redirect to signin
+          localStorage.clear()
+          sessionStorage.clear()
+          router.push('/signin')
+          return
+        }
+
+        // Update local state for non-email changes
+        setUserProfile(prev => ({
+          ...prev,
+          name: editForm.name,
+          email: editForm.email,
+          age: editForm.age,
+          gender: editForm.gender,
+          nationality: editForm.nationality,
+          currentCountry: editForm.currentCountry
+        }))
+        
+        setIsEditing(false)
+        setError('')
+        
+        // Show success message briefly
+        setError('')
+        const successDiv = document.createElement('div')
+        successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50'
+        successDiv.textContent = 'Profile updated successfully!'
+        document.body.appendChild(successDiv)
+        setTimeout(() => {
+          if (document.body.contains(successDiv)) {
+            document.body.removeChild(successDiv)
+          }
+        }, 3000)
+      } else {
+        setError(result.error || 'Failed to update profile')
+      }
     } catch (error) {
       console.error('Error updating profile:', error)
+      setError('Failed to update profile')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -118,14 +252,23 @@ export default function UserProfilePage() {
       
       <div className="p-8 pt-24">
         <div className="max-w-7xl mx-auto bg-gradient-to-b from-blue-700 to-blue-600 rounded-3xl shadow-2xl p-8">
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-center">
+              {error}
+            </div>
+          )}
+
           {/* Header */}
           <div className="flex justify-end gap-4 mb-8">
-            <button 
-              onClick={handleAdmin}
-              className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-xl transition-colors"
-            >
-              ADMIN
-            </button>
+            {userProfile.role === 'admin' && (
+              <button 
+                onClick={handleAdmin}
+                className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-xl transition-colors"
+              >
+                ADMIN
+              </button>
+            )}
             <button 
               onClick={handleBack}
               className="bg-white hover:bg-gray-100 text-blue-600 font-bold px-6 py-3 rounded-xl transition-colors"
@@ -186,24 +329,44 @@ export default function UserProfilePage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {/* Email Field */}
+                    {/* Name Field */}
                     <div className="border-l-4 border-blue-500 pl-4 py-2">
-                      <span className="font-semibold text-gray-700 block mb-2">Email :</span>
+                      <span className="font-semibold text-gray-700 block mb-2">Name <span className="text-red-500">*</span>:</span>
                       <input
-                        type="email"
-                        value={editForm.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        type="text"
+                        value={editForm.name}
+                        onChange={(e) => handleInputChange('name', e.target.value)}
+                        placeholder="Enter your full name"
+                        required
                         className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
 
+                    {/* Email Field */}
+                    <div className="border-l-4 border-blue-500 pl-4 py-2">
+                      <span className="font-semibold text-gray-700 block mb-2">Email <span className="text-red-500">*</span>:</span>
+                      <input
+                        type="email"
+                        value={editForm.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        placeholder="Enter your email address"
+                        required
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <p className="text-sm text-orange-600 mt-1">⚠️ Changing your email will require you to log in again</p>
+                    </div>
+
                     {/* Age Field */}
                     <div className="border-l-4 border-blue-500 pl-4 py-2">
-                      <span className="font-semibold text-gray-700 block mb-2">Age :</span>
+                      <span className="font-semibold text-gray-700 block mb-2">Age <span className="text-red-500">*</span>:</span>
                       <input
                         type="number"
                         value={editForm.age}
-                        onChange={(e) => handleInputChange('age', parseInt(e.target.value))}
+                        onChange={(e) => handleInputChange('age', parseInt(e.target.value) || 0)}
+                        placeholder="Enter your age (13-120)"
+                        min="13"
+                        max="120"
+                        required
                         className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -665,9 +828,10 @@ export default function UserProfilePage() {
                       </button>
                       <button 
                         onClick={handleSave}
-                        className="bg-green-600 hover:bg-green-700 text-white font-bold px-6 py-2 rounded-xl transition-colors"
+                        disabled={isLoading}
+                        className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold px-6 py-2 rounded-xl transition-colors"
                       >
-                        Save
+                        {isLoading ? 'Saving...' : 'Save'}
                       </button>
                     </div>
                   )}
@@ -692,8 +856,8 @@ export default function UserProfilePage() {
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 text-center">
-                  <div className="text-6xl font-bold text-blue-600 mb-2">{userProfile.streak}</div>
-                  <div className="text-lg font-semibold text-gray-700">Streak</div>
+                  <div className="text-lg font-bold text-blue-600 mb-2 text-center break-words">{userProfile.userLevel}</div>
+                  <div className="text-lg font-semibold text-gray-700">User Level</div>
                 </div>
 
                 <div className="bg-gray-50 rounded-2xl p-6 text-center">

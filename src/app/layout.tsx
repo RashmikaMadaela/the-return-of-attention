@@ -23,6 +23,11 @@ const arimo = Arimo({
 export const metadata: Metadata = {
   title: "The Return of Attention - Practices for the Happiness that Stays",
   description: "A simple, practical guide to happiness that actually stays",
+  other: {
+    // Prevent certain browser extensions from injecting code
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+  },
 };
 
 export default function RootLayout({
@@ -34,6 +39,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${inter.variable} ${lexend.variable} ${arimo.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
         {children}
       </body>

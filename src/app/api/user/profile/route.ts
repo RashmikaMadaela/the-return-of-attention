@@ -23,6 +23,7 @@ export async function GET(_request: NextRequest) {
         image: true,
         emailVerified: true,
         isActive: true,
+        role: true,
         createdAt: true,
         updatedAt: true,
         profile: {
@@ -49,6 +50,21 @@ export async function GET(_request: NextRequest) {
           },
           orderBy: { createdAt: 'desc' },
           take: 3
+        },
+        happinessScores: {
+          select: {
+            finalScore: true,
+            userLevel: true,
+            calculatedAt: true
+          },
+          orderBy: { calculatedAt: 'desc' },
+          take: 1
+        },
+        stageProgress: {
+          select: {
+            sessionsCompleted: true,
+            hoursCompleted: true
+          }
         },
         _count: {
           select: {
