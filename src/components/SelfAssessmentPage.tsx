@@ -14,10 +14,10 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
   const [answers, setAnswers] = useState<Record<string, string | null>>({
     foodTaste: null,
     scentsAromas: null,
-    soundMusic: null,
+    soundsMusic: null,
     visualBeauty: null,
     touchTextures: null,
-    thoughtsMentalImages: null
+    thoughtsImages: null
   })
 
   const questions = [
@@ -36,7 +36,7 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
       description: 'Consider perfumes, cooking smells, nature scents, and other olfactory experiences'
     },
     {
-      id: 'soundMusic',
+      id: 'soundsMusic',
       emoji: '🎵',
       title: 'Sounds & Music',
       subtitle: 'What is your relationship with sounds, music, and audio?',
@@ -57,7 +57,7 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
       description: 'Think about fabrics, temperatures, physical comfort, and tactile experiences'
     },
     {
-      id: 'thoughtsMentalImages',
+      id: 'thoughtsImages',
       emoji: '🧠',
       title: 'Thoughts & Mental Images',
       subtitle: 'What is your relationship with thoughts, ideas, and mental imagery?',
@@ -66,21 +66,9 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
   ]
 
   const options = [
-    {
-      value: 'no_preference',
-      label: "I don't have particular preferences for this",
-      description: 'I am generally content with whatever comes my way in this sense area'
-    },
-    {
-      value: 'flexible',
-      label: "I have some preferences, but I'm flexible",
-      description: 'I enjoy certain things more than others, but I adapt easily (Sometimes)'
-    },
-    {
-      value: 'strong_preference',
-      label: 'I have strong preferences and specific likes/dislikes',
-      description: 'There are things I love or dislike very much in this area (Most)'
-    }
+    { value: 'none', label: "I don't have particular preferences for this", description: 'I am generally content with whatever comes my way in this sense area' },
+    { value: 'some', label: "I have some preferences, but I'm flexible", description: 'I enjoy certain things more than others, but I adapt easily' },
+    { value: 'strong', label: 'I have strong preferences and specific likes/dislikes', description: 'There are things I love or dislike very much in this area' }
   ]
 
   const handleAnswerChange = (questionId: string, value: string) => {
@@ -101,15 +89,34 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
     }
 
     try {
-      // TODO: Save to database
-      console.log('Self Assessment Answers:', answers)
-      
-      // Update localStorage to mark self assessment as completed
-      localStorage.setItem('selfAssessmentCompleted', 'true')
-      localStorage.setItem('selfAssessmentAnswers', JSON.stringify(answers))
-      
-      // Navigate to completion page
-      router.push('/self-assessment/completed')
+      // Determine assessment type (initial/mid/final)
+      const forcedType = (sessionStorage.getItem('assessment_type') as string) || null
+      const type = forcedType || localStorage.getItem('expected_assessment_type') || 'initial'
+
+      const payload = {
+        type,
+        foodTaste: answers.foodTaste as string,
+        scentsAromas: answers.scentsAromas as string,
+        soundsMusic: answers.soundsMusic as string,
+        visualBeauty: answers.visualBeauty as string,
+        touchTextures: answers.touchTextures as string,
+        thoughtsImages: answers.thoughtsImages as string
+      }
+
+      const res = await fetch('/api/assessment/self-assessment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+
+      if (res.ok) {
+        localStorage.setItem('selfAssessmentCompleted', 'true')
+        localStorage.setItem('selfAssessmentAnswers', JSON.stringify(answers))
+        router.push('/self-assessment/completed')
+      } else {
+        const err = await res.json().catch(() => ({}))
+        alert(err?.message || 'Failed to submit self assessment')
+      }
       
     } catch (error) {
       console.error('Error submitting self assessment:', error)

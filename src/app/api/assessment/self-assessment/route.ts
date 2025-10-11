@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { selfAssessmentSchema, validateRequestBody } from '@/lib/validation'
 import { getAuthenticatedUser } from '@/lib/auth/middleware'
-import { handleApiError, createSuccessResponse, CommonErrors } from '@/lib/errors'
-import { calculateSelfAssessmentScore } from '@/lib/business-logic'
+import { handleApiError, createSuccessResponse } from '@/lib/errors'
+import { calculateSelfAssessmentScore } from '@/lib/business-logic/index'
 
 /**
  * POST /api/assessment/self-assessment

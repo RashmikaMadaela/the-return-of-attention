@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Navigation from './Navigation'
@@ -8,46 +8,71 @@ import Navigation from './Navigation'
 export default function HomePage() {
   const router = useRouter()
   const [currentStage, setCurrentStage] = useState(1)
-  const [happinessPoints, setHappinessPoints] = useState(20)
+  const [happinessPoints, setHappinessPoints] = useState(0)
   const [userName, setUserName] = useState('User')
   const [showMidAssessment, setShowMidAssessment] = useState(false)
   const [showFinalAssessment, setShowFinalAssessment] = useState(false)
+  const [loadingOverview, setLoadingOverview] = useState(true)
+  const [serverStageProgress, setServerStageProgress] = useState<any[]>([])
+  const [assessmentsCompleted, setAssessmentsCompleted] = useState(false)
+  const [hasHappinessScore, setHasHappinessScore] = useState(false)
+  const [questionnaireCompleted, setQuestionnaireCompleted] = useState(false)
+  const [selfAssessmentCompleted, setSelfAssessmentCompleted] = useState(false)
 
   // Check if assessments are completed
   useEffect(() => {
-    const questionnaireCompleted = localStorage.getItem('questionnaire_completed') === 'true'
-    const selfAssessmentCompleted = localStorage.getItem('self_assessment_completed') === 'true'
-    const qaCompleted = localStorage.getItem('qa_completed') === 'true'
+    // Fetch progress overview and assessment status from server
+    let mounted = true
+    async function loadOverview() {
+      setLoadingOverview(true)
+      try {
+        const res = await fetch('/api/progress/overview')
+        if (res.status === 401) {
+          // Not authenticated - send to sign in
+          router.push('/signin')
+          return
+        }
+        const data = await res.json()
+        if (!mounted) return
 
-    // If assessments not completed, redirect to Q&A page
-    if (!questionnaireCompleted || !selfAssessmentCompleted || !qaCompleted) {
-      router.push('/home-qa')
-      return
+        const overview = data.overview || {}
+        const assessments = overview.assessments || {}
+
+        // Update UI state
+        if (overview.user?.name) setUserName(overview.user.name)
+        if (overview.happiness?.currentScore?.score) setHappinessPoints(overview.happiness.currentScore.score)
+        if (overview.journey?.currentStage?.number) setCurrentStage(overview.journey.currentStage.number)
+
+        // Store server stage progress for displaying real-time data
+        if (overview.stages && Array.isArray(overview.stages)) {
+          setServerStageProgress(overview.stages)
+        }
+
+        // Determine whether to show Home Q&A
+        const questionnaireCompleted = assessments.questionnaire?.completed === true
+        const initialCompleted = assessments.initial?.completed === true
+        const assessmentsComplete = questionnaireCompleted && initialCompleted
+        
+        setQuestionnaireCompleted(questionnaireCompleted)
+        setSelfAssessmentCompleted(initialCompleted)
+        setAssessmentsCompleted(assessmentsComplete)
+        setHasHappinessScore(overview.happiness?.currentScore?.score !== undefined && overview.happiness?.currentScore?.score !== null)
+
+        // Show mid / final assessment prompts based on assessment flags
+        const midRequired = assessments.mid?.completed === false && overview.journey?.completedStages >= 3
+        const finalRequired = assessments.final?.completed === false && overview.journey?.completedStages >= 6
+        setShowMidAssessment(!!midRequired)
+        setShowFinalAssessment(!!finalRequired)
+
+      } catch (err) {
+        console.error('Failed to load overview', err)
+      } finally {
+        setLoadingOverview(false)
+      }
     }
 
-    // Load user progress
-    const savedStage = localStorage.getItem('current_stage')
-    const savedPoints = localStorage.getItem('happiness_points')
-    const savedName = localStorage.getItem('user_name')
-
-    if (savedStage) setCurrentStage(parseInt(savedStage))
-    if (savedPoints) setHappinessPoints(parseInt(savedPoints))
-    if (savedName) setUserName(savedName)
-
-    // Check for assessment requirements
-    const completedStages = parseInt(localStorage.getItem('completedStages') || '0')
-    const midAssessmentCompleted = localStorage.getItem('mid_assessment_completed') === 'true'
-    const finalAssessmentCompleted = localStorage.getItem('final_assessment_completed') === 'true'
-
-    // Show mid assessment after completing stage 3
-    if (completedStages >= 3 && !midAssessmentCompleted) {
-      setShowMidAssessment(true)
-    }
-
-    // Show final assessment after completing stage 6
-    if (completedStages >= 6 && !finalAssessmentCompleted) {
-      setShowFinalAssessment(true)
-    }
+    loadOverview()
+    return () => { mounted = false }
   }, [router])
 
   // Get stage progress from localStorage
@@ -89,65 +114,101 @@ export default function HomePage() {
     return 'Start'
   }
 
+  // Helper to get progress text from server data or fallback to local
+  const getProgressText = (stageNum: number) => {
+    const serverStage = serverStageProgress.find(s => s.stageNumber === stageNum)
+    if (serverStage) {
+      if (stageNum === 1) {
+        // Stage 1 shows sessions
+        return `${serverStage.sessionsCompleted || 0}/15 sessions`
+      } else {
+        // Other stages show hours
+        return `${(serverStage.hoursCompleted || 0).toFixed(1)}/15 hours`
+      }
+    }
+    // Fallback for loading state
+    return stageNum === 1 ? '0/15 sessions' : '0.0/15 hours'
+  }
+
+  // Helper to check if stage is unlocked from server or fallback to local
+  const isStageUnlocked = (stageNum: number) => {
+    if (serverStageProgress.length > 0) {
+      // Use server data if available
+      const serverStage = serverStageProgress.find(s => s.stageNumber === stageNum)
+      return serverStage ? !serverStage.isCompleted || stageNum === 1 || serverStageProgress.find(s => s.stageNumber === stageNum - 1)?.isCompleted : false
+    }
+    // Fallback to localStorage
+    return stageProgress.unlockedStages.includes(stageNum)
+  }
+
+  // Helper to check if stage is completed from server or fallback to local
+  const isStageCompleted = (stageNum: number) => {
+    if (serverStageProgress.length > 0) {
+      const serverStage = serverStageProgress.find(s => s.stageNumber === stageNum)
+      return serverStage?.isCompleted || false
+    }
+    return stageProgress.completedStages >= stageNum
+  }
+
   const stages = [
     {
       id: 1,
       name: 'Seeker',
       description: 'Physical Stillness (T1-T5)',
-      progress: '15/15 sessions',
+      progress: getProgressText(1),
       image: '/png_images/Flux_Dev_A_realistic_image_of_a_thoughtful_person_sitting_at_t_0.jpg',
-      unlocked: stageProgress.unlockedStages.includes(1),
-      completed: stageProgress.completedStages >= 1,
+      unlocked: isStageUnlocked(1),
+      completed: isStageCompleted(1),
       buttonText: getStageButtonText(1)
     },
     {
       id: 2,
       name: 'PAHM Trainee',
       description: 'Basic attention training',
-      progress: '0.0/15 hours',
+      progress: getProgressText(2),
       image: '/png_images/Flux_Dev_A_realistic_image_of_a_person_sitting_crosslegged_ind_1.jpg',
-      unlocked: stageProgress.unlockedStages.includes(2),
-      completed: stageProgress.completedStages >= 2,
+      unlocked: isStageUnlocked(2),
+      completed: isStageCompleted(2),
       buttonText: getStageButtonText(2)
     },
     {
       id: 3,
       name: 'PAHM Beginner',
       description: 'Structured practice',
-      progress: '0.0/15 hours',
+      progress: getProgressText(3),
       image: '/png_images/Flux_Dev_A_realistic_image_of_a_beginner_meditator_sitting_cal_0.jpg',
-      unlocked: stageProgress.unlockedStages.includes(3),
-      completed: stageProgress.completedStages >= 3,
+      unlocked: isStageUnlocked(3),
+      completed: isStageCompleted(3),
       buttonText: getStageButtonText(3)
     },
     {
       id: 4,
       name: 'PAHM Practitioner',
       description: 'Advanced techniques',
-      progress: '0.0/15 hours',
+      progress: getProgressText(4),
       image: '/png_images/Flux_Dev_A_realistic_image_of_a_dedicated_practitioner_sitting_0.jpg',
-      unlocked: stageProgress.unlockedStages.includes(4),
-      completed: stageProgress.completedStages >= 4,
+      unlocked: isStageUnlocked(4),
+      completed: isStageCompleted(4),
       buttonText: getStageButtonText(4)
     },
     {
       id: 5,
       name: 'PAHM Master',
       description: 'Refined awareness',
-      progress: '0.0/15 hours',
+      progress: getProgressText(5),
       image: '/png_images/Image_fx (5).jpg',
-      unlocked: stageProgress.unlockedStages.includes(5),
-      completed: stageProgress.completedStages >= 5,
+      unlocked: isStageUnlocked(5),
+      completed: isStageCompleted(5),
       buttonText: getStageButtonText(5)
     },
     {
       id: 6,
       name: 'PAHM Illuminator',
       description: 'Complete mastery',
-      progress: '0.0/15 hours',
+      progress: getProgressText(6),
       image: '/png_images/Image_fx (3).jpg',
-      unlocked: stageProgress.unlockedStages.includes(6),
-      completed: stageProgress.completedStages >= 6,
+      unlocked: isStageUnlocked(6),
+      completed: isStageCompleted(6),
       buttonText: getStageButtonText(6)
     }
   ]
@@ -176,6 +237,12 @@ export default function HomePage() {
       // Other stages - go to their respective pages
       router.push(`/stage-${stage.id}`)
     }
+  }
+
+  if (loadingOverview) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    )
   }
 
   return (
@@ -223,23 +290,108 @@ export default function HomePage() {
           <div className="text-center sm:text-left">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-black font-lexend mb-1 sm:mb-2">Welcome Back</h2>
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-black font-lexend mb-1 sm:mb-2">{userName}</h3>
-            <p className="text-black font-lexend text-sm sm:text-base lg:text-lg">Your Journey to Happiness that Stays</p>
+            <p className="text-black font-lexend text-sm sm:text-base lg:text-lg">
+              {assessmentsCompleted && hasHappinessScore 
+                ? "Your Journey to Happiness that Stays" 
+                : "Complete your assessments to begin your journey"}
+            </p>
           </div>
-          <div className="hidden sm:block w-1 h-20 bg-blue-600 mx-4"></div>
-          <div className="flex flex-row sm:flex-col gap-4 justify-center">
-            <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-[15px] font-lexend text-center min-w-[100px] sm:min-w-[120px]">
-              <div className="text-xs sm:text-sm">Current Stage</div>
-              <div className="text-xl sm:text-2xl font-bold">{currentStage.toString().padStart(2, '0')}</div>
+          
+          {/* Only show stats boxes when assessments are completed */}
+          {assessmentsCompleted && hasHappinessScore && (
+            <>
+              <div className="hidden sm:block w-1 h-20 bg-blue-600 mx-4"></div>
+              <div className="flex flex-row sm:flex-col gap-4 justify-center">
+                <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-[15px] font-lexend text-center min-w-[100px] sm:min-w-[120px]">
+                  <div className="text-xs sm:text-sm">Current Stage</div>
+                  <div className="text-xl sm:text-2xl font-bold">{currentStage.toString().padStart(2, '0')}</div>
+                </div>
+                <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-[15px] font-lexend text-center min-w-[100px] sm:min-w-[120px]">
+                  <div className="text-xs sm:text-sm">Happiness Points</div>
+                  <div className="text-xl sm:text-2xl font-bold">{happinessPoints}</div>
+                </div>
+              </div>
+            </>
+          )}
+          
+          {/* Show notice for new users who haven't completed assessments */}
+          {!assessmentsCompleted && (
+            <div className="bg-yellow-100 border-2 border-yellow-500 rounded-[15px] p-4 sm:p-6 text-center sm:text-left max-w-md">
+              <p className="text-yellow-900 font-lexend text-sm sm:text-base font-semibold mb-3">
+                ⚠️ Assessment Progress
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${questionnaireCompleted ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'}`}>
+                    {questionnaireCompleted ? '✓' : '1'}
+                  </div>
+                  <p className={`font-lexend text-xs sm:text-sm ${questionnaireCompleted ? 'text-green-700 font-semibold' : 'text-yellow-800'}`}>
+                    Questionnaire {questionnaireCompleted ? '(Completed ✓)' : '(Pending)'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${selfAssessmentCompleted ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'}`}>
+                    {selfAssessmentCompleted ? '✓' : '2'}
+                  </div>
+                  <p className={`font-lexend text-xs sm:text-sm ${selfAssessmentCompleted ? 'text-green-700 font-semibold' : 'text-yellow-800'}`}>
+                    Self-Assessment {selfAssessmentCompleted ? '(Completed ✓)' : '(Pending)'}
+                  </p>
+                </div>
+              </div>
+              {!questionnaireCompleted || !selfAssessmentCompleted ? (
+                <p className="text-yellow-800 font-lexend text-xs sm:text-sm mt-3 pt-3 border-t border-yellow-300">
+                  Complete both assessments to unlock your journey and see your progress!
+                </p>
+              ) : null}
             </div>
-            <div className="bg-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-[15px] font-lexend text-center min-w-[100px] sm:min-w-[120px]">
-              <div className="text-xs sm:text-sm">Happiness Points</div>
-              <div className="text-xl sm:text-2xl font-bold">{happinessPoints}</div>
-            </div>
-          </div>
+          )}
         </div>
 
+        {/* New User Call-to-Action - Show prominent CTA when assessments not completed */}
+        {!assessmentsCompleted && (
+          <div className="bg-gradient-to-r from-orange-400 to-red-500 rounded-[25px] p-6 sm:p-8 lg:p-10 mb-6 sm:mb-10 shadow-xl">
+            <div className="flex flex-col items-center text-center text-white space-y-4 sm:space-y-6">
+              <div className="text-4xl sm:text-5xl lg:text-6xl">🎯</div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-lexend">
+                Start Your Journey to Lasting Happiness
+              </h2>
+              <p className="text-base sm:text-lg lg:text-xl font-lexend max-w-2xl">
+                Complete the questionnaire and self-assessment to unlock your personalized journey. 
+                These assessments help us understand your current state and create a tailored path for you.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto sm:min-w-[400px]">
+                <button
+                  onClick={() => router.push('/questionnaire')}
+                  className={`px-8 py-4 rounded-[15px] font-bold font-lexend transition-colors text-lg shadow-lg flex-1 sm:flex-none relative ${
+                    questionnaireCompleted 
+                      ? 'bg-green-500 text-white cursor-default' 
+                      : 'bg-white text-orange-600 hover:bg-orange-50'
+                  }`}
+                  disabled={questionnaireCompleted}
+                >
+                  {questionnaireCompleted ? '✓ Questionnaire Complete' : '📋 Start Questionnaire'}
+                </button>
+                <button
+                  onClick={() => router.push('/self-assessment')}
+                  className={`px-8 py-4 rounded-[15px] font-bold font-lexend transition-colors text-lg shadow-lg flex-1 sm:flex-none ${
+                    selfAssessmentCompleted 
+                      ? 'bg-green-500 text-white cursor-default' 
+                      : 'bg-orange-700 text-white hover:bg-orange-800'
+                  }`}
+                  disabled={selfAssessmentCompleted}
+                >
+                  {selfAssessmentCompleted ? '✓ Self-Assessment Complete' : '✍️ Self Assessment'}
+                </button>
+              </div>
+              <p className="text-sm sm:text-base font-lexend opacity-90">
+                ⏱️ Takes approximately 10-15 minutes to complete both assessments
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Mid Assessment Container - Shows after Stage 3 completion */}
-        {showMidAssessment && (
+        {showMidAssessment && assessmentsCompleted && (
           <div className="bg-gradient-to-r from-purple-400 to-purple-600 rounded-[25px] p-4 sm:p-6 lg:p-8 mb-4 sm:mb-8 shadow-lg">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
               <div className="text-white text-center sm:text-left">
@@ -275,7 +427,7 @@ export default function HomePage() {
         )}
 
         {/* Final Assessment Container - Shows after Stage 6 completion */}
-        {showFinalAssessment && (
+        {showFinalAssessment && assessmentsCompleted && (
           <div className="bg-gradient-to-r from-gold-400 to-gold-600 rounded-[25px] p-4 sm:p-6 lg:p-8 mb-4 sm:mb-8 shadow-lg" style={{background: 'linear-gradient(to right, #fbbf24, #d97706)'}}>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
               <div className="text-white text-center sm:text-left">

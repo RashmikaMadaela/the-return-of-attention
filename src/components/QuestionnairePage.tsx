@@ -133,13 +133,71 @@ export default function QuestionnairePage() {
     }
     
     // Save questionnaire completion status to localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('questionnaireCompleted', 'true')
-      localStorage.setItem('questionnaireAnswers', JSON.stringify(answers))
-    }
-    
-    // Navigate back to home page
-    router.push('/home')
+    ;(async () => {
+      try {
+        const payload = {
+          experienceLevel: answers.experienceLevel,
+          mainGoals: answers.goals,
+          ageRange: answers.ageRange,
+          location: answers.location,
+          occupation: answers.occupation,
+          educationLevel: answers.educationLevel,
+          meditationBackground: answers.meditationBackground,
+          sleepPattern: answers.sleepPattern,
+          physicalActivity: answers.physicalActivity,
+
+          // page2
+          stressTrigers: answers.stressTriggers,
+          dailyRoutine: answers.dailyRoutine,
+          dietPattern: answers.dietPattern,
+          screenTime: answers.screenTime,
+          socialConnections: answers.socialConnections,
+          workLifeBalance: answers.workLifeBalance,
+
+          // page3
+          emotionalAwareness: answers.emotionalAwareness,
+          stressResponse: answers.stressResponse,
+          decisionMaking: answers.decisionMaking,
+          selfReflection: answers.selfReflection,
+          thoughtPatterns: answers.thoughtPatterns,
+          mindfulnessInDailyLife: answers.mindfulnessDaily,
+
+          mindfulnessExperience: answers.mindfulnessExperience,
+          meditationBackgroundDetail: answers.meditationBackgroundDetail,
+          practiceGoals: answers.practiceGoals,
+          preferredDuration: answers.preferredDuration,
+          biggestChallenges: answers.biggestChallenges,
+          motivation: answers.additionalInfo || ''
+        }
+
+        const res = await fetch('/api/assessment/questionnaire', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+
+        if (res.ok) {
+          // Mark completed and save answers locally
+          localStorage.setItem('questionnaireCompleted', 'true')
+          localStorage.setItem('questionnaireAnswers', JSON.stringify(answers))
+          router.push('/home')
+        } else {
+          const body = await res.json().catch(() => ({}))
+          console.error('Questionnaire submit failed', res.status, body)
+          if (body?.errors && Array.isArray(body.errors) && body.errors.length > 0) {
+            alert('Validation failed:\n' + body.errors.join('\n'))
+          } else if (body?.message) {
+            alert(body.message)
+          } else {
+            alert('Failed to submit questionnaire (see console for details)')
+          }
+        }
+
+      } catch (err) {
+        console.error('Failed to submit questionnaire', err)
+        alert('Failed to submit questionnaire')
+      }
+    })()
   }
 
   const getProgress = () => {
@@ -473,9 +531,9 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
         <div className="space-y-4">
           <input
             type="range"
-            min="1"
-            max="10"
-            value={answers.emotionalAwareness || 5}
+            min="3"
+            max="9"
+            value={answers.emotionalAwareness ?? 5}
             onChange={(e) => onSliderChange('emotionalAwareness', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
@@ -571,8 +629,8 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
           <input
             type="range"
             min="1"
-            max="10"
-            value={answers.mindfulnessExperience || 1}
+            max="8"
+            value={answers.mindfulnessExperience ?? 1}
             onChange={(e) => onSliderChange('mindfulnessExperience', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
