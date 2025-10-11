@@ -17,26 +17,66 @@ export default function DailyNotesPage() {
   }, [])
 
   const [viewMode, setViewMode] = useState('quick') // 'quick' or 'detailed'
-  const [emotionalJourney, setEmotionalJourney] = useState([
-    {
-      id: 1,
-      emotion: 'Happy',
-      type: 'quick',
-      description: 'Quick emotional check-in: Happy',
-      trigger: 'quick check-in',
-      intensity: 5,
-      timestamp: '4 hours ago'
-    },
-    {
-      id: 2,
-      emotion: 'Sad',
-      type: 'quick',
-      description: 'Quick emotional check-in: Happy',
-      trigger: 'daily routine',
-      intensity: 5,
-      timestamp: '7 hours ago'
+  const [emotionalJourney, setEmotionalJourney] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  // Load today's emotional journey from database
+  useEffect(() => {
+    loadTodaysEmotionalJourney()
+  }, [])
+
+  const loadTodaysEmotionalJourney = async () => {
+    try {
+      setIsLoading(true)
+      const today = new Date().toISOString().split('T')[0]
+      
+      // Get detailed notes for today (quick logs are now saved as detailed entries)
+      const detailedResponse = await fetch(`/api/notes/detailed?startDate=${today}T00:00:00Z&endDate=${today}T23:59:59Z`)
+      const detailedData = await detailedResponse.json()
+
+      if (detailedData.success) {
+        // Transform database entries to match UI format
+        const transformedEntries = detailedData.data.notes.map((note: any) => ({
+          id: note.id,
+          emotion: note.emotion,
+          type: note.context === "Quick Log" ? 'quick' : 'detailed',
+          description: note.context === "Quick Log" 
+            ? `Quick emotional check-in: ${note.emotion}`
+            : note.context || `Detailed note: ${note.emotion}`,
+          trigger: note.trigger || 'Not specified',
+          intensity: note.intensity || 5,
+          timestamp: formatTimestamp(note.createdAt),
+          createdAt: note.createdAt
+        }))
+
+        // Sort by creation time (newest first)
+        transformedEntries.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        
+        setEmotionalJourney(transformedEntries)
+      } else {
+        setError('Failed to load emotional journey')
+      }
+    } catch (err) {
+      console.error('Error loading emotional journey:', err)
+      setError('Failed to load emotional journey')
+    } finally {
+      setIsLoading(false)
     }
-  ])
+  }
+
+  const formatTimestamp = (timestamp: string) => {
+    const now = new Date()
+    const noteTime = new Date(timestamp)
+    const diffMs = now.getTime() - noteTime.getTime()
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffMinutes = Math.floor(diffMs / (1000 * 60))
+
+    if (diffMinutes < 1) return 'Just now'
+    if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''} ago`
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+    return noteTime.toLocaleDateString()
+  }
 
   // Detailed form state
   const [detailedForm, setDetailedForm] = useState({
@@ -74,61 +114,88 @@ export default function DailyNotesPage() {
     'daily routine',
     'unexpected event',
     'physical state',
-    'quick check-in'
+    'quick log'
   ]
 
-  const handleQuickLog = (emotionName: string) => {
-    const newEntry = {
-      id: Date.now(),
-      emotion: emotionName,
-      type: 'quick',
-      description: `Quick emotional check-in: ${emotionName}`,
-      trigger: 'quick check-in',
-      intensity: 5,
-      timestamp: 'Just now'
-    }
-    setEmotionalJourney([newEntry, ...emotionalJourney])
+  const handleQuickLog = async (emotionName: string) => {
+    try {
+      setIsLoading(true)
+      
+      const response = await fetch('/api/notes/detailed', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emotion: emotionName,
+          intensity: 5,
+          context: "Quick Log",
+          trigger: "quick log"
+        })
+      })
 
-    // Save to localStorage for database integration later
-    if (typeof window !== 'undefined') {
-      const existingSessions = JSON.parse(localStorage.getItem('dailyNotesSessions') || '[]')
-      existingSessions.push(newEntry)
-      localStorage.setItem('dailyNotesSessions', JSON.stringify(existingSessions))
+      const result = await response.json()
+
+      if (result.success) {
+        // Reload the emotional journey to show the new entry
+        await loadTodaysEmotionalJourney()
+        setError('')
+      } else {
+        setError(result.error || 'Failed to save quick log')
+      }
+    } catch (err) {
+      console.error('Error saving quick log:', err)
+      setError('Failed to save quick log')
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const handleDetailedLog = () => {
+  const handleDetailedLog = async () => {
     if (!detailedForm.emotion) {
       alert('Please select an emotion!')
       return
     }
 
-    const newEntry = {
-      id: Date.now(),
-      emotion: detailedForm.emotion,
-      type: 'detailed',
-      description: detailedForm.description || `Detailed note: ${detailedForm.emotion}`,
-      trigger: detailedForm.trigger || 'Not specified',
-      intensity: detailedForm.intensity,
-      timestamp: 'Just now'
-    }
+    try {
+      setIsLoading(true)
+      
+      const response = await fetch('/api/notes/detailed', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emotion: detailedForm.emotion,
+          intensity: detailedForm.intensity,
+          context: detailedForm.description || null,
+          trigger: detailedForm.trigger || null
+        })
+      })
 
-    setEmotionalJourney([newEntry, ...emotionalJourney])
-    
-    // Save to localStorage for database integration later
-    if (typeof window !== 'undefined') {
-      const existingSessions = JSON.parse(localStorage.getItem('dailyNotesSessions') || '[]')
-      existingSessions.push(newEntry)
-      localStorage.setItem('dailyNotesSessions', JSON.stringify(existingSessions))
-    }
+      const result = await response.json()
 
-    // Reset form
-    setDetailedForm({
-      description: '',
-      emotion: '',
-      intensity: 5,
-      trigger: ''
-    })
+      if (result.success) {
+        // Reload the emotional journey to show the new entry
+        await loadTodaysEmotionalJourney()
+        setError('')
+        
+        // Reset form
+        setDetailedForm({
+          description: '',
+          emotion: '',
+          intensity: 5,
+          trigger: ''
+        })
+      } else {
+        setError(result.error || 'Failed to save detailed log')
+      }
+    } catch (err) {
+      console.error('Error saving detailed log:', err)
+      setError('Failed to save detailed log')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -143,6 +210,13 @@ export default function DailyNotesPage() {
             <h1 className="text-white text-5xl font-bold mb-3">Emotional Check-ins</h1>
             <p className="text-white text-xl">Capture how you're feeling Today</p>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-center">
+              {error}
+            </div>
+          )}
 
           {/* View Mode Toggle */}
           <div className="flex justify-center gap-3 mb-8">
@@ -178,13 +252,24 @@ export default function DailyNotesPage() {
                   <button
                     key={emotion.name}
                     onClick={() => handleQuickLog(emotion.name)}
-                    className="bg-cyan-200 hover:bg-cyan-300 rounded-2xl p-6 flex flex-col items-center justify-center transition-all transform hover:scale-105 shadow-lg"
+                    disabled={isLoading}
+                    className="bg-cyan-200 hover:bg-cyan-300 rounded-2xl p-6 flex flex-col items-center justify-center transition-all transform hover:scale-110 hover:shadow-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
-                    <div className="text-5xl mb-3">{emotion.emoji}</div>
-                    <div className="text-gray-800 font-semibold text-sm">{emotion.name}</div>
+                    <div className="text-5xl mb-3 transition-transform group-hover:scale-110">
+                      {emotion.emoji}
+                    </div>
+                    <div className="text-gray-800 font-semibold text-sm transition-colors group-hover:text-blue-600">
+                      {emotion.name}
+                    </div>
                   </button>
                 ))}
               </div>
+              
+              {isLoading && (
+                <div className="text-center mt-4">
+                  <div className="text-gray-600">Saving your emotion...</div>
+                </div>
+              )}
             </div>
           )}
 
@@ -264,9 +349,10 @@ export default function DailyNotesPage() {
               {/* Log Button */}
               <button
                 onClick={handleDetailedLog}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg"
+                disabled={isLoading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Log Emotion
+                {isLoading ? 'Saving...' : 'Log Emotion'}
               </button>
             </div>
           )}
@@ -275,30 +361,48 @@ export default function DailyNotesPage() {
           <div className="bg-white rounded-3xl p-8 shadow-xl">
             <h2 className="text-gray-800 font-bold text-2xl mb-6">Today's Emotional Journey</h2>
             
-            <div className="space-y-4">
-              {emotionalJourney.map((entry) => (
-                <div key={entry.id} className="bg-cyan-100 rounded-2xl p-6 shadow-md">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl">
-                        {emotions.find(e => e.name === entry.emotion)?.emoji}
-                      </span>
-                      <span className="text-gray-800 font-bold text-lg">{entry.emotion}</span>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-gray-700 font-semibold text-sm">
-                        Intensity: {entry.intensity}/10
+            {isLoading && emotionalJourney.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <div className="text-gray-600">Loading your emotional journey...</div>
+              </div>
+            ) : emotionalJourney.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-6xl mb-4">🌱</div>
+                <h3 className="text-gray-800 font-semibold text-lg mb-2">Start Your Emotional Journey</h3>
+                <p className="text-gray-600">No entries yet today. Log your first emotion to begin tracking your daily emotional patterns.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {emotionalJourney.map((entry) => (
+                  <div key={entry.id} className="bg-cyan-100 rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">
+                          {emotions.find(e => e.name === entry.emotion)?.emoji || '😐'}
+                        </span>
+                        <span className="text-gray-800 font-bold text-lg">{entry.emotion}</span>
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">
+                          {entry.type === 'emoji' ? 'Quick' : 'Detailed'}
+                        </span>
                       </div>
-                      <div className="text-gray-600 text-sm">{entry.timestamp}</div>
+                      <div className="text-right">
+                        <div className="text-gray-700 font-semibold text-sm">
+                          Intensity: {entry.intensity}/10
+                        </div>
+                        <div className="text-gray-600 text-sm">{entry.timestamp}</div>
+                      </div>
+                    </div>
+                    {entry.description && (
+                      <div className="text-gray-800 mb-2">{entry.description}</div>
+                    )}
+                    <div className="text-gray-600 text-sm">
+                      Triggered by: {entry.trigger}
                     </div>
                   </div>
-                  <div className="text-gray-800 mb-2">{entry.description}</div>
-                  <div className="text-gray-600 text-sm">
-                    Triggered by: {entry.trigger}
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

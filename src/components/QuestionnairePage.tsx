@@ -43,7 +43,7 @@ export default function QuestionnairePage() {
     practiceGoals: null,
     preferredDuration: null,
     biggestChallenges: null,
-    additionalInfo: ''
+    motivation: null
   })
 
   const handleAnswerChange = (field: string, value: any, isMultiple = false) => {
@@ -95,7 +95,8 @@ export default function QuestionnairePage() {
            answers.meditationBackgroundDetail !== null &&
            answers.practiceGoals !== null &&
            answers.preferredDuration !== null &&
-           answers.biggestChallenges !== null
+           answers.biggestChallenges !== null &&
+           answers.motivation !== null
   }
 
   const handleNext = () => {
@@ -167,7 +168,7 @@ export default function QuestionnairePage() {
           practiceGoals: answers.practiceGoals,
           preferredDuration: answers.preferredDuration,
           biggestChallenges: answers.biggestChallenges,
-          motivation: answers.additionalInfo || ''
+          motivation: answers.motivation
         }
 
         const res = await fetch('/api/assessment/questionnaire', {
@@ -699,14 +700,18 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
         </div>
       </QuestionCard>
 
-      {/* Additional Information */}
-      <QuestionCard title="Additional Information" subtitle="Is there anything else you'd like to share about your meditation journey?" optional={true}>
-        <textarea
-          value={answers.additionalInfo}
-          onChange={(e) => onAnswerChange('additionalInfo', e.target.value)}
-          placeholder="Share any additional thoughts or goals..."
-          className="w-full h-32 p-4 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none"
-        />
+      {/* Motivation */}
+      <QuestionCard title="Motivation" subtitle="What motivates you to start this mindfulness journey?">
+        <div className="grid grid-cols-3 gap-3">
+          {['Service to others and spiritual awakening', 'Personal growth', 'Stress reduction and emotional balance', 'Better relationships', 'Improve focus and productivity', 'Doctor recommended for anxiety'].map(motivationOption => (
+            <RadioOption
+              key={motivationOption}
+              label={motivationOption}
+              selected={answers.motivation === motivationOption}
+              onChange={() => onAnswerChange('motivation', motivationOption)}
+            />
+          ))}
+        </div>
       </QuestionCard>
     </div>
   )
