@@ -64,13 +64,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Define component weights and descriptions
+    // Define component weights and descriptions (v3 STRICT mode)
     const componentDetails = {
       currentStateScore: {
         weight: 0.12,
         percentage: 12,
-        title: 'Current State',
-        description: 'Your present emotional and mental state',
+        title: 'Current State Assessment',
+        description: 'Your present emotional and mental state based on questionnaire and daily notes',
         value: Number(happinessScore.currentStateScore),
         weightedValue: Number(happinessScore.currentStateScore) * 0.12,
         category: 'Assessment'
@@ -78,8 +78,8 @@ export async function GET(request: NextRequest) {
       attachmentScore: {
         weight: 0.20,
         percentage: 20,
-        title: 'Attachment Levels',
-        description: 'Your attachment to sensory experiences and thoughts',
+        title: 'Attachment-Based Happiness',
+        description: 'Your level of attachment to sensory experiences (non-attachment brings happiness)',
         value: Number(happinessScore.attachmentScore),
         weightedValue: Number(happinessScore.attachmentScore) * 0.20,
         category: 'Assessment'
@@ -87,55 +87,56 @@ export async function GET(request: NextRequest) {
       pahmScore: {
         weight: 0.25,
         percentage: 25,
-        title: 'PAHM Matrix',
-        description: 'Your attention awareness and matrix practice progress',
+        title: 'PAHM Development (PRIMARY)',
+        description: 'Your attention awareness and Present Attention Happiness Matrix practice progress',
         value: Number(happinessScore.pahmScore),
         weightedValue: Number(happinessScore.pahmScore) * 0.25,
-        category: 'Practice'
+        category: 'Practice',
+        isPrimary: true
       },
-      practiceScore: {
-        weight: 0.15,
-        percentage: 15,
-        title: 'Practice Quality',
-        description: 'Consistency and quality of your meditation practice',
-        value: Number(happinessScore.practiceScore),
-        weightedValue: Number(happinessScore.practiceScore) * 0.15,
-        category: 'Practice'
-      },
-      progressScore: {
-        weight: 0.10,
-        percentage: 10,
-        title: 'Progress Tracking',
-        description: 'Your advancement through meditation stages',
-        value: Number(happinessScore.progressScore),
-        weightedValue: Number(happinessScore.progressScore) * 0.10,
+      emotionalStabilityScore: {
+        weight: 0.18,
+        percentage: 18,
+        title: 'Emotional Stability Progress',
+        description: 'Your emotional awareness, stress management, and thought patterns',
+        value: Number(happinessScore.emotionalStabilityScore),
+        weightedValue: Number(happinessScore.emotionalStabilityScore) * 0.18,
         category: 'Progress'
       },
-      consistencyScore: {
+      mindRecoveryScore: {
         weight: 0.08,
         percentage: 8,
-        title: 'Consistency',
-        description: 'Regularity of your practice and engagement',
-        value: Number(happinessScore.consistencyScore),
-        weightedValue: Number(happinessScore.consistencyScore) * 0.08,
+        title: 'Mind Recovery Effectiveness',
+        description: 'Effectiveness of your practice sessions in recovering present-moment awareness',
+        value: Number(happinessScore.mindRecoveryScore),
+        weightedValue: Number(happinessScore.mindRecoveryScore) * 0.08,
         category: 'Practice'
       },
-      reflectionScore: {
-        weight: 0.05,
-        percentage: 5,
-        title: 'Self-Reflection',
-        description: 'Quality of your notes and self-awareness',
-        value: Number(happinessScore.reflectionScore),
-        weightedValue: Number(happinessScore.reflectionScore) * 0.05,
+      emotionalRegulationScore: {
+        weight: 0.10,
+        percentage: 10,
+        title: 'Emotional Regulation',
+        description: 'Your ability to maintain mindful awareness and make intuitive decisions',
+        value: Number(happinessScore.emotionalRegulationScore),
+        weightedValue: Number(happinessScore.emotionalRegulationScore) * 0.10,
         category: 'Progress'
       },
-      dailyLifeScore: {
-        weight: 0.05,
-        percentage: 5,
-        title: 'Daily Life Integration',
-        description: 'Application of mindfulness in everyday activities',
-        value: Number(happinessScore.dailyLifeScore),
-        weightedValue: Number(happinessScore.dailyLifeScore) * 0.05,
+      practiceConsistencyScore: {
+        weight: 0.03,
+        percentage: 3,
+        title: 'Practice Consistency',
+        description: 'Regularity of your meditation practice and daily engagement',
+        value: Number(happinessScore.practiceConsistencyScore),
+        weightedValue: Number(happinessScore.practiceConsistencyScore) * 0.03,
+        category: 'Practice'
+      },
+      socialConnectionScore: {
+        weight: 0.04,
+        percentage: 4,
+        title: 'Social Connection',
+        description: 'Quality of your social relationships and service motivation',
+        value: Number(happinessScore.socialConnectionScore),
+        weightedValue: Number(happinessScore.socialConnectionScore) * 0.04,
         category: 'Integration'
       }
     };
@@ -268,19 +269,19 @@ function generateInsights(score: any, components: any) {
   }
 
   // Practice consistency insights
-  const consistencyScore = components.consistencyScore.value;
-  const practiceScore = components.practiceScore.value;
-  if (consistencyScore < practiceScore - 20) {
+  const consistencyScore = components.practiceConsistencyScore.value;
+  const mindRecoveryScore = components.mindRecoveryScore.value;
+  if (consistencyScore < mindRecoveryScore - 20) {
     insights.push({
       type: 'suggestion',
-      message: 'Your practice quality is good, but consistency could enhance your overall progress.',
+      message: 'Your practice quality is good, but more consistency could enhance your overall progress.',
       priority: 'medium'
     });
   }
 
   // Balance insights
   const assessmentTotal = components.currentStateScore.value + components.attachmentScore.value;
-  const practiceTotal = components.pahmScore.value + components.practiceScore.value + components.consistencyScore.value;
+  const practiceTotal = components.pahmScore.value + components.mindRecoveryScore.value + components.practiceConsistencyScore.value;
   
   if (Math.abs(assessmentTotal - practiceTotal) > 30) {
     if (assessmentTotal > practiceTotal) {

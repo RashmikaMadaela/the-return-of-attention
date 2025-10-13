@@ -4,6 +4,7 @@ import { selfAssessmentSchema, validateRequestBody } from '@/lib/validation'
 import { getAuthenticatedUser } from '@/lib/auth/middleware'
 import { handleApiError, createSuccessResponse } from '@/lib/errors'
 import { calculateSelfAssessmentScore } from '@/lib/business-logic/index'
+import { autoTriggerHappinessCalculation } from '@/lib/business-logic/auto-trigger'
 
 /**
  * POST /api/assessment/self-assessment
@@ -39,12 +40,23 @@ export async function POST(request: NextRequest) {
       }
     })
 
+    // AUTO-TRIGGER: Calculate happiness score (STRICT mode check inside)
+    const triggerResult = await autoTriggerHappinessCalculation(user.id, 'self-assessment')
+
     return createSuccessResponse({
       id: selfAssessment.id,
       totalScore: selfAssessment.totalScore,
       createdAt: selfAssessment.createdAt,
-      userId: user.id
-    }, 'Self assessment submitted successfully', 201)
+      userId: user.id,
+      happinessScore: triggerResult.calculated ? {
+        calculated: true,
+        finalScore: triggerResult.finalScore,
+        userLevel: triggerResult.userLevel
+      } : {
+        calculated: false,
+        reason: triggerResult.reason
+      }
+    }, `Self assessment submitted successfully${triggerResult.calculated ? ' and happiness score updated' : ''}`, 201)
 
   } catch (error) {
     return handleApiError(error)

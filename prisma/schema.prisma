@@ -323,24 +323,24 @@ model HappinessScore {
   id                  String   @id @default(cuid())
   userId              String
   
-  // Score components (based on Business Logic Documentation)
-  currentStateScore   Decimal  @db.Decimal(5,2) // Component 1: 12% weight
-  attachmentScore     Decimal  @db.Decimal(5,2) // Component 2: 20% weight  
-  pahmScore          Decimal  @db.Decimal(5,2) // Component 3: 25% weight
-  practiceScore      Decimal  @db.Decimal(5,2) // Component 4: 15% weight
-  progressScore      Decimal  @db.Decimal(5,2) // Component 5: 10% weight
-  consistencyScore   Decimal  @db.Decimal(5,2) // Component 6: 8% weight
-  reflectionScore    Decimal  @db.Decimal(5,2) // Component 7: 5% weight
-  dailyLifeScore     Decimal  @db.Decimal(5,2) // Component 8: 5% weight
+  // Score components (based on Business Logic Documentation v3)
+  currentStateScore          Decimal  @db.Decimal(5,2) // Component 1: Current State Assessment - 12% weight
+  attachmentScore            Decimal  @db.Decimal(5,2) // Component 2: Attachment-Based Happiness - 20% weight  
+  pahmScore                  Decimal  @db.Decimal(5,2) // Component 3: PAHM Development (PRIMARY) - 25% weight
+  emotionalStabilityScore    Decimal  @db.Decimal(5,2) // Component 4: Emotional Stability Progress - 18% weight
+  mindRecoveryScore          Decimal  @db.Decimal(5,2) // Component 5: Mind Recovery Effectiveness - 8% weight
+  emotionalRegulationScore   Decimal  @db.Decimal(5,2) // Component 6: Emotional Regulation - 10% weight
+  practiceConsistencyScore   Decimal  @db.Decimal(5,2) // Component 7: Practice Consistency - 3% weight
+  socialConnectionScore      Decimal  @db.Decimal(5,2) // Component 8: Social Connection - 4% weight
   
-  // Final calculated score
+  // Final calculated score (sum of weighted components)
   finalScore         Decimal  @db.Decimal(5,2) // 0-100
-  userLevel          String   // 'Seeker', 'Aware Seeker', etc.
+  userLevel          String   // 'Seeker', 'Active Seeker', 'Awakening Seeker', 'Progressing Seeker', 'Advanced Seeker', 'Enlightened Seeker'
   
-  // Calculation metadata
-  questionnaireBased Boolean  @default(false)
-  selfAssessmentBased Boolean @default(false)
-  practiceEnhanced   Boolean  @default(false)
+  // Calculation metadata (STRICT mode requirements)
+  questionnaireBased Boolean  @default(false) // Must be true
+  selfAssessmentBased Boolean @default(false) // Must be true
+  practiceEnhanced   Boolean  @default(false) // Optional enhancement
   
   calculatedAt       DateTime @default(now())
   

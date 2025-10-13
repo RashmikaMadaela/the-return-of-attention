@@ -16,16 +16,7 @@ export async function GET(_request: NextRequest) {
     // Get user profile data
     const userProfile = await prisma.user.findUnique({
       where: { id: user.id },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        image: true,
-        emailVerified: true,
-        isActive: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
+      include: {
         profile: {
           select: {
             age: true,

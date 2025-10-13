@@ -186,14 +186,16 @@ export const dailyNoteSchema = z.object({
 })
 
 export const happinessCalculationSchema = z.object({
-  currentStateScore: z.number().min(0).max(100),
-  attachmentScore: z.number().min(0).max(100),
-  pahmScore: z.number().min(0).max(100),
-  practiceScore: z.number().min(0).max(100),
-  progressScore: z.number().min(0).max(100),
-  consistencyScore: z.number().min(0).max(100),
-  reflectionScore: z.number().min(0).max(100),
-  dailyLifeScore: z.number().min(0).max(100),
+  // Component scores (aligned with documentation v3)
+  currentStateScore: z.number().min(0).max(100),          // Component 1: 12%
+  attachmentScore: z.number().min(0).max(100),            // Component 2: 20%
+  pahmScore: z.number().min(0).max(100),                  // Component 3: 25% PRIMARY
+  emotionalStabilityScore: z.number().min(0).max(100),    // Component 4: 18%
+  mindRecoveryScore: z.number().min(0).max(100),          // Component 5: 8%
+  emotionalRegulationScore: z.number().min(0).max(100),   // Component 6: 10%
+  practiceConsistencyScore: z.number().min(0).max(100),   // Component 7: 3%
+  socialConnectionScore: z.number().min(0).max(100),      // Component 8: 4%
+  // STRICT mode metadata - both must be true for valid calculation
   questionnaireBased: z.boolean().default(false),
   selfAssessmentBased: z.boolean().default(false),
   practiceEnhanced: z.boolean().default(false)
