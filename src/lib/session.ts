@@ -48,15 +48,29 @@ export async function requireAdmin(request: NextRequest) {
     )
   }
 
-  // Check if user is admin
-  const adminUser = await prisma.adminUser.findUnique({
+  // Check if user has admin or super_admin role
+  const user = await prisma.user.findUnique({
     where: { 
-      userId: session.user.id,
-      isActive: true 
+      id: session.user.id
+    },
+    select: {
+      role: true,
+      isActive: true
     }
   })
 
-  if (!adminUser) {
+  if (!user || !user.isActive) {
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: 'Account is inactive.',
+        code: 'ACCOUNT_INACTIVE'
+      }, 
+      { status: 403 }
+    )
+  }
+
+  if (user.role !== 'admin' && user.role !== 'super_admin') {
     return NextResponse.json(
       { 
         success: false, 
