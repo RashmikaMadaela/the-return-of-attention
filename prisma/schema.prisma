@@ -241,11 +241,36 @@ model Session {
   updatedAt       DateTime @updatedAt
 
   // Relations
-  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stage        Stage        @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stage        Stage             @relation(fields: [stageId], references: [id], onDelete: Cascade)
   pahmSession  PAHMSession?
+  challenges   SessionChallenge? // Track challenges faced during session
 
   @@map("sessions")
+}
+
+model SessionChallenge {
+  id                    String   @id @default(cuid())
+  sessionId             String   @unique
+  
+  // Challenges faced during session (multi-select checkboxes)
+  mindWandering         Boolean  @default(false)
+  physicalDiscomfort    Boolean  @default(false)
+  sleepiness            Boolean  @default(false)
+  restlessness          Boolean  @default(false)
+  strongEmotions        Boolean  @default(false)
+  externalDistractions  Boolean  @default(false)
+  
+  // Additional notes about challenges
+  notes                 String?  @db.Text
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("session_challenges")
 }
 
 // ============================================================================
