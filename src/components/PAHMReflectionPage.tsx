@@ -19,6 +19,7 @@ interface PAHMData {
 interface ReflectionData {
   notes: string
   challenges: string[]
+  qualityRating: number
 }
 
 export default function PAHMReflectionPage() {
@@ -43,7 +44,8 @@ export default function PAHMReflectionPage() {
 
   const [reflection, setReflection] = useState<ReflectionData>({
     notes: '',
-    challenges: []
+    challenges: [],
+    qualityRating: 5
   })
 
   const [sessionDuration, setSessionDuration] = useState(30)
@@ -282,6 +284,29 @@ export default function PAHMReflectionPage() {
               placeholder="Enter your reflections and insights here"
               className="w-full h-32 p-4 border-2 border-gray-200 rounded-lg mb-8 resize-none focus:outline-none focus:border-blue-500 text-black"
             />
+
+            {/* Quality Rating Slider */}
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-black mb-2">Session Quality Rating</h2>
+              <p className="text-gray-600 text-sm mb-4">How would you rate the overall quality of this practice session?</p>
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-gray-700 min-w-[80px]">Poor (1)</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={reflection.qualityRating}
+                  onChange={(e) => setReflection(prev => ({ ...prev, qualityRating: parseInt(e.target.value) }))}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                />
+                <span className="text-sm font-medium text-gray-700 min-w-[100px]">Excellent (10)</span>
+              </div>
+              <div className="text-center mt-2">
+                <span className="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-bold text-lg">
+                  {reflection.qualityRating} / 10
+                </span>
+              </div>
+            </div>
 
             <h2 className="text-xl font-bold text-black mb-4">Challenges</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
