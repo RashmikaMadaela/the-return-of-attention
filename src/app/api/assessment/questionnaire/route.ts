@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { questionnaireSchema, validateRequestBody } from '@/lib/validation'
 import { getAuthenticatedUser } from '@/lib/auth/middleware'
 import { handleApiError, createSuccessResponse, CommonErrors } from '@/lib/errors'
+import { normalizeQuestionnaire } from '@/lib/business-logic/questionnaire-normalization'
 
 /**
  * POST /api/assessment/questionnaire
@@ -35,11 +36,14 @@ export async function POST(request: NextRequest) {
       throw CommonErrors.assessmentCompleted('Questionnaire')
     }
 
+    // Normalize questionnaire data (convert UI strings to calculation format)
+    const normalizedData = normalizeQuestionnaire(validation.data)
+
     // Create questionnaire record
     const questionnaire = await prisma.questionnaire.create({
       data: {
         userId: user.id,
-        ...validation.data,
+        ...normalizedData,
         isCompleted: new Date()
       }
     })
@@ -164,11 +168,14 @@ export async function PUT(request: NextRequest) {
       }, { status: 400 })
     }
 
+    // Normalize questionnaire data (convert UI strings to calculation format)
+    const normalizedData = normalizeQuestionnaire(validation.data)
+
     // Update questionnaire
     const updatedQuestionnaire = await prisma.questionnaire.update({
       where: { userId: user.id },
       data: {
-        ...validation.data,
+        ...normalizedData,
         isCompleted: new Date() // Mark as completed on update
       }
     })
