@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
+import { startSession, type StartSessionRequest } from '@/lib/api/sessions'
 
 interface SessionSettings {
   posture: string
@@ -21,6 +22,10 @@ export default function SessionSetupPage() {
     bells: true,
     voiceCommands: true
   })
+  
+  // Loading and error states
+  const [isStarting, setIsStarting] = useState(false)
+  const [startError, setStartError] = useState<string | null>(null)
 
   // Get stage info - Only handles Stage 1 T1-T5
   const getStageInfo = () => {
@@ -76,20 +81,55 @@ export default function SessionSetupPage() {
     }
   }
 
-  const handleStart = () => {
-    // Store session settings and stage info
-    const settingsToStore = {
-      ...sessionSettings,
-      stage: stageId || '1',
-      title: `${stage.name}: Physical Stillness Training`
+  const handleStart = async () => {
+    setIsStarting(true)
+    setStartError(null)
+
+    // Prepare session start request
+    const request: StartSessionRequest = {
+      stageNumber: 1, // Stage 1 always
+      subStage: stage.name, // T1, T2, T3, T4, T5
+      sessionType: 'timer_only',
+      duration: sessionSettings.duration,
+      posture: sessionSettings.posture as any, // Cast to match API type
+      meditationBells: sessionSettings.bells,
+      voiceCommands: sessionSettings.voiceCommands,
     }
-    
-    sessionStorage.setItem('sessionSettings', JSON.stringify(settingsToStore))
-    sessionStorage.setItem('currentStage', stageId || '1')
-    sessionStorage.setItem('previousPage', `/stage-1/session-setup?stage=${stageId}`)
-    
-    // Stage 1 T1-T5 use regular timer page
-    router.push(`/timer?stage=${stageId}`)
+
+    try {
+      // Call API to start session
+      const response = await startSession(request)
+
+      if (!response.success) {
+        setStartError(response.message)
+        setIsStarting(false)
+        return
+      }
+
+      // Save session ID and settings for timer page
+      const sessionData = {
+        sessionId: response.data!.id,
+        stageNumber: response.data!.stageNumber,
+        subStage: response.data!.subStage,
+        sessionType: response.data!.sessionType,
+        duration: response.data!.duration,
+        posture: response.data!.posture,
+        startedAt: response.data!.startedAt,
+        settings: sessionSettings,
+        title: `${stage.name}: Physical Stillness Training`
+      }
+      
+      sessionStorage.setItem('activeSession', JSON.stringify(sessionData))
+      sessionStorage.setItem('currentStage', stageId || '1')
+      sessionStorage.setItem('previousPage', `/stage-1/session-setup?stage=${stageId}`)
+      
+      // Navigate to timer page with sessionId
+      router.push(`/timer?stage=${stageId}&sessionId=${response.data!.id}`)
+    } catch (error) {
+      console.error('Error starting session:', error)
+      setStartError('Failed to start session. Please try again.')
+      setIsStarting(false)
+    }
   }
 
   return (
@@ -189,18 +229,41 @@ export default function SessionSetupPage() {
                   </div>
                 </div>
 
+                {/* Error Display */}
+                {startError && (
+                  <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
+                    <p className="font-semibold">⚠️ Error</p>
+                    <p className="text-sm">{startError}</p>
+                    <button 
+                      onClick={() => setStartError(null)}
+                      className="mt-2 text-sm underline hover:no-underline"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                )}
+
                 <div className="flex gap-4 mt-6">
                   <button
                     onClick={handleBack}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold"
+                    disabled={isStarting}
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleStart}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
+                    disabled={isStarting}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    Start
+                    {isStarting ? (
+                      <>
+                        <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                        <span>Starting...</span>
+                      </>
+                    ) : (
+                      'Start'
+                    )}
                   </button>
                 </div>
               </div>

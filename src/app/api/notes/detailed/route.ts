@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { autoTriggerHappinessCalculation } from '@/lib/business-logic/auto-trigger';
 
 // Validation schema for detailed note submission
 const detailedNoteSchema = z.object({
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       message: 'Detailed note created successfully',
       data: {
@@ -83,6 +84,14 @@ export async function POST(request: NextRequest) {
         updatedAt: dailyNote.updatedAt
       }
     });
+
+    // Auto-trigger happiness score calculation after note creation
+    // This runs asynchronously without blocking the response
+    autoTriggerHappinessCalculation(user.id, 'daily-note').catch(error => {
+      console.error('Failed to auto-trigger happiness calculation after detailed note:', error)
+    })
+
+    return response
 
   } catch (error) {
     console.error('Error in detailed note submission:', error);

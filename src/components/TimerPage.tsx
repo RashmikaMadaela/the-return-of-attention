@@ -12,10 +12,23 @@ interface TimerState {
   startedAt: Date | null
 }
 
+interface SessionData {
+  sessionId: string
+  stageNumber: number
+  subStage?: string
+  sessionType: string
+  duration: number
+  posture: string
+  startedAt: string
+  settings: any
+  title: string
+}
+
 export default function TimerPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stage')
+  const sessionId = searchParams.get('sessionId') // Get sessionId from URL
   const isAdminMode = searchParams.get('admin') === 'true'
   const audioContextRef = useRef<AudioContext | null>(null)
 
@@ -27,52 +40,69 @@ export default function TimerPage() {
     startedAt: null
   })
 
+  const [sessionData, setSessionData] = useState<SessionData | null>(null)
   const [sessionSettings, setSessionSettings] = useState<any>(null)
   const [stage, setStage] = useState<any>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    // Load session settings and stage info
-    const settings = sessionStorage.getItem('sessionSettings')
-    if (settings) {
-      const parsedSettings = JSON.parse(settings)
-      setSessionSettings(parsedSettings)
-      const duration = parsedSettings.duration || 10
+    // Load session data from sessionStorage (set by SessionSetupPage)
+    const activeSession = sessionStorage.getItem('activeSession')
+    if (activeSession) {
+      const parsedSession: SessionData = JSON.parse(activeSession)
+      setSessionData(parsedSession)
+      setSessionSettings(parsedSession.settings)
+      
+      // Set timer duration from session data
+      const duration = parsedSession.duration
       setTimer(prev => ({
         ...prev,
         minutes: duration,
         totalSeconds: duration * 60
       }))
+
+      // Set stage info
+      const stageNum = parseInt(stageId || '1')
+      const stageDurations = {
+        1: { name: 'T1', minTime: 10 },
+        2: { name: 'T2', minTime: 15 },
+        3: { name: 'T3', minTime: 20 },
+        4: { name: 'T4', minTime: 25 },
+        5: { name: 'T5', minTime: 30 }
+      }
+      
+      const stageInfo = stageDurations[stageNum as keyof typeof stageDurations] || stageDurations[1]
+      setStage({ id: stageNum, ...stageInfo })
     } else {
-      // Default settings if none found
-      const defaultDuration = 10
-      setTimer(prev => ({
-        ...prev,
-        minutes: defaultDuration,
-        totalSeconds: defaultDuration * 60
-      }))
+      // Fallback: Try old sessionSettings format for backward compatibility
+      const settings = sessionStorage.getItem('sessionSettings')
+      if (settings) {
+        const parsedSettings = JSON.parse(settings)
+        setSessionSettings(parsedSettings)
+        const duration = parsedSettings.duration || 10
+        setTimer(prev => ({
+          ...prev,
+          minutes: duration,
+          totalSeconds: duration * 60
+        }))
+      } else {
+        console.warn('No session data found, redirecting to setup...')
+        router.push(`/stage-1/session-setup?stage=${stageId}`)
+      }
     }
 
-    // Load stage info with proper T1-T5 names and durations
-    const stageNum = parseInt(stageId || '1')
-    const stageDurations = {
-      1: { name: 'T1', minTime: 10 },
-      2: { name: 'T2', minTime: 15 },
-      3: { name: 'T3', minTime: 20 },
-      4: { name: 'T4', minTime: 25 },
-      5: { name: 'T5', minTime: 30 }
+    // Verify sessionId is present
+    if (!sessionId && !isAdminMode) {
+      console.warn('No sessionId found in URL, redirecting to setup...')
+      router.push(`/stage-1/session-setup?stage=${stageId}`)
     }
-    
-    const stageInfo = stageDurations[stageNum as keyof typeof stageDurations] || stageDurations[1]
-    setStage({ id: stageNum, ...stageInfo })
 
-    // Initialize audio context on user interaction
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
       }
     }
-  }, [stageId])
+  }, [stageId, sessionId, isAdminMode, router])
 
   const playBell = async () => {
     try {
@@ -189,22 +219,18 @@ export default function TimerPage() {
       setTimeout(() => playBell(), 2000)
     }
     
-    // Save session completion
-    const sessionData = {
-      stageId: parseInt(stageId || '1'),
-      duration: sessionSettings?.duration || 10,
-      completedAt: new Date().toISOString(),
-      posture: sessionSettings?.posture || 'sitting'
-    }
+    // Calculate actual session duration (in minutes)
+    const actualDurationMinutes = sessionSettings?.duration || 10
+    sessionStorage.setItem('actualSessionDuration', actualDurationMinutes.toString())
     
-    const sessions = JSON.parse(localStorage.getItem('completedSessions') || '[]')
-    sessions.push(sessionData)
-    localStorage.setItem('completedSessions', JSON.stringify(sessions))
-    
-    // Store full session duration and navigate to reflection page after a brief pause
-    sessionStorage.setItem('actualSessionDuration', (sessionSettings?.duration || 10).toString())
+    // Navigate to reflection page with sessionId after a brief pause
     setTimeout(() => {
-      router.push(`/stage-1/reflection?stage=${stageId}`)
+      if (sessionId) {
+        router.push(`/stage-1/reflection?sessionId=${sessionId}&stage=${stageId}`)
+      } else {
+        // Fallback for backward compatibility
+        router.push(`/stage-1/reflection?stage=${stageId}`)
+      }
     }, 3000)
   }
 
@@ -286,7 +312,13 @@ export default function TimerPage() {
                   // Calculate actual session duration
                   const actualDuration = Math.floor(((sessionSettings?.duration || 10) * 60 - timer.totalSeconds) / 60)
                   sessionStorage.setItem('actualSessionDuration', actualDuration.toString())
-                  router.push(`/stage-1/reflection?stage=${stageId}`)
+                  
+                  // Navigate to reflection with sessionId
+                  if (sessionId) {
+                    router.push(`/stage-1/reflection?sessionId=${sessionId}&stage=${stageId}`)
+                  } else {
+                    router.push(`/stage-1/reflection?stage=${stageId}`)
+                  }
                 }}
                 className="bg-pink-600 hover:bg-pink-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
               >

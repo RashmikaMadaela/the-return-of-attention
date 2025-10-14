@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
+import { startSession, type StartSessionRequest, type ExerciseType } from '@/lib/api/sessions'
 
 interface SessionSettings {
   posture: string
@@ -26,6 +27,10 @@ export default function PAHMSessionSetupPage() {
   })
   
   const [isMindRecovery, setIsMindRecovery] = useState(false)
+  
+  // Loading and error states
+  const [isStarting, setIsStarting] = useState(false)
+  const [startError, setStartError] = useState<string | null>(null)
 
   // Get stage info for PAHM stages and mind recovery
   const getStageInfo = () => {
@@ -133,26 +138,79 @@ export default function PAHMSessionSetupPage() {
     }
   }
 
-  const handleStart = () => {
-    // Store session settings and stage info
-    const settingsToStore = {
-      ...sessionSettings,
-      stage: stage.isMindRecovery ? 'mind-recovery' : (stageId || '2'),
-      sessionType: mindRecoverySession || sessionType,
-      title: stage.name
+  const handleStart = async () => {
+    setIsStarting(true)
+    setStartError(null)
+
+    // Map mind recovery session names to API exercise types
+    const exerciseTypeMap: { [key: string]: ExerciseType } = {
+      'morning': 'morning_recharge',
+      'midday': 'midday_reset',
+      'emotional': 'emotional_reset',
+      'transition': 'work_home_transition',
+      'bedtime': 'bedtime_wind_down'
     }
+
+    // Determine session type and prepare request
+    const isMindRecoverySession = stage.isMindRecovery
+    const sessionTypeValue = isMindRecoverySession ? 'mind_recovery' : 'pahm_matrix'
     
-    sessionStorage.setItem('sessionSettings', JSON.stringify(settingsToStore))
-    sessionStorage.setItem('currentStage', stageId || '2')
-    
-    if (stage.isMindRecovery) {
-      sessionStorage.setItem('previousPage', `/pahm-session-setup?type=mind-recovery&session=${mindRecoverySession}`)
-      // Mind recovery uses PAHM timer with mind-recovery stage identifier
-      router.push(`/pahm-timer?stage=mind-recovery&session=${mindRecoverySession}`)
-    } else {
-      sessionStorage.setItem('previousPage', `/pahm-session-setup?stage=${stageId}${sessionType ? `&type=${sessionType}` : ''}`)
-      // Navigate to PAHM timer
-      router.push(`/pahm-timer?stage=${stageId}`)
+    // Prepare session start request
+    const request: StartSessionRequest = {
+      stageNumber: isMindRecoverySession ? parseInt(stageId || '2') : parseInt(stageId || '2'),
+      sessionType: sessionTypeValue as any,
+      duration: sessionSettings.duration,
+      posture: sessionSettings.posture as any,
+      meditationBells: sessionSettings.bells,
+      voiceCommands: sessionSettings.voiceCommands,
+    }
+
+    // Add exercise type for mind recovery sessions
+    if (isMindRecoverySession && mindRecoverySession) {
+      request.exerciseType = exerciseTypeMap[mindRecoverySession]
+    }
+
+    try {
+      // Call API to start session
+      const response = await startSession(request)
+
+      if (!response.success) {
+        setStartError(response.message)
+        setIsStarting(false)
+        return
+      }
+
+      // Save session data for timer page
+      const sessionData = {
+        sessionId: response.data!.id,
+        pahmSessionId: response.data!.pahmSessionId,
+        stageNumber: response.data!.stageNumber,
+        sessionType: response.data!.sessionType,
+        duration: response.data!.duration,
+        posture: response.data!.posture,
+        startedAt: response.data!.startedAt,
+        settings: sessionSettings,
+        stage: stage.isMindRecovery ? 'mind-recovery' : (stageId || '2'),
+        mindRecoverySession: mindRecoverySession,
+        title: stage.name
+      }
+      
+      sessionStorage.setItem('activeSession', JSON.stringify(sessionData))
+      sessionStorage.setItem('currentStage', stageId || '2')
+      
+      if (stage.isMindRecovery) {
+        sessionStorage.setItem('previousPage', `/pahm-session-setup?type=mind-recovery&session=${mindRecoverySession}`)
+        // Mind recovery uses PAHM timer with mind-recovery stage identifier
+        router.push(`/pahm-timer?stage=mind-recovery&session=${mindRecoverySession}&sessionId=${response.data!.id}`)
+      } else {
+        sessionStorage.setItem('previousPage', `/pahm-session-setup?stage=${stageId}${sessionType ? `&type=${sessionType}` : ''}`)
+        // Navigate to PAHM timer
+        router.push(`/pahm-timer?stage=${stageId}&sessionId=${response.data!.id}`)
+      }
+    } catch (error) {
+      console.error('Error starting session:', error)
+      setStartError('Failed to start session. Please try again.')
+      setIsStarting(false)
     }
   }
 
@@ -262,18 +320,41 @@ export default function PAHMSessionSetupPage() {
                   </div>
                 </div>
 
+                {/* Error Display */}
+                {startError && (
+                  <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
+                    <p className="font-semibold">⚠️ Error</p>
+                    <p className="text-sm">{startError}</p>
+                    <button 
+                      onClick={() => setStartError(null)}
+                      className="mt-2 text-sm underline hover:no-underline"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                )}
+
                 <div className="flex gap-4 mt-6">
                   <button
                     onClick={handleBack}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold"
+                    disabled={isStarting}
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleStart}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-semibold"
+                    disabled={isStarting}
+                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    Start PAHM Session
+                    {isStarting ? (
+                      <>
+                        <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                        <span>Starting...</span>
+                      </>
+                    ) : (
+                      'Start PAHM Session'
+                    )}
                   </button>
                 </div>
               </div>

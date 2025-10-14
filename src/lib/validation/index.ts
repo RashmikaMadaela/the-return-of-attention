@@ -133,8 +133,10 @@ export const sessionStartSchema = z.object({
   subStage: z.string().optional(), // 'T1', 'T2', etc. for Stage 1
   sessionType: z.enum(['timer_only', 'pahm_matrix', 'mind_recovery']),
   duration: z.number().min(1).max(120), // 1-120 minutes
-  posture: z.enum(['sitting', 'lying', 'walking', 'custom']).optional(),
-  exerciseType: z.string().optional() // For mind recovery exercises
+  posture: z.enum(['sitting', 'cushion', 'half-lotus', 'lying', 'standing', 'full-lotus', 'burmese', 'seiza', 'other']).optional(),
+  exerciseType: z.string().optional(), // For mind recovery exercises
+  meditationBells: z.boolean().optional().default(true), // Audio: Meditation bells
+  voiceCommands: z.boolean().optional().default(true) // Audio: Voice commands
 })
 
 export const sessionUpdateSchema = z.object({
@@ -154,8 +156,21 @@ export const sessionCompleteSchema = z.object({
     clickData: z.array(z.object({
       position: z.string(),
       timestamp: z.string(),
-      timeFromStart: z.number()
+      timeFromStart: z.number(),
+      coordinates: z.object({
+        x: z.number(),
+        y: z.number()
+      }).optional()
     })).optional()
+  }).optional(),
+  challenges: z.object({
+    mindWandering: z.boolean().default(false),
+    physicalDiscomfort: z.boolean().default(false),
+    sleepiness: z.boolean().default(false),
+    restlessness: z.boolean().default(false),
+    strongEmotions: z.boolean().default(false),
+    externalDistractions: z.boolean().default(false),
+    notes: z.string().max(500).optional()
   }).optional()
 })
 

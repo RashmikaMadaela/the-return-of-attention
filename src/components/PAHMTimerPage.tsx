@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
+import { type PAHMClick, type PAHMPosition } from '@/lib/api/sessions'
 
 interface TimerState {
   minutes: number
@@ -24,10 +25,25 @@ interface PAHMTracking {
   worry: number
 }
 
+interface SessionData {
+  sessionId: string
+  pahmSessionId?: string
+  stageNumber: number
+  sessionType: string
+  duration: number
+  posture: string
+  startedAt: string
+  settings: any
+  stage: string
+  mindRecoverySession?: string
+  title: string
+}
+
 export default function PAHMTimerPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stage') || '2'
+  const sessionId = searchParams.get('sessionId') // Get sessionId from URL
   const mindRecoverySession = searchParams.get('session')
   const isAdminMode = searchParams.get('admin') === 'true'
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -54,6 +70,11 @@ export default function PAHMTimerPage() {
     worry: 0
   })
 
+  // Track PAHM clicks with full data (timestamp, coordinates)
+  const [pahmClicks, setPahmClicks] = useState<PAHMClick[]>([])
+  const sessionStartTimeRef = useRef<number>(Date.now())
+
+  const [sessionData, setSessionData] = useState<SessionData | null>(null)
   const [sessionSettings, setSessionSettings] = useState<any>(null)
   const [stage, setStage] = useState<any>(null)
   const [clickedButton, setClickedButton] = useState<string | null>(null)
@@ -63,22 +84,57 @@ export default function PAHMTimerPage() {
   const pulseIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    // Load session settings and stage info
-    const settings = sessionStorage.getItem('sessionSettings')
-    if (settings) {
-      const parsedSettings = JSON.parse(settings)
-      setSessionSettings(parsedSettings)
-      const duration = parsedSettings.duration
+    // Set session start time
+    sessionStartTimeRef.current = Date.now()
+
+    // Load session data from sessionStorage (set by PAHMSessionSetupPage)
+    const activeSession = sessionStorage.getItem('activeSession')
+    if (activeSession) {
+      const parsedSession: SessionData = JSON.parse(activeSession)
+      setSessionData(parsedSession)
+      setSessionSettings(parsedSession.settings)
+      
+      // Set timer duration from session data
+      const duration = parsedSession.duration
       setTimer(prev => ({
         ...prev,
         minutes: duration,
         totalSeconds: duration * 60
       }))
+
+      // Load stage info
+      const currentStage = getStageInfo(parseInt(stageId))
+      setStage(currentStage)
+    } else {
+      // Fallback: Try old sessionSettings format for backward compatibility
+      const settings = sessionStorage.getItem('sessionSettings')
+      if (settings) {
+        const parsedSettings = JSON.parse(settings)
+        setSessionSettings(parsedSettings)
+        const duration = parsedSettings.duration || 30
+        setTimer(prev => ({
+          ...prev,
+          minutes: duration,
+          totalSeconds: duration * 60
+        }))
+        
+        const currentStage = getStageInfo(parseInt(stageId))
+        setStage(currentStage)
+      } else {
+        console.warn('No session data found, redirecting to setup...')
+        router.push(`/pahm-session-setup?stage=${stageId}`)
+      }
     }
 
-    // Load stage info
-    const currentStage = getStageInfo(parseInt(stageId))
-    setStage(currentStage)
+    // Verify sessionId is present
+    if (!sessionId && !isAdminMode) {
+      console.warn('No sessionId found in URL, redirecting to setup...')
+      if (isMindRecovery) {
+        router.push(`/pahm-session-setup?type=mind-recovery&session=${mindRecoverySession}`)
+      } else {
+        router.push(`/pahm-session-setup?stage=${stageId}`)
+      }
+    }
 
     // Start pulsing animation
     startPulseAnimation()
@@ -91,7 +147,7 @@ export default function PAHMTimerPage() {
         clearInterval(pulseIntervalRef.current)
       }
     }
-  }, [stageId])
+  }, [stageId, sessionId, isAdminMode, isMindRecovery, mindRecoverySession, router])
 
   const getStageInfo = (stageNum: number) => {
     const stageNames = {
@@ -212,44 +268,65 @@ export default function PAHMTimerPage() {
       setTimeout(() => playBell(), 2000)
     }
     
-    // Save session completion
-    const sessionData = {
-      stageId: parseInt(stageId),
-      duration: sessionSettings?.duration || 30,
-      completedAt: new Date().toISOString(),
-      posture: sessionSettings?.posture || 'sitting',
-      pahmTracking: pahmTracking
-    }
-    
-    const sessions = JSON.parse(localStorage.getItem('completedPAHMSessions') || '[]')
-    sessions.push(sessionData)
-    localStorage.setItem('completedPAHMSessions', JSON.stringify(sessions))
-    
-    // Store PAHM data for reflection page
-    sessionStorage.setItem('pahmData', JSON.stringify(pahmTracking))
+    // Store PAHM click data for reflection page (full data for API)
+    sessionStorage.setItem('pahmClickData', JSON.stringify(pahmClicks))
+    sessionStorage.setItem('pahmTracking', JSON.stringify(pahmTracking)) // Simple counts for display
     sessionStorage.setItem('sessionDuration', (sessionSettings?.duration || 30).toString())
-    
-    // Store full session duration and navigate to reflection page after a brief pause
     sessionStorage.setItem('actualSessionDuration', (sessionSettings?.duration || 30).toString())
+    
+    // Navigate to reflection page with sessionId after a brief pause
     setTimeout(() => {
       if (isMindRecovery) {
-        // Mind recovery sessions go to reflection page with mind-recovery stage
-        router.push(`/pahm-reflection?stage=mind-recovery&session=${mindRecoverySession}`)
+        // Mind recovery sessions go to reflection page with sessionId
+        if (sessionId) {
+          router.push(`/pahm-reflection?sessionId=${sessionId}&stage=mind-recovery&session=${mindRecoverySession}`)
+        } else {
+          router.push(`/pahm-reflection?stage=mind-recovery&session=${mindRecoverySession}`)
+        }
       } else {
-        // Regular PAHM sessions go to reflection page
-        router.push(`/pahm-reflection?stage=${stageId}`)
+        // Regular PAHM sessions go to reflection page with sessionId
+        if (sessionId) {
+          router.push(`/pahm-reflection?sessionId=${sessionId}&stage=${stageId}`)
+        } else {
+          router.push(`/pahm-reflection?stage=${stageId}`)
+        }
       }
     }, 3000)
   }
 
 
 
-  const handlePahmClick = (position: keyof PAHMTracking) => {
+  const handlePahmClick = (position: keyof PAHMTracking, event?: React.MouseEvent) => {
     if (timer.isRunning) {
+      // Update simple tracking (for display)
       setPahmTracking(prev => ({
         ...prev,
         [position]: prev[position] + 1
       }))
+      
+      // Track full click data with timestamp and coordinates for API
+      const now = Date.now()
+      const timeFromStart = Math.floor((now - sessionStartTimeRef.current) / 1000) // seconds
+      
+      let coordinates = { x: 0, y: 0 }
+      if (event) {
+        const rect = event.currentTarget.getBoundingClientRect()
+        coordinates = {
+          x: Math.floor(event.clientX - rect.left),
+          y: Math.floor(event.clientY - rect.top)
+        }
+      }
+
+      const click: PAHMClick = {
+        position: position as PAHMPosition,
+        timestamp: new Date(now).toISOString(), // Convert to ISO string
+        timeFromStart: timeFromStart,
+        coordinates: coordinates
+      }
+
+      setPahmClicks(prev => [...prev, click])
+      
+      // Visual feedback
       setClickedButton(position)
       setTimeout(() => setClickedButton(null), 300)
     }
@@ -478,7 +555,7 @@ export default function PAHMTimerPage() {
             {/* PAHM Matrix */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8 max-w-xs sm:max-w-md lg:max-w-lg mx-auto px-2">
               <button
-                onClick={() => handlePahmClick('nostalgia')}
+                onClick={(e) => handlePahmClick('nostalgia', e)}
                 disabled={!timer.isRunning}
                 className={`btn-nostalgia bg-orange-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
                   clickedButton === 'nostalgia' ? 'click-animation' : ''
@@ -487,7 +564,7 @@ export default function PAHMTimerPage() {
                 Nostalgia
               </button>
               <button
-                onClick={() => handlePahmClick('likes')}
+                onClick={(e) => handlePahmClick('likes', e)}
                 disabled={!timer.isRunning}
                 className={`btn-likes bg-teal-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
                   clickedButton === 'likes' ? 'click-animation' : ''
@@ -496,7 +573,7 @@ export default function PAHMTimerPage() {
                 Likes
               </button>
               <button
-                onClick={() => handlePahmClick('anticipation')}
+                onClick={(e) => handlePahmClick('anticipation', e)}
                 disabled={!timer.isRunning}
                 className={`btn-anticipation bg-purple-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
                   clickedButton === 'anticipation' ? 'click-animation' : ''
@@ -506,7 +583,7 @@ export default function PAHMTimerPage() {
               </button>
 
               <button
-                onClick={() => handlePahmClick('past')}
+                onClick={(e) => handlePahmClick('past', e)}
                 disabled={!timer.isRunning}
                 className={`btn-past bg-yellow-400 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
                   clickedButton === 'past' ? 'click-animation' : ''
@@ -515,7 +592,7 @@ export default function PAHMTimerPage() {
                 Past
               </button>
               <button
-                onClick={() => handlePahmClick('present')}
+                onClick={(e) => handlePahmClick('present', e)}
                 disabled={!timer.isRunning}
                 className={`btn-present bg-gray-200 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 leading-tight ${
                   clickedButton === 'present' ? 'click-animation' : ''
@@ -524,7 +601,7 @@ export default function PAHMTimerPage() {
                 Present<br/>or Neutral
               </button>
               <button
-                onClick={() => handlePahmClick('future')}
+                onClick={(e) => handlePahmClick('future', e)}
                 disabled={!timer.isRunning}
                 className={`btn-future bg-blue-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
                   clickedButton === 'future' ? 'click-animation' : ''
@@ -534,7 +611,7 @@ export default function PAHMTimerPage() {
               </button>
 
               <button
-                onClick={() => handlePahmClick('regret')}
+                onClick={(e) => handlePahmClick('regret', e)}
                 disabled={!timer.isRunning}
                 className={`btn-regret bg-orange-400 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
                   clickedButton === 'regret' ? 'click-animation' : ''
@@ -543,7 +620,7 @@ export default function PAHMTimerPage() {
                 Regret
               </button>
               <button
-                onClick={() => handlePahmClick('dislikes')}
+                onClick={(e) => handlePahmClick('dislikes', e)}
                 disabled={!timer.isRunning}
                 className={`btn-dislikes bg-pink-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
                   clickedButton === 'dislikes' ? 'click-animation' : ''
@@ -552,7 +629,7 @@ export default function PAHMTimerPage() {
                 Dislikes
               </button>
               <button
-                onClick={() => handlePahmClick('worry')}
+                onClick={(e) => handlePahmClick('worry', e)}
                 disabled={!timer.isRunning}
                 className={`btn-worry bg-purple-200 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
                   clickedButton === 'worry' ? 'click-animation' : ''
@@ -584,17 +661,27 @@ export default function PAHMTimerPage() {
                 onClick={() => {
                   // Calculate actual session duration
                   const actualDuration = Math.floor(((sessionSettings?.duration || 30) * 60 - timer.totalSeconds) / 60)
-                  // Save current PAHM data and navigate appropriately
+                  // Save PAHM click data for reflection page (both full data and simple counts)
+                  sessionStorage.setItem('pahmClickData', JSON.stringify(pahmClicks))
+                  sessionStorage.setItem('pahmTracking', JSON.stringify(pahmTracking))
                   sessionStorage.setItem('pahmData', JSON.stringify(pahmTracking))
                   sessionStorage.setItem('sessionDuration', actualDuration.toString())
                   sessionStorage.setItem('actualSessionDuration', actualDuration.toString())
                   
                   if (isMindRecovery) {
-                    // Mind recovery sessions go to reflection page with mind-recovery stage
-                    router.push(`/pahm-reflection?stage=mind-recovery&session=${mindRecoverySession}`)
+                    // Mind recovery sessions go to reflection page with sessionId
+                    if (sessionId) {
+                      router.push(`/pahm-reflection?sessionId=${sessionId}&stage=mind-recovery&session=${mindRecoverySession}`)
+                    } else {
+                      router.push(`/pahm-reflection?stage=mind-recovery&session=${mindRecoverySession}`)
+                    }
                   } else {
-                    // Regular PAHM sessions go to reflection page
-                    router.push(`/pahm-reflection?stage=${stageId}`)
+                    // Regular PAHM sessions go to reflection page with sessionId
+                    if (sessionId) {
+                      router.push(`/pahm-reflection?sessionId=${sessionId}&stage=${stageId}`)
+                    } else {
+                      router.push(`/pahm-reflection?stage=${stageId}`)
+                    }
                   }
                 }}
                 className="w-full sm:w-auto bg-pink-600 hover:bg-pink-700 active:bg-pink-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors"

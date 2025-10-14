@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
+import { completeSession, type CompleteSessionRequest, type SessionChallenges, type PAHMClick, type PAHMData as APIPAHMData } from '@/lib/api/sessions'
 
 interface PAHMData {
   nostalgia: number
@@ -22,10 +23,25 @@ interface ReflectionData {
   qualityRating: number
 }
 
+interface SessionData {
+  sessionId: string
+  pahmSessionId?: string
+  stageNumber: number
+  sessionType: string
+  duration: number
+  posture: string
+  startedAt: string
+  settings: any
+  stage: string
+  mindRecoverySession?: string
+  title: string
+}
+
 export default function PAHMReflectionPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stage') || '2'
+  const sessionId = searchParams.get('sessionId') // Get sessionId from URL
   const mindRecoverySession = searchParams.get('session')
   
   const isMindRecovery = stageId === 'mind-recovery'
@@ -42,16 +58,25 @@ export default function PAHMReflectionPage() {
     worry: 0
   })
 
+  const [pahmClicks, setPahmClicks] = useState<PAHMClick[]>([]) // Full click data for API
+
   const [reflection, setReflection] = useState<ReflectionData>({
     notes: '',
     challenges: [],
     qualityRating: 5
   })
 
+  const [sessionData, setSessionData] = useState<SessionData | null>(null)
   const [sessionDuration, setSessionDuration] = useState(30)
   const [actualSessionDuration, setActualSessionDuration] = useState(30)
   const [stage, setStage] = useState<any>(null)
   const [shouldCountAsSession, setShouldCountAsSession] = useState(true)
+  
+  // API state
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+  const [stageCompleted, setStageCompleted] = useState(false)
 
   const challenges = [
     'Mind Wandering',
@@ -63,37 +88,46 @@ export default function PAHMReflectionPage() {
   ]
 
   useEffect(() => {
-    // Load PAHM data from session storage
-    const pahmDataStr = sessionStorage.getItem('pahmData')
-    if (pahmDataStr) {
-      setPahmData(JSON.parse(pahmDataStr))
+    // Verify sessionId is present
+    if (!sessionId) {
+      console.warn('No sessionId found, redirecting...')
+      if (isMindRecovery) {
+        router.push('/mind-recovery')
+      } else {
+        router.push('/home-qa')
+      }
+      return
     }
 
-    // Load session duration
-    const duration = sessionStorage.getItem('sessionDuration')
-    if (duration) {
-      setSessionDuration(parseInt(duration))
+    // Load session data from sessionStorage
+    const activeSession = sessionStorage.getItem('activeSession')
+    if (activeSession) {
+      const parsedSession: SessionData = JSON.parse(activeSession)
+      setSessionData(parsedSession)
+      setSessionDuration(parsedSession.duration)
+      setActualSessionDuration(parsedSession.duration)
     }
 
-    // Load actual session duration and determine if session counts
-    const actualTime = sessionStorage.getItem('actualSessionDuration')
-    let actualDuration = 30
-    if (actualTime) {
-      actualDuration = parseInt(actualTime)
-      setActualSessionDuration(actualDuration)
-    } else if (duration) {
-      actualDuration = parseInt(duration)
-      setActualSessionDuration(actualDuration)
+    // Load PAHM click data (full data for API)
+    const pahmClickDataStr = sessionStorage.getItem('pahmClickData')
+    if (pahmClickDataStr) {
+      const clickData: PAHMClick[] = JSON.parse(pahmClickDataStr)
+      setPahmClicks(clickData)
     }
-    
-    // Determine if session should count (minimum 30 minutes for PAHM stages)
-    const shouldCount = actualDuration >= 30
-    setShouldCountAsSession(shouldCount)
+
+    // Load PAHM tracking (simple counts for display)
+    const pahmTrackingStr = sessionStorage.getItem('pahmTracking')
+    if (pahmTrackingStr) {
+      setPahmData(JSON.parse(pahmTrackingStr))
+    }
+
+    // All PAHM sessions count
+    setShouldCountAsSession(true)
 
     // Load stage info
     const currentStage = getStageInfo(parseInt(stageId))
     setStage(currentStage)
-  }, [stageId])
+  }, [stageId, sessionId, isMindRecovery, router])
 
   const getStageInfo = (stageNum: number) => {
     const stageNames = {
@@ -161,33 +195,80 @@ export default function PAHMReflectionPage() {
 
   const pahmStats = calculateStats()
 
-  const handleSave = () => {
-    // Save reflection data
-    const reflectionData = {
-      ...reflection,
-      pahmData: pahmData,
-      stageId: parseInt(stageId),
-      sessionDuration: sessionDuration,
-      completedAt: new Date().toISOString(),
-      pahmStats: pahmStats
+  const handleSave = async () => {
+    if (!sessionId) {
+      setSaveError('No active session found')
+      return
     }
 
-    const reflections = JSON.parse(localStorage.getItem('pahmReflections') || '[]')
-    reflections.push(reflectionData)
-    localStorage.setItem('pahmReflections', JSON.stringify(reflections))
+    setIsSaving(true)
+    setSaveError(null)
 
-    // Update stage progress (only for regular PAHM stages, not mind recovery)
-    if (!isMindRecovery) {
-      updateStageProgress()
-    }
+    try {
+      // Prepare challenges data
+      const challenges: SessionChallenges = {
+        mindWandering: reflection.challenges.includes('Mind Wandering'),
+        physicalDiscomfort: reflection.challenges.includes('Physical Discomfort'),
+        sleepiness: reflection.challenges.includes('Sleepiness'),
+        restlessness: reflection.challenges.includes('Restlessness'),
+        strongEmotions: reflection.challenges.includes('Strong Emotions'),
+        externalDistractions: reflection.challenges.includes('External Distractions'),
+        notes: reflection.notes
+      }
 
-    // Navigate appropriately
-    if (isMindRecovery) {
-      // Mind recovery sessions go back to mind recovery page
-      router.push('/mind-recovery')
-    } else {
-      // Regular PAHM sessions go back to home
-      router.push('/home-qa')
+      // Prepare PAHM data for API
+      const pahmDataForAPI: APIPAHMData = {
+        totalClicks: pahmClicks.length,
+        clickData: pahmClicks,
+        patternNotes: reflection.notes
+      }
+
+      // Prepare complete session request
+      const request: CompleteSessionRequest = {
+        sessionId,
+        qualityRating: reflection.qualityRating,
+        insights: reflection.notes,
+        pahmData: pahmDataForAPI,
+        challenges
+      }
+
+      // Call API to complete session
+      const response = await completeSession(request)
+
+      if (!response.success) {
+        setSaveError(response.message)
+        setIsSaving(false)
+        return
+      }
+
+      // Check if stage was completed
+      const progress = response.data!.progress
+      if (progress.isStageCompleted) {
+        setStageCompleted(true)
+      }
+
+      // Show success message
+      setSaveSuccess(true)
+
+      // Clear session storage
+      sessionStorage.removeItem('activeSession')
+      sessionStorage.removeItem('pahmClickData')
+      sessionStorage.removeItem('pahmTracking')
+      sessionStorage.removeItem('sessionDuration')
+      sessionStorage.removeItem('actualSessionDuration')
+
+      // Navigate back after showing success
+      setTimeout(() => {
+        if (isMindRecovery) {
+          router.push('/mind-recovery')
+        } else {
+          router.push('/home-qa')
+        }
+      }, 2000)
+    } catch (error) {
+      console.error('Error completing session:', error)
+      setSaveError('Failed to save reflection. Please try again.')
+      setIsSaving(false)
     }
   }
 
@@ -394,11 +475,59 @@ export default function PAHMReflectionPage() {
               </div>
             </div>
 
+            {/* Error Display */}
+            {saveError && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-red-800 mb-1">Error Saving Reflection</h3>
+                    <p className="text-sm text-red-700">{saveError}</p>
+                  </div>
+                  <button
+                    onClick={() => setSaveError(null)}
+                    className="ml-4 text-red-600 hover:text-red-800 font-bold"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Success Display */}
+            {saveSuccess && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-green-800 mb-1">✓ Reflection Saved Successfully!</h3>
+                    {stageCompleted && (
+                      <p className="text-sm text-green-700 font-medium">
+                        🎉 Congratulations! You've completed this stage!
+                      </p>
+                    )}
+                    <p className="text-sm text-green-600 mt-1">Redirecting...</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <button
               onClick={handleSave}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg font-semibold text-lg transition-colors"
+              disabled={isSaving || saveSuccess}
+              className={`w-full py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center ${
+                saveSuccess
+                  ? 'bg-green-600 text-white cursor-default'
+                  : isSaving
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
             >
-              Save Reflection & Continue
+              {isSaving && (
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              )}
+              {isSaving ? 'Saving...' : saveSuccess ? '✓ Saved!' : 'Save Reflection & Continue'}
             </button>
           </div>
         </div>

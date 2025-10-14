@@ -3,11 +3,25 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
+import { completeSession, type CompleteSessionRequest, type SessionChallenges } from '@/lib/api/sessions'
+
+interface SessionData {
+  sessionId: string
+  stageNumber: number
+  subStage?: string
+  sessionType: string
+  duration: number
+  posture: string
+  startedAt: string
+  settings: any
+  title: string
+}
 
 export default function ReflectionPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stage')
+  const sessionId = searchParams.get('sessionId') // Get sessionId from URL
 
   const [reflection, setReflection] = useState({
     notes: '',
@@ -16,8 +30,13 @@ export default function ReflectionPage() {
     shouldCountAsSession: false
   })
 
+  const [sessionData, setSessionData] = useState<SessionData | null>(null)
   const [stage, setStage] = useState<any>(null)
   const [sessionSettings, setSessionSettings] = useState<any>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [saveSuccess, setSaveSuccess] = useState(false)
+  const [stageCompleted, setStageCompleted] = useState(false)
 
   const challenges = [
     'Mind Wandering',
@@ -29,79 +48,98 @@ export default function ReflectionPage() {
   ]
 
   useEffect(() => {
+    // Verify sessionId is present
+    if (!sessionId) {
+      console.warn('No sessionId found, redirecting to stage selection...')
+      router.push('/stage-1')
+      return
+    }
+
+    // Load session data from sessionStorage
+    const activeSession = sessionStorage.getItem('activeSession')
+    if (activeSession) {
+      const parsedSession: SessionData = JSON.parse(activeSession)
+      setSessionData(parsedSession)
+      setSessionSettings(parsedSession.settings)
+      
+      // Determine if session should count (all timer-only sessions count)
+      setReflection(prev => ({ ...prev, shouldCountAsSession: true }))
+    }
+
     // Load stage info
-    const stages = JSON.parse(localStorage.getItem('stage1Progress') || '[]')
-    const currentStage = stages.find((s: any) => s.id === parseInt(stageId || '1'))
-    setStage(currentStage || { id: 1, name: 'T1', minTime: 10 })
-
-    // Load session settings
-    const settings = sessionStorage.getItem('sessionSettings')
-    let actualDuration = 0
+    const stageNum = parseInt(stageId || '1')
+    const stageDurations = {
+      1: { name: 'T1', minTime: 10 },
+      2: { name: 'T2', minTime: 15 },
+      3: { name: 'T3', minTime: 20 },
+      4: { name: 'T4', minTime: 25 },
+      5: { name: 'T5', minTime: 30 }
+    }
     
-    if (settings) {
-      const parsedSettings = JSON.parse(settings)
-      setSessionSettings(parsedSettings)
-      
-      // Try to get actual session duration from sessionStorage
-      const actualTime = sessionStorage.getItem('actualSessionDuration')
-      if (actualTime) {
-        actualDuration = parseInt(actualTime)
-      } else {
-        // Fallback to planned duration if actual time not available
-        actualDuration = parsedSettings.duration
-      }
-      
-      // Determine if session should count based on actual time spent
-      const shouldCount = actualDuration >= (currentStage?.minTime || 10)
-      setReflection(prev => ({ ...prev, shouldCountAsSession: shouldCount }))
+    const stageInfo = stageDurations[stageNum as keyof typeof stageDurations] || stageDurations[1]
+    setStage({ id: stageNum, ...stageInfo })
+  }, [stageId, sessionId, router])
+
+  const saveReflection = async () => {
+    if (!sessionId) {
+      setSaveError('No active session found')
+      return
     }
-  }, [stageId])
 
-  const saveReflection = () => {
-    if (reflection.shouldCountAsSession) {
-      // Update stage progress
-      const stages = JSON.parse(localStorage.getItem('stage1Progress') || '[]')
-      const updatedStages = stages.map((stage: any) => {
-        if (stage.id === parseInt(stageId || '1')) {
-          const newSessions = Math.min((stage.sessions || 0) + 1, 3)
-          const isCompleted = newSessions === 3
-          
-          return {
-            ...stage,
-            sessions: newSessions,
-            completed: isCompleted,
-            lastCompleted: new Date().toISOString()
-          }
-        }
-        return stage
-      })
+    setIsSaving(true)
+    setSaveError(null)
 
-      // Unlock next stage if current stage is completed
-      const currentStageIndex = updatedStages.findIndex((s: any) => s.id === parseInt(stageId || '1'))
-      if (currentStageIndex >= 0 && currentStageIndex < updatedStages.length - 1) {
-        const currentStage = updatedStages[currentStageIndex]
-        if (currentStage.completed) {
-          updatedStages[currentStageIndex + 1].unlocked = true
-        }
+    try {
+      // Prepare challenges data
+      const challenges: SessionChallenges = {
+        mindWandering: reflection.challenges.includes('Mind Wandering'),
+        physicalDiscomfort: reflection.challenges.includes('Physical Discomfort'),
+        sleepiness: reflection.challenges.includes('Sleepiness'),
+        restlessness: reflection.challenges.includes('Restlessness'),
+        strongEmotions: reflection.challenges.includes('Strong Emotions'),
+        externalDistractions: reflection.challenges.includes('External Distractions'),
+        notes: reflection.notes
       }
 
-      localStorage.setItem('stage1Progress', JSON.stringify(updatedStages))
+      // Prepare complete session request
+      const request: CompleteSessionRequest = {
+        sessionId,
+        qualityRating: reflection.qualityRating,
+        insights: reflection.notes,
+        challenges
+      }
+
+      // Call API to complete session
+      const response = await completeSession(request)
+
+      if (!response.success) {
+        setSaveError(response.message)
+        setIsSaving(false)
+        return
+      }
+
+      // Check if stage was completed
+      const progress = response.data!.progress
+      if (progress.isStageCompleted) {
+        setStageCompleted(true)
+      }
+
+      // Show success message
+      setSaveSuccess(true)
+
+      // Clear session storage
+      sessionStorage.removeItem('activeSession')
+      sessionStorage.removeItem('actualSessionDuration')
+
+      // Navigate back to stage selection after showing success
+      setTimeout(() => {
+        router.push('/stage-1')
+      }, 2000)
+    } catch (error) {
+      console.error('Error completing session:', error)
+      setSaveError('Failed to save reflection. Please try again.')
+      setIsSaving(false)
     }
-
-    // Save reflection data
-    const reflectionData = {
-      ...reflection,
-      stageId: parseInt(stageId || '1'),
-      completedAt: new Date().toISOString(),
-      duration: sessionSettings?.duration || 10
-    }
-
-    const reflections = JSON.parse(localStorage.getItem('sessionReflections') || '[]')
-    reflections.push(reflectionData)
-    localStorage.setItem('sessionReflections', JSON.stringify(reflections))
-
-    // Navigate back to stage selection
-    router.push('/stage-1')
   }
 
   return (
@@ -199,11 +237,48 @@ export default function ReflectionPage() {
               </div>
             </div>
 
+            {/* Error Display */}
+            {saveError && (
+              <div className="p-4 mb-6 text-red-800 bg-red-50 border border-red-200 rounded-lg">
+                <p className="font-semibold">⚠️ Error</p>
+                <p className="text-sm">{saveError}</p>
+                <button 
+                  onClick={() => setSaveError(null)}
+                  className="mt-2 text-sm underline hover:no-underline"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
+
+            {/* Success Display */}
+            {saveSuccess && (
+              <div className="p-4 mb-6 text-green-800 bg-green-50 border border-green-200 rounded-lg">
+                <p className="font-semibold">✅ Session Completed!</p>
+                {stageCompleted && (
+                  <p className="mt-2 text-lg font-bold">🎉 Congratulations! You've completed this stage!</p>
+                )}
+                <p className="mt-2 text-sm">Redirecting to stage selection...</p>
+              </div>
+            )}
+
             <button
               onClick={saveReflection}
-              className="w-full py-4 text-lg font-semibold text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+              disabled={isSaving || saveSuccess}
+              className="w-full py-4 text-lg font-semibold text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              Save Reflection
+              {isSaving ? (
+                <>
+                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                  <span>Saving...</span>
+                </>
+              ) : saveSuccess ? (
+                <>
+                  <span>✓ Saved!</span>
+                </>
+              ) : (
+                'Save Reflection'
+              )}
             </button>
           </div>
         </div>

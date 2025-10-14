@@ -4,6 +4,7 @@ import { sessionCompleteSchema, validateRequestBody } from '@/lib/validation'
 import { getAuthenticatedUser } from '@/lib/auth/middleware'
 import { handleApiError, createSuccessResponse, CommonErrors } from '@/lib/errors'
 import { Decimal } from '@prisma/client/runtime/library'
+import { autoTriggerHappinessCalculation } from '@/lib/business-logic/auto-trigger'
 
 /**
  * POST /api/session/complete
@@ -78,6 +79,33 @@ export async function POST(request: NextRequest) {
         }
       });
 
+      // Save session challenges if provided
+      if (validatedData.challenges) {
+        await tx.sessionChallenge.upsert({
+          where: { sessionId: validatedData.sessionId },
+          update: {
+            mindWandering: validatedData.challenges.mindWandering ?? false,
+            physicalDiscomfort: validatedData.challenges.physicalDiscomfort ?? false,
+            sleepiness: validatedData.challenges.sleepiness ?? false,
+            restlessness: validatedData.challenges.restlessness ?? false,
+            strongEmotions: validatedData.challenges.strongEmotions ?? false,
+            externalDistractions: validatedData.challenges.externalDistractions ?? false,
+            notes: validatedData.challenges.notes,
+            updatedAt: completedAt
+          },
+          create: {
+            sessionId: validatedData.sessionId,
+            mindWandering: validatedData.challenges.mindWandering ?? false,
+            physicalDiscomfort: validatedData.challenges.physicalDiscomfort ?? false,
+            sleepiness: validatedData.challenges.sleepiness ?? false,
+            restlessness: validatedData.challenges.restlessness ?? false,
+            strongEmotions: validatedData.challenges.strongEmotions ?? false,
+            externalDistractions: validatedData.challenges.externalDistractions ?? false,
+            notes: validatedData.challenges.notes
+          }
+        });
+      }
+
       // Update PAHM session if exists
       let updatedPahmSession = null;
       if (existingSession.pahmSession && validatedData.pahmData) {
@@ -94,12 +122,14 @@ export async function POST(request: NextRequest) {
           anticipationClicks: 0,
         };
 
-        // Count clicks by position
+        // Count clicks by position (map position names to database field names)
         if (validatedData.pahmData.clickData) {
           validatedData.pahmData.clickData.forEach((click: any) => {
             const position = click.position;
-            if (position in clickCounts) {
-              clickCounts[position as keyof typeof clickCounts]++;
+            // Map position to database field name (add "Clicks" suffix)
+            const fieldName = `${position}Clicks` as keyof typeof clickCounts;
+            if (fieldName in clickCounts) {
+              clickCounts[fieldName]++;
             }
           });
         }
@@ -169,6 +199,12 @@ export async function POST(request: NextRequest) {
         stageCompleted: isStageCompleted
       };
     });
+
+    // Auto-trigger happiness score calculation after session completion
+    // This runs asynchronously without blocking the response
+    autoTriggerHappinessCalculation(user.id, 'session').catch(error => {
+      console.error('Failed to auto-trigger happiness calculation after session:', error)
+    })
 
     return createSuccessResponse({
       session: {

@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const { stageNumber, subStage, sessionType, duration, posture, exerciseType } = validation.data
+    const { stageNumber, subStage, sessionType, duration, posture, exerciseType, meditationBells, voiceCommands } = validation.data
 
     // Check stage access
     await checkStageAccess(user.id, stageNumber)
@@ -62,6 +62,8 @@ export async function POST(request: NextRequest) {
         sessionType,
         duration,
         posture,
+        meditationBells: meditationBells ?? true,
+        voiceCommands: voiceCommands ?? true,
         status: 'in_progress',
         startedAt: new Date()
       },
