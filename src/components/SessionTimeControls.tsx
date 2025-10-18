@@ -7,6 +7,7 @@ interface SessionTimeControlsProps {
   onFastForward: () => void
   fastForwardActive: boolean
   isActive: boolean
+  isAdminMode?: boolean
   className?: string
 }
 
@@ -15,9 +16,13 @@ export default function SessionTimeControls({
   onFastForward,
   fastForwardActive,
   isActive,
+  isAdminMode = false,
   className = ''
 }: SessionTimeControlsProps) {
   if (!isActive) return null
+  
+  // Only show controls for admin users
+  if (!isAdminMode) return null
 
   return (
     <div className={`flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mt-6 ${className}`}>

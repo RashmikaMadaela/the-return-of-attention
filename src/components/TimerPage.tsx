@@ -411,6 +411,7 @@ export default function TimerPage() {
               onFastForward={handleFastForward}
               fastForwardActive={fastForwardActive}
               isActive={timer.isRunning}
+              isAdminMode={isAdminMode}
             />
 
             {/* Admin Controls - Only show in admin mode */}

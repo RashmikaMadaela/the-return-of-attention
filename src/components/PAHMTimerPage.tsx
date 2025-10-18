@@ -789,6 +789,7 @@ export default function PAHMTimerPage() {
               onFastForward={handleFastForward}
               fastForwardActive={fastForwardActive}
               isActive={timer.isRunning}
+              isAdminMode={isAdminMode}
               className="mb-6"
             />
 
