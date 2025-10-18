@@ -62,16 +62,16 @@ export default function UserProfilePageOptimized() {
   // Handle errors
   if (error && error.message !== 'UNAUTHORIZED') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-300">
-        <div className="text-center bg-white rounded-3xl p-8 shadow-2xl max-w-md">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Failed to Load Profile</h2>
-          <p className="text-gray-600 mb-6">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 to-blue-300">
+        <div className="max-w-md p-8 text-center bg-white shadow-2xl rounded-3xl">
+          <div className="mb-4 text-6xl">⚠️</div>
+          <h2 className="mb-2 text-2xl font-bold text-gray-800">Failed to Load Profile</h2>
+          <p className="mb-6 text-gray-600">
             We encountered an error loading your profile. Please try again.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl transition-colors"
+            className="px-8 py-3 font-bold text-white transition-colors bg-blue-600 hover:bg-blue-700 rounded-xl"
           >
             Retry
           </button>
@@ -200,7 +200,7 @@ export default function UserProfilePageOptimized() {
         
         // Show success message
         const successDiv = document.createElement('div')
-        successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in'
+        successDiv.className = 'fixed z-50 px-6 py-3 text-white bg-green-500 rounded-lg shadow-lg top-4 right-4 animate-fade-in'
         successDiv.textContent = '✓ Profile updated successfully!'
         document.body.appendChild(successDiv)
         setTimeout(() => {
@@ -251,9 +251,9 @@ export default function UserProfilePageOptimized() {
     <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-300">
       {/* Background refresh indicator */}
       {isValidating && !isSaving && (
-        <div className="fixed top-20 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in">
+        <div className="fixed z-50 px-4 py-2 text-white bg-blue-500 rounded-lg shadow-lg top-20 right-4 animate-fade-in">
           <div className="flex items-center gap-2">
-            <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+            <div className="w-4 h-4 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
             <span className="text-sm font-medium">Refreshing...</span>
           </div>
         </div>
@@ -263,10 +263,10 @@ export default function UserProfilePageOptimized() {
       <Navigation currentPage="profile" />
       
       <div className="p-8 pt-24">
-        <div className="max-w-7xl mx-auto bg-gradient-to-b from-blue-700 to-blue-600 rounded-3xl shadow-2xl p-8">
+        <div className="p-8 mx-auto shadow-2xl max-w-7xl bg-gradient-to-b from-blue-700 to-blue-600 rounded-3xl">
           {/* Error Message */}
           {saveError && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-center">
+            <div className="px-4 py-3 mb-6 text-center text-red-700 bg-red-100 border border-red-400 rounded-lg">
               {saveError}
             </div>
           )}
@@ -276,65 +276,65 @@ export default function UserProfilePageOptimized() {
             {userProfile.role === 'admin' && (
               <button 
                 onClick={handleAdmin}
-                className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-xl transition-colors"
+                className="px-6 py-3 font-bold text-black transition-colors bg-yellow-400 hover:bg-yellow-500 rounded-xl"
               >
                 ADMIN
               </button>
             )}
             <button 
               onClick={handleBack}
-              className="bg-white hover:bg-gray-100 text-blue-600 font-bold px-6 py-3 rounded-xl transition-colors"
+              className="px-6 py-3 font-bold text-blue-600 transition-colors bg-white hover:bg-gray-100 rounded-xl"
             >
               ← Back
             </button>
             <button 
               onClick={handlePrivacy}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition-colors"
+              className="px-6 py-3 font-bold text-white transition-colors bg-blue-600 hover:bg-blue-700 rounded-xl"
             >
               Privacy
             </button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Left Panel - User Information */}
             <div className="space-y-6">
               {/* Profile Card */}
-              <div className="bg-blue-600 rounded-3xl p-6 shadow-lg">
+              <div className="p-6 bg-blue-600 shadow-lg rounded-3xl">
                 <div className="flex justify-center mb-6">
-                  <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <div className="flex items-center justify-center w-32 h-32 bg-white rounded-full shadow-lg">
                     <User className="w-20 h-20 text-blue-600" />
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-6 space-y-6">
-                  <div className="text-center border-b-4 border-blue-500 pb-3">
+                <div className="p-6 space-y-6 bg-white rounded-2xl">
+                  <div className="pb-3 text-center border-b-4 border-blue-500">
                     <h1 className="text-3xl font-bold text-gray-800">Hello {userProfile.name}</h1>
                   </div>
 
                   {/* User Details */}
                   {!isEditing ? (
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between border-l-4 border-blue-500 pl-4 py-2">
+                      <div className="flex items-center justify-between py-2 pl-4 border-l-4 border-blue-500">
                         <span className="font-semibold text-gray-700">Email :</span>
                         <span className="text-gray-800">{userProfile.email}</span>
                       </div>
 
-                      <div className="flex items-center justify-between border-l-4 border-blue-500 pl-4 py-2">
+                      <div className="flex items-center justify-between py-2 pl-4 border-l-4 border-blue-500">
                         <span className="font-semibold text-gray-700">Age :</span>
                         <span className="text-gray-800">{userProfile.age}</span>
                       </div>
 
-                      <div className="flex items-center justify-between border-l-4 border-blue-500 pl-4 py-2">
+                      <div className="flex items-center justify-between py-2 pl-4 border-l-4 border-blue-500">
                         <span className="font-semibold text-gray-700">Gender :</span>
                         <span className="text-gray-800">{userProfile.gender}</span>
                       </div>
 
-                      <div className="flex items-center justify-between border-l-4 border-blue-500 pl-4 py-2">
+                      <div className="flex items-center justify-between py-2 pl-4 border-l-4 border-blue-500">
                         <span className="font-semibold text-gray-700">Nationality :</span>
                         <span className="text-gray-800">{userProfile.nationality}</span>
                       </div>
 
-                      <div className="flex items-center justify-between border-l-4 border-blue-500 pl-4 py-2">
+                      <div className="flex items-center justify-between py-2 pl-4 border-l-4 border-blue-500">
                         <span className="font-semibold text-gray-700">Current Country :</span>
                         <span className="text-gray-800">{userProfile.currentCountry}</span>
                       </div>
@@ -342,8 +342,8 @@ export default function UserProfilePageOptimized() {
                   ) : (
                     <div className="space-y-4">
                       {/* Name Field */}
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <span className="font-semibold text-gray-700 block mb-2">Name <span className="text-red-500">*</span>:</span>
+                      <div className="py-2 pl-4 border-l-4 border-blue-500">
+                        <span className="block mb-2 font-semibold text-gray-700">Name <span className="text-red-500">*</span>:</span>
                         <input
                           type="text"
                           value={editForm.name}
@@ -355,8 +355,8 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Email Field */}
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <span className="font-semibold text-gray-700 block mb-2">Email <span className="text-red-500">*</span>:</span>
+                      <div className="py-2 pl-4 border-l-4 border-blue-500">
+                        <span className="block mb-2 font-semibold text-gray-700">Email <span className="text-red-500">*</span>:</span>
                         <input
                           type="email"
                           value={editForm.email}
@@ -365,12 +365,12 @@ export default function UserProfilePageOptimized() {
                           required
                           className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
-                        <p className="text-sm text-orange-600 mt-1">⚠️ Changing your email will require you to log in again</p>
+                        <p className="mt-1 text-sm text-orange-600">⚠️ Changing your email will require you to log in again</p>
                       </div>
 
                       {/* Age Field */}
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <span className="font-semibold text-gray-700 block mb-2">Age <span className="text-red-500">*</span>:</span>
+                      <div className="py-2 pl-4 border-l-4 border-blue-500">
+                        <span className="block mb-2 font-semibold text-gray-700">Age <span className="text-red-500">*</span>:</span>
                         <input
                           type="number"
                           value={editForm.age}
@@ -384,8 +384,8 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Gender Field */}
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <span className="font-semibold text-gray-700 block mb-2">Gender :</span>
+                      <div className="py-2 pl-4 border-l-4 border-blue-500">
+                        <span className="block mb-2 font-semibold text-gray-700">Gender :</span>
                         <select
                           value={editForm.gender}
                           onChange={(e) => handleInputChange('gender', e.target.value)}
@@ -399,8 +399,8 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Nationality Field */}
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <span className="font-semibold text-gray-700 block mb-2">Nationality :</span>
+                      <div className="py-2 pl-4 border-l-4 border-blue-500">
+                        <span className="block mb-2 font-semibold text-gray-700">Nationality :</span>
                         <select
                           value={editForm.nationality}
                           onChange={(e) => handleInputChange('nationality', e.target.value)}
@@ -423,8 +423,8 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Current Country Field */}
-                      <div className="border-l-4 border-blue-500 pl-4 py-2">
-                        <span className="font-semibold text-gray-700 block mb-2">Current Country :</span>
+                      <div className="py-2 pl-4 border-l-4 border-blue-500">
+                        <span className="block mb-2 font-semibold text-gray-700">Current Country :</span>
                         <select
                           value={editForm.currentCountry}
                           onChange={(e) => handleInputChange('currentCountry', e.target.value)}
@@ -448,17 +448,17 @@ export default function UserProfilePageOptimized() {
                     </div>
                   )}
 
-                  <div className="flex justify-between items-center pt-4">
+                  <div className="flex items-center justify-between pt-4">
                     <button 
                       onClick={handleLogout}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl transition-colors"
+                      className="px-8 py-3 font-bold text-white transition-colors bg-blue-600 hover:bg-blue-700 rounded-xl"
                     >
                       Log Out
                     </button>
                     {!isEditing ? (
                       <button 
                         onClick={handleEditToggle}
-                        className="text-blue-500 hover:text-blue-600 font-semibold underline"
+                        className="font-semibold text-blue-500 underline hover:text-blue-600"
                       >
                         Edit
                       </button>
@@ -467,18 +467,18 @@ export default function UserProfilePageOptimized() {
                         <button 
                           onClick={handleEditToggle}
                           disabled={isSaving}
-                          className="text-gray-500 hover:text-gray-600 font-semibold underline disabled:opacity-50"
+                          className="font-semibold text-gray-500 underline hover:text-gray-600 disabled:opacity-50"
                         >
                           Cancel
                         </button>
                         <button 
                           onClick={handleSave}
                           disabled={isSaving}
-                          className="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold px-6 py-2 rounded-xl transition-colors flex items-center gap-2"
+                          className="flex items-center gap-2 px-6 py-2 font-bold text-white transition-colors bg-green-600 hover:bg-green-700 disabled:bg-gray-400 rounded-xl"
                         >
                           {isSaving ? (
                             <>
-                              <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                              <div className="w-4 h-4 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
                               Saving...
                             </>
                           ) : (
@@ -495,36 +495,36 @@ export default function UserProfilePageOptimized() {
             {/* Right Panel - Stats and Status */}
             <div className="space-y-6">
               {/* Stats Grid */}
-              <div className="bg-white rounded-3xl p-8 shadow-lg">
+              <div className="p-8 bg-white shadow-lg rounded-3xl">
                 <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-gray-50 rounded-2xl p-6 text-center">
-                    <div className="text-6xl font-bold text-blue-600 mb-2">{userProfile.happiness}</div>
+                  <div className="p-6 text-center bg-gray-50 rounded-2xl">
+                    <div className="mb-2 text-6xl font-bold text-blue-600">{userProfile.happiness}</div>
                     <div className="text-lg font-semibold text-gray-700">Happiness</div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-2xl p-6 text-center">
-                    <div className="text-6xl font-bold text-blue-600 mb-2">{userProfile.sessions}</div>
+                  <div className="p-6 text-center bg-gray-50 rounded-2xl">
+                    <div className="mb-2 text-6xl font-bold text-blue-600">{userProfile.sessions}</div>
                     <div className="text-lg font-semibold text-gray-700">Sessions</div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-2xl p-6 text-center">
-                    <div className="text-lg font-bold text-blue-600 mb-2 text-center break-words">{userProfile.userLevel}</div>
+                  <div className="p-6 text-center bg-gray-50 rounded-2xl">
+                    <div className="mb-2 text-lg font-bold text-center text-blue-600 break-words">{userProfile.userLevel}</div>
                     <div className="text-lg font-semibold text-gray-700">User Level</div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-2xl p-6 text-center">
-                    <div className="text-6xl font-bold text-blue-600 mb-2">{userProfile.hours}</div>
+                  <div className="p-6 text-center bg-gray-50 rounded-2xl">
+                    <div className="mb-2 text-6xl font-bold text-blue-600">{userProfile.hours}</div>
                     <div className="text-lg font-semibold text-gray-700">Hours</div>
                   </div>
                 </div>
               </div>
 
               {/* Completion Status */}
-              <div className="bg-white rounded-3xl p-8 shadow-lg">
-                <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Completion Status</h2>
+              <div className="p-8 bg-white shadow-lg rounded-3xl">
+                <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">Completion Status</h2>
                 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between bg-gray-50 rounded-2xl p-6">
+                  <div className="flex items-center justify-between p-6 bg-gray-50 rounded-2xl">
                     <span className="text-lg font-semibold text-gray-700">Questionnaire</span>
                     <button 
                       className={`font-bold px-6 py-2 rounded-xl ${
@@ -537,7 +537,7 @@ export default function UserProfilePageOptimized() {
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between bg-gray-50 rounded-2xl p-6">
+                  <div className="flex items-center justify-between p-6 bg-gray-50 rounded-2xl">
                     <span className="text-lg font-semibold text-gray-700">Self Assessment</span>
                     <button 
                       onClick={() => {

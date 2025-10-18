@@ -175,3 +175,73 @@ export function ProfilePageSkeleton() {
     </div>
   )
 }
+
+/**
+ * Stage 1 Sub-Stage Card Skeleton
+ */
+export function Stage1CardSkeleton() {
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-lg animate-pulse">
+      <div className="h-7 bg-gray-300 rounded-lg w-3/4 mb-4"></div>
+      <div className="space-y-2 mb-4">
+        <div className="h-5 bg-gray-200 rounded w-1/2"></div>
+        <div className="h-5 bg-gray-200 rounded w-2/3"></div>
+      </div>
+      <div className="mb-4">
+        <div className="w-full bg-gray-200 rounded-full h-2"></div>
+      </div>
+      <div className="h-12 bg-gray-300 rounded-lg w-full"></div>
+    </div>
+  )
+}
+
+/**
+ * Stage 1 Progress Summary Skeleton
+ */
+export function Stage1ProgressSkeleton() {
+  return (
+    <div className="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-6 animate-pulse">
+      <div className="h-8 bg-white bg-opacity-30 rounded-lg w-1/3 mb-4"></div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="text-center">
+            <div className="h-10 bg-white bg-opacity-30 rounded-lg w-16 mx-auto mb-2"></div>
+            <div className="h-4 bg-white bg-opacity-20 rounded w-24 mx-auto"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Full Stage 1 Page Skeleton
+ */
+export function Stage1PageSkeleton() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-700">
+      <div className="p-8 pt-24">
+        <div className="max-w-6xl mx-auto">
+          {/* Header Skeleton */}
+          <div className="text-center mb-8 animate-pulse">
+            <div className="h-10 bg-white bg-opacity-30 rounded-lg w-96 mx-auto mb-4"></div>
+            <div className="h-6 bg-white bg-opacity-20 rounded-lg w-full max-w-2xl mx-auto"></div>
+          </div>
+
+          {/* Stage Cards Grid Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Stage1CardSkeleton key={i} />
+            ))}
+          </div>
+
+          {/* Progress Summary Skeleton */}
+          <div className="mt-8">
+            <Stage1ProgressSkeleton />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+

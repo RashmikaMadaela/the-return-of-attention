@@ -49,8 +49,29 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
   return (
     <header className="fixed top-0 left-0 right-0 bg-gradient-to-r from-blue-500/20 to-blue-400/20 backdrop-blur-sm p-4 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center space-x-4">
+        {/* Logo with Animated PAHM Grid */}
+        <div className="flex items-center space-x-3">
+          {/* Animated PAHM Grid Logo */}
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-purple-600 rounded-lg flex-shrink-0">
+            <div className="absolute inset-1 sm:inset-1.5 grid grid-cols-3 gap-0.5 sm:gap-1">
+              {/* Row 1 */}
+              <div className="w-full aspect-square bg-orange-300 rounded-md animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}}></div>
+              <div className="w-full aspect-square bg-cyan-300 rounded-sm animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}}></div>
+              <div className="w-full aspect-square bg-purple-300 rounded-md animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
+              
+              {/* Row 2 */}
+              <div className="w-full aspect-square bg-yellow-400 rounded-sm animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}}></div>
+              <div className="w-full aspect-square bg-gray-200 rounded-sm animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}}></div>
+              <div className="w-full aspect-square bg-blue-300 rounded-sm animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}}></div>
+              
+              {/* Row 3 */}
+              <div className="w-full aspect-square bg-orange-300 rounded-md animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}}></div>
+              <div className="w-full aspect-square bg-pink-300 rounded-sm animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}}></div>
+              <div className="w-full aspect-square bg-purple-200 rounded-md animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}}></div>
+            </div>
+          </div>
+          
+          {/* Text Logo */}
           <div className="text-white font-bold text-xs sm:text-sm">
             <div>RETURN</div>
             <div>OF</div>
