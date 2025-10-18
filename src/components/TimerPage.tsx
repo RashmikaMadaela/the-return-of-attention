@@ -274,12 +274,18 @@ export default function TimerPage() {
     // If we have a sessionId, complete the session immediately via API
     if (sessionId) {
       try {
-        // Dynamically import the completeSession function
-        const { completeSession } = await import('@/lib/api/sessions')
+        // Dynamically import the session functions
+        const { updateSession, completeSession } = await import('@/lib/api/sessions')
         
         const actualDurationMinutes = sessionSettings?.duration || 10
         
-        // Complete the session with minimal data
+        // First, update the session with the full planned duration
+        // This ensures time-skipped sessions count toward hour requirements
+        await updateSession(sessionId, {
+          duration: actualDurationMinutes
+        })
+        
+        // Then complete the session with minimal data
         await completeSession({
           sessionId,
           qualityRating: 5, // Default rating for time-skipped sessions

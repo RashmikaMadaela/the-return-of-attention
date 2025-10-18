@@ -46,12 +46,21 @@ export async function POST(request: NextRequest) {
       throw CommonErrors.sessionNotFound()
     }
 
-    // Calculate actual session duration (if different from planned)
+    // Calculate actual session duration
     const startedAt = existingSession.startedAt;
     const completedAt = new Date();
-    const actualDurationMinutes = startedAt 
+    const elapsedMinutes = startedAt 
       ? Math.round((completedAt.getTime() - startedAt.getTime()) / (1000 * 60))
-      : existingSession.duration;
+      : 0;
+    
+    // If session was just started (< 1 minute) but has a different duration set,
+    // it's likely a time skip - use the explicitly set duration
+    // Otherwise, use the calculated elapsed time
+    const actualDurationMinutes = (elapsedMinutes < 1 && existingSession.duration > 1)
+      ? existingSession.duration // Use explicitly set duration (time skip)
+      : elapsedMinutes > 0
+        ? elapsedMinutes // Use calculated elapsed time (normal completion)
+        : existingSession.duration; // Fallback to session duration
 
     // Use transaction to ensure data consistency
     const result = await prisma.$transaction(async (tx) => {
