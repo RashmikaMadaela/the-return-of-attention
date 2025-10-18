@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
 import SessionTimeControls from './SessionTimeControls'
+import ConfirmDialog from './ui/ConfirmDialog'
 
 interface TimerState {
   minutes: number
@@ -48,6 +49,9 @@ export default function TimerPage() {
   const [sessionSettings, setSessionSettings] = useState<any>(null)
   const [stage, setStage] = useState<any>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Confirmation dialog state
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false)
 
   useEffect(() => {
     // Load session data from sessionStorage (set by SessionSetupPage)
@@ -247,53 +251,57 @@ export default function TimerPage() {
     router.push(`/stage-1/reflection?stage=${stageId}`)
   }
 
-  const handleTimeSkip = async () => {
-    if (confirm('Skip to the end of this session? This will mark the session as completed.')) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-      
-      // Set timer to 0
-      setTimer(prev => ({
-        ...prev,
-        totalSeconds: 0,
-        minutes: 0,
-        seconds: 0,
-        isRunning: false
-      }))
+  const handleTimeSkip = () => {
+    setShowSkipConfirm(true)
+  }
 
-      // If we have a sessionId, complete the session immediately via API
-      if (sessionId) {
-        try {
-          // Dynamically import the completeSession function
-          const { completeSession } = await import('@/lib/api/sessions')
-          
-          const actualDurationMinutes = sessionSettings?.duration || 10
-          
-          // Complete the session with minimal data
-          await completeSession({
-            sessionId,
-            qualityRating: 5, // Default rating for time-skipped sessions
-            insights: 'Session completed via Time Skip'
-          })
+  const executeTimeSkip = async () => {
+    setShowSkipConfirm(false)
+    
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
+    
+    // Set timer to 0
+    setTimer(prev => ({
+      ...prev,
+      totalSeconds: 0,
+      minutes: 0,
+      seconds: 0,
+      isRunning: false
+    }))
 
-          // Clear session storage
-          sessionStorage.removeItem('activeSession')
-          sessionStorage.removeItem('actualSessionDuration')
-          
-          // Redirect to home or stage page
-          setTimeout(() => {
-            router.push('/stage-1')
-          }, 1000)
-        } catch (error) {
-          console.error('Error completing skipped session:', error)
-          // Fall back to regular completion flow
-          handleTimerComplete()
-        }
-      } else {
-        // No sessionId, use regular flow
+    // If we have a sessionId, complete the session immediately via API
+    if (sessionId) {
+      try {
+        // Dynamically import the completeSession function
+        const { completeSession } = await import('@/lib/api/sessions')
+        
+        const actualDurationMinutes = sessionSettings?.duration || 10
+        
+        // Complete the session with minimal data
+        await completeSession({
+          sessionId,
+          qualityRating: 5, // Default rating for time-skipped sessions
+          insights: 'Session completed via Time Skip'
+        })
+
+        // Clear session storage
+        sessionStorage.removeItem('activeSession')
+        sessionStorage.removeItem('actualSessionDuration')
+        
+        // Redirect to home or stage page
+        setTimeout(() => {
+          router.push('/stage-1')
+        }, 1000)
+      } catch (error) {
+        console.error('Error completing skipped session:', error)
+        // Fall back to regular completion flow
         handleTimerComplete()
       }
+    } else {
+      // No sessionId, use regular flow
+      handleTimerComplete()
     }
   }
 
@@ -307,6 +315,18 @@ export default function TimerPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex flex-col">
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showSkipConfirm}
+        title="Skip Session?"
+        message="Skip to the end of this session? This will mark the session as completed."
+        variant="warning"
+        confirmText="Yes, Skip"
+        cancelText="Cancel"
+        onConfirm={executeTimeSkip}
+        onCancel={() => setShowSkipConfirm(false)}
+      />
+      
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       

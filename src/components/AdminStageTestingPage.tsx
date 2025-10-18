@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useToast } from '@/hooks/useToast'
 
 interface Stage {
   id: number
@@ -15,6 +16,7 @@ interface Stage {
 
 export default function AdminStageTestingPage() {
   const router = useRouter()
+  const { showSuccess, showError, ToastContainer } = useToast()
   
   const [stages] = useState<Stage[]>([
     {
@@ -108,20 +110,23 @@ export default function AdminStageTestingPage() {
       }
 
       // Show success message
-      alert(data.message)
+      showSuccess(data.message)
       
-      // Reload the page to reflect changes
+      // Reload the page to reflect changes (with slight delay to show toast)
       if (action === 'complete') {
-        window.location.reload()
+        setTimeout(() => {
+          window.location.reload()
+        }, 1500)
       }
     } catch (error) {
       console.error('Stage action error:', error)
-      alert(`Failed to ${action} stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      showError(`Failed to ${action} stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 pb-10">
+      <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="admin" />
 

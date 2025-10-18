@@ -16,10 +16,12 @@ import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import { ProfilePageSkeleton } from './LoadingSkeletons'
+import { useToast } from '@/hooks/useToast'
 
 export default function UserProfilePageOptimized() {
   const router = useRouter()
   const { data: profileData, error, isLoading, isValidating, mutate } = useUserProfile()
+  const { showSuccess, showError, showInfo, ToastContainer } = useToast()
   
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -185,10 +187,12 @@ export default function UserProfilePageOptimized() {
       if (result.success) {
         // If email was changed, user needs to log in again
         if (result.emailChanged) {
-          alert('Your email has been updated successfully. Please log in again with your new email.')
-          localStorage.clear()
-          sessionStorage.clear()
-          router.push('/signin')
+          showInfo('Your email has been updated successfully. Please log in again with your new email.')
+          setTimeout(() => {
+            localStorage.clear()
+            sessionStorage.clear()
+            router.push('/signin')
+          }, 2000)
           return
         }
 
@@ -197,27 +201,19 @@ export default function UserProfilePageOptimized() {
         
         setIsEditing(false)
         setSaveError('')
-        
-        // Show success message
-        const successDiv = document.createElement('div')
-        successDiv.className = 'fixed z-50 px-6 py-3 text-white bg-green-500 rounded-lg shadow-lg top-4 right-4 animate-fade-in'
-        successDiv.textContent = '✓ Profile updated successfully!'
-        document.body.appendChild(successDiv)
-        setTimeout(() => {
-          if (document.body.contains(successDiv)) {
-            document.body.removeChild(successDiv)
-          }
-        }, 3000)
+        showSuccess('Profile updated successfully!')
       } else {
         // Revert optimistic update on error
         await mutate()
         setSaveError(result.error || 'Failed to update profile')
+        showError(result.error || 'Failed to update profile')
       }
     } catch (error) {
       console.error('Error updating profile:', error)
       // Revert optimistic update on error
       await mutate()
       setSaveError('Failed to update profile. Please try again.')
+      showError('Failed to update profile. Please try again.')
     } finally {
       setIsSaving(false)
     }
@@ -249,6 +245,7 @@ export default function UserProfilePageOptimized() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-300">
+      <ToastContainer />
       {/* Background refresh indicator */}
       {isValidating && !isSaving && (
         <div className="fixed z-50 px-4 py-2 text-white bg-blue-500 rounded-lg shadow-lg top-20 right-4 animate-fade-in">

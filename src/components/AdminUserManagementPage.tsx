@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useToast } from '@/hooks/useToast'
+import ConfirmDialog from './ui/ConfirmDialog'
 
 interface User {
   id: string
@@ -23,6 +25,27 @@ interface User {
 
 export default function AdminUserManagementPage() {
   const router = useRouter()
+  const { showError, ToastContainer } = useToast()
+  
+  // Confirmation dialog state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean
+    userId: string
+    userName: string
+    action: string
+    title: string
+    message: string
+    variant: 'danger' | 'warning' | 'info'
+  }>({
+    isOpen: false,
+    userId: '',
+    userName: '',
+    action: '',
+    title: '',
+    message: '',
+    variant: 'warning'
+  })
+  
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('Creation Date')
   const [filterBy, setFilterBy] = useState('All Users')
@@ -119,17 +142,61 @@ export default function AdminUserManagementPage() {
     setTimeout(() => setSuccessMessage(null), 5000)
   }
 
-  const handleUserAction = async (userId: string, userName: string, action: string) => {
+  const openConfirmDialog = (userId: string, userName: string, action: string) => {
+    let title = ''
+    let message = ''
+    let variant: 'danger' | 'warning' | 'info' = 'warning'
+
+    switch(action) {
+      case 'reset':
+        title = 'Reset User Progress?'
+        message = `Are you sure you want to reset progress for ${userName}? This will delete all their progress data and reset them to beginner stage.`
+        variant = 'warning'
+        break
+      case 'disable':
+        title = 'Disable Account?'
+        message = `Are you sure you want to disable account for ${userName}? They will not be able to log in.`
+        variant = 'warning'
+        break
+      case 'enable':
+        title = 'Enable Account?'
+        message = `Are you sure you want to enable account for ${userName}? They will be able to log in again.`
+        variant = 'info'
+        break
+      case 'revoke':
+        title = 'Revoke Access?'
+        message = `Are you sure you want to revoke access for ${userName}? This will disable their account.`
+        variant = 'warning'
+        break
+      case 'undo_revoke':
+        title = 'Undo Revocation?'
+        message = `Are you sure you want to undo revocation for ${userName}? This will re-enable their account.`
+        variant = 'info'
+        break
+      case 'delete':
+        title = '⚠️ PERMANENT ACTION ⚠️'
+        message = `Are you sure you want to DELETE ${userName}?\n\nThis will:\n- Permanently delete the user account\n- Delete all their progress data\n- Delete all their sessions and notes\n- This action CANNOT be undone!`
+        variant = 'danger'
+        break
+    }
+
+    setConfirmDialog({
+      isOpen: true,
+      userId,
+      userName,
+      action,
+      title,
+      message,
+      variant
+    })
+  }
+
+  const executeUserAction = async (userId: string, userName: string, action: string) => {
     setActionLoading(`${userId}-${action}`)
     
     try {
       switch(action) {
         case 'reset':
-          if (!confirm(`Are you sure you want to reset progress for ${userName}? This will delete all their progress data and reset them to beginner stage.`)) {
-            setActionLoading(null)
-            return
-          }
-          
           const resetResponse = await fetch('/api/admin/users/manage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -149,11 +216,6 @@ export default function AdminUserManagementPage() {
           break
           
         case 'disable':
-          if (!confirm(`Are you sure you want to disable account for ${userName}? They will not be able to log in.`)) {
-            setActionLoading(null)
-            return
-          }
-          
           const disableResponse = await fetch('/api/admin/users/manage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -173,11 +235,6 @@ export default function AdminUserManagementPage() {
           break
 
         case 'enable':
-          if (!confirm(`Are you sure you want to enable account for ${userName}? They will be able to log in again.`)) {
-            setActionLoading(null)
-            return
-          }
-          
           const enableResponse = await fetch('/api/admin/users/manage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -198,11 +255,6 @@ export default function AdminUserManagementPage() {
           
         case 'revoke':
           // Revoke is similar to disable for now
-          if (!confirm(`Are you sure you want to revoke access for ${userName}? This will disable their account.`)) {
-            setActionLoading(null)
-            return
-          }
-          
           const revokeResponse = await fetch('/api/admin/users/manage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -222,11 +274,6 @@ export default function AdminUserManagementPage() {
           break
 
         case 'undo_revoke':
-          if (!confirm(`Are you sure you want to undo revocation for ${userName}? This will re-enable their account.`)) {
-            setActionLoading(null)
-            return
-          }
-          
           const undoRevokeResponse = await fetch('/api/admin/users/manage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -246,11 +293,6 @@ export default function AdminUserManagementPage() {
           break
           
         case 'delete':
-          if (!confirm(`⚠️ PERMANENT ACTION ⚠️\n\nAre you sure you want to DELETE ${userName}?\n\nThis will:\n- Permanently delete the user account\n- Delete all their progress data\n- Delete all their sessions and notes\n- This action CANNOT be undone!`)) {
-            setActionLoading(null)
-            return
-          }
-          
           const deleteResponse = await fetch('/api/admin/users/manage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -273,15 +315,44 @@ export default function AdminUserManagementPage() {
           throw new Error('Invalid action')
       }
     } catch (err) {
-      alert(`Error: ${err instanceof Error ? err.message : 'Operation failed'}`)
+      showError(`Error: ${err instanceof Error ? err.message : 'Operation failed'}`)
       console.error(`Error performing ${action}:`, err)
     } finally {
       setActionLoading(null)
     }
   }
 
+  const handleUserAction = (userId: string, userName: string, action: string) => {
+    openConfirmDialog(userId, userName, action)
+  }
+
+  const handleConfirm = () => {
+    const { userId, userName, action } = confirmDialog
+    setConfirmDialog({ ...confirmDialog, isOpen: false })
+    executeUserAction(userId, userName, action)
+  }
+
+  const handleCancel = () => {
+    setConfirmDialog({ ...confirmDialog, isOpen: false })
+    setActionLoading(null)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 pb-10">
+      <ToastContainer />
+      
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        variant={confirmDialog.variant}
+        confirmText="OK"
+        cancelText="Cancel"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
+      
       {/* Main Navigation */}
       <Navigation currentPage="admin" />
 

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useToast } from '@/hooks/useToast'
+import ConfirmDialog from './ui/ConfirmDialog'
 
 interface StatCard {
   id: number
@@ -16,6 +18,20 @@ interface StatCard {
 
 export default function AdminUserProgressPage() {
   const router = useRouter()
+  const { showInfo, ToastContainer } = useToast()
+  
+  // Confirmation dialog state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean
+    statId: number | null
+    dataKey: string
+    statLabel: string
+  }>({
+    isOpen: false,
+    statId: null,
+    dataKey: '',
+    statLabel: ''
+  })
   
   const [stats, setStats] = useState<StatCard[]>([
     {
@@ -130,14 +146,28 @@ export default function AdminUserProgressPage() {
   }
 
   const handleClearStat = async (statId: number, dataKey: string) => {
-    const statLabel = stats.find(s => s.id === statId)?.label
+    const statLabel = stats.find(s => s.id === statId)?.label || ''
     
-    if (!confirm(`⚠️ WARNING: This will permanently delete all ${statLabel} data!\n\nThis action CANNOT be undone. Are you sure?`)) {
-      return
-    }
+    // Open confirmation dialog
+    setConfirmDialog({
+      isOpen: true,
+      statId,
+      dataKey,
+      statLabel
+    })
+  }
 
-    // For now, show info message since the clear API requires more complex authentication
-    alert(`The Clear Data feature requires additional authentication.\n\nTo clear ${statLabel}:\n1. Navigate to Admin Settings\n2. Use the Data Management section\n3. Follow the secure deletion process\n\nThis helps prevent accidental data loss.`)
+  const handleConfirmClear = () => {
+    // Close dialog
+    setConfirmDialog({
+      isOpen: false,
+      statId: null,
+      dataKey: '',
+      statLabel: ''
+    })
+
+    // Show info message since the clear API requires more complex authentication
+    showInfo(`The Clear Data feature requires additional authentication.\n\nTo clear ${confirmDialog.statLabel}:\n1. Navigate to Admin Settings\n2. Use the Data Management section\n3. Follow the secure deletion process\n\nThis helps prevent accidental data loss.`, 'Additional Authentication Required')
     
     /* 
     // Full implementation would be:
@@ -154,8 +184,31 @@ export default function AdminUserProgressPage() {
     */
   }
 
+  const handleCancelClear = () => {
+    setConfirmDialog({
+      isOpen: false,
+      statId: null,
+      dataKey: '',
+      statLabel: ''
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800">
+      <ToastContainer />
+      
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="⚠️ WARNING"
+        message={`This will permanently delete all ${confirmDialog.statLabel} data!\n\nThis action CANNOT be undone. Are you sure?`}
+        confirmText="OK"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={handleConfirmClear}
+        onCancel={handleCancelClear}
+      />
+      
       {/* Navigation */}
       <Navigation currentPage="admin" />
 

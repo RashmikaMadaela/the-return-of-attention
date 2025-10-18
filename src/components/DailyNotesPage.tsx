@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 import Navigation from './Navigation'
+import { useToast } from '@/hooks/useToast'
 
 export default function DailyNotesPage() {
+  const { showWarning, showError, showSuccess, ToastContainer } = useToast()
   // Add Lexend font
   useEffect(() => {
     const link = document.createElement('link')
@@ -153,7 +155,7 @@ export default function DailyNotesPage() {
 
   const handleDetailedLog = async () => {
     if (!detailedForm.emotion) {
-      alert('Please select an emotion!')
+      showWarning('Please select an emotion!')
       return
     }
 
@@ -179,6 +181,7 @@ export default function DailyNotesPage() {
         // Reload the emotional journey to show the new entry
         await loadTodaysEmotionalJourney()
         setError('')
+        showSuccess('Emotional note saved successfully!')
         
         // Reset form
         setDetailedForm({
@@ -189,10 +192,12 @@ export default function DailyNotesPage() {
         })
       } else {
         setError(result.error || 'Failed to save detailed log')
+        showError(result.error || 'Failed to save detailed log')
       }
     } catch (err) {
       console.error('Error saving detailed log:', err)
       setError('Failed to save detailed log')
+      showError('Failed to save detailed log')
     } finally {
       setIsLoading(false)
     }
@@ -200,6 +205,7 @@ export default function DailyNotesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-400 to-blue-300">
+      <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="daily-notes" />
 

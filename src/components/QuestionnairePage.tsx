@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useToast } from '@/hooks/useToast'
 
 interface QuestionnaireAnswers {
   [key: string]: any
@@ -10,6 +11,7 @@ interface QuestionnaireAnswers {
 
 export default function QuestionnairePage() {
   const router = useRouter()
+  const { showWarning, showError, showSuccess, ToastContainer } = useToast()
   const [currentPage, setCurrentPage] = useState(1)
   const [answers, setAnswers] = useState<QuestionnaireAnswers>({
     // Page 1 (Questions 1-9)
@@ -101,11 +103,11 @@ export default function QuestionnairePage() {
 
   const handleNext = () => {
     if (currentPage === 1 && !isPage1Complete()) {
-      alert('Please answer all questions before proceeding!')
+      showWarning('Please answer all questions before proceeding!')
       return
     }
     if (currentPage === 2 && !isPage2Complete()) {
-      alert('Please answer all questions before proceeding!')
+      showWarning('Please answer all questions before proceeding!')
       return
     }
     if (currentPage < 3) {
@@ -129,7 +131,7 @@ export default function QuestionnairePage() {
 
   const handleFinish = () => {
     if (!isPage3Complete()) {
-      alert('Please answer all required questions before finishing!')
+      showWarning('Please answer all required questions before finishing!')
       return
     }
     
@@ -181,22 +183,23 @@ export default function QuestionnairePage() {
           // Mark completed and save answers locally
           localStorage.setItem('questionnaireCompleted', 'true')
           localStorage.setItem('questionnaireAnswers', JSON.stringify(answers))
-          router.push('/home')
+          showSuccess('Questionnaire completed successfully!')
+          setTimeout(() => router.push('/home'), 1500)
         } else {
           const body = await res.json().catch(() => ({}))
           console.error('Questionnaire submit failed', res.status, body)
           if (body?.errors && Array.isArray(body.errors) && body.errors.length > 0) {
-            alert('Validation failed:\n' + body.errors.join('\n'))
+            showError('Validation failed:\n' + body.errors.join('\n'))
           } else if (body?.message) {
-            alert(body.message)
+            showError(body.message)
           } else {
-            alert('Failed to submit questionnaire (see console for details)')
+            showError('Failed to submit questionnaire (see console for details)')
           }
         }
 
       } catch (err) {
         console.error('Failed to submit questionnaire', err)
-        alert('Failed to submit questionnaire')
+        showError('Failed to submit questionnaire')
       }
     })()
   }
@@ -221,6 +224,7 @@ export default function QuestionnairePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-purple-600">
+      <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="questionnaire" />
       

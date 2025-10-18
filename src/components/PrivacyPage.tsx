@@ -2,9 +2,11 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/useToast'
 
 export default function PrivacyPage() {
   const router = useRouter()
+  const { showInfo, ToastContainer } = useToast()
 
   const handleChangePassword = () => {
     sessionStorage.setItem('previousPage', '/privacy')
@@ -13,7 +15,7 @@ export default function PrivacyPage() {
 
   const handleDeleteAccount = () => {
     // TODO: Implement delete account functionality
-    alert('Delete account functionality to be implemented')
+    showInfo('Delete account functionality to be implemented')
   }
 
   const handleBack = () => {
@@ -28,6 +30,7 @@ export default function PrivacyPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+      <ToastContainer />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <h1 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-8 sm:mb-12">

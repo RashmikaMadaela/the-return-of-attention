@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useToast } from '@/hooks/useToast'
 
 interface SelfAssessmentPageProps {
   onComplete?: (answers: any) => void
@@ -10,6 +11,7 @@ interface SelfAssessmentPageProps {
 
 export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPageProps) {
   const router = useRouter()
+  const { showWarning, showError, showSuccess, ToastContainer } = useToast()
   
   const [answers, setAnswers] = useState<Record<string, string | null>>({
     foodTaste: null,
@@ -84,7 +86,7 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
 
   const handleSubmit = async () => {
     if (!isAllAnswered()) {
-      alert('Please answer all questions before submitting!')
+      showWarning('Please answer all questions before submitting!')
       return
     }
 
@@ -112,14 +114,16 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
       if (res.ok) {
         localStorage.setItem('selfAssessmentCompleted', 'true')
         localStorage.setItem('selfAssessmentAnswers', JSON.stringify(answers))
-        router.push('/self-assessment/completed')
+        showSuccess('Self assessment completed successfully!')
+        setTimeout(() => router.push('/self-assessment/completed'), 1500)
       } else {
         const err = await res.json().catch(() => ({}))
-        alert(err?.message || 'Failed to submit self assessment')
+        showError(err?.message || 'Failed to submit self assessment')
       }
       
     } catch (error) {
       console.error('Error submitting self assessment:', error)
+      showError('Failed to submit self assessment')
     }
   }
 
@@ -134,6 +138,7 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600">
+      <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="self-assessment" />
       
