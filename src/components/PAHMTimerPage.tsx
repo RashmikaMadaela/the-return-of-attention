@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
+import SessionTimeControls from './SessionTimeControls'
 import { type PAHMClick, type PAHMPosition } from '@/lib/api/sessions'
 
 interface TimerState {
@@ -57,6 +58,9 @@ export default function PAHMTimerPage() {
     totalSeconds: 1800,
     startedAt: null
   })
+
+  const [timeMultiplier, setTimeMultiplier] = useState(1)
+  const [fastForwardActive, setFastForwardActive] = useState(false)
 
   const [pahmTracking, setPahmTracking] = useState<PAHMTracking>({
     nostalgia: 0,
@@ -240,10 +244,10 @@ export default function PAHMTimerPage() {
           }
         }
         
-        const newTotal = prev.totalSeconds - 1
+        const newTotal = prev.totalSeconds - timeMultiplier
         return {
           ...prev,
-          totalSeconds: newTotal,
+          totalSeconds: Math.max(0, newTotal),
           minutes: Math.floor(newTotal / 60),
           seconds: newTotal % 60
         }
@@ -330,6 +334,75 @@ export default function PAHMTimerPage() {
       setClickedButton(position)
       setTimeout(() => setClickedButton(null), 300)
     }
+  }
+
+  const handleTimeSkip = async () => {
+    if (confirm('Skip to the end of this session? This will mark the session as completed with current PAHM data.')) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+      
+      // Set timer to 0
+      setTimer(prev => ({
+        ...prev,
+        totalSeconds: 0,
+        minutes: 0,
+        seconds: 0,
+        isRunning: false
+      }))
+
+      // If we have a sessionId, complete the session immediately via API
+      if (sessionId) {
+        try {
+          // Dynamically import the completeSession function
+          const { completeSession } = await import('@/lib/api/sessions')
+          
+          const actualDurationMinutes = sessionSettings?.duration || 30
+          
+          // Complete the session with current PAHM data
+          await completeSession({
+            sessionId,
+            qualityRating: 5, // Default rating for time-skipped sessions
+            insights: 'Session completed via Time Skip',
+            pahmData: {
+              totalClicks: pahmTracking.nostalgia + pahmTracking.likes + pahmTracking.anticipation +
+                          pahmTracking.past + pahmTracking.present + pahmTracking.future +
+                          pahmTracking.regret + pahmTracking.dislikes + pahmTracking.worry,
+              clickData: pahmClicks,
+              patternNotes: 'Time Skip completion'
+            }
+          })
+
+          // Clear session storage
+          sessionStorage.removeItem('activeSession')
+          sessionStorage.removeItem('pahmClickData')
+          sessionStorage.removeItem('pahmTracking')
+          sessionStorage.removeItem('sessionDuration')
+          sessionStorage.removeItem('actualSessionDuration')
+          
+          // Redirect based on session type
+          setTimeout(() => {
+            if (isMindRecovery) {
+              router.push('/mind-recovery')
+            } else {
+              router.push('/home')
+            }
+          }, 1000)
+        } catch (error) {
+          console.error('Error completing skipped session:', error)
+          // Fall back to regular completion flow
+          handleTimerComplete()
+        }
+      } else {
+        // No sessionId, use regular flow
+        handleTimerComplete()
+      }
+    }
+  }
+
+  const handleFastForward = () => {
+    setFastForwardActive(!fastForwardActive)
+    setTimeMultiplier(fastForwardActive ? 1 : 10)
   }
 
   const progress = sessionSettings ? 
@@ -690,37 +763,20 @@ export default function PAHMTimerPage() {
               </button>
             </div>
 
+            {/* Session Time Controls - Available for all users */}
+            <SessionTimeControls
+              onTimeSkip={handleTimeSkip}
+              onFastForward={handleFastForward}
+              fastForwardActive={fastForwardActive}
+              isActive={timer.isRunning}
+              className="mb-6"
+            />
+
             {/* Admin Controls - Only show in admin mode */}
             {isAdminMode && (
               <div className="bg-red-900/50 rounded-xl p-6 mb-6 border-2 border-red-500">
                 <h3 className="text-red-300 font-bold text-lg mb-4 text-center">🔧 Admin Testing Controls</h3>
                 <div className="flex justify-center gap-4">
-                  <button
-                    onClick={() => {
-                      // Fast forward by 5 minutes
-                      setTimer(prev => ({
-                        ...prev,
-                        totalSeconds: Math.max(0, prev.totalSeconds - 300)
-                      }))
-                    }}
-                    className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
-                  >
-                    ⏩ Fast Forward 5min
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      // Skip to end of session
-                      setTimer(prev => ({
-                        ...prev,
-                        totalSeconds: 0
-                      }))
-                    }}
-                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
-                  >
-                    ⏭️ Skip Session
-                  </button>
-                  
                   <button
                     onClick={() => {
                       // Go back to admin page

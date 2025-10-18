@@ -81,102 +81,42 @@ export default function AdminStageTestingPage() {
     }
   }
 
-  const handleStageAction = (stageId: number, action: string) => {
+  const handleStageAction = async (stageId: number, action: string) => {
     console.log(`${action} action for stage ${stageId}`)
     
-    switch(action) {
-      case 'unlock':
-        // Unlock stage for users by setting it as available
-        const unlockedStages = JSON.parse(localStorage.getItem('unlockedStages') || '[]')
-        if (!unlockedStages.includes(stageId)) {
-          unlockedStages.push(stageId)
-          localStorage.setItem('unlockedStages', JSON.stringify(unlockedStages))
-          
-          // Special handling for Stage 1 - unlock all sub-stages
-          if (stageId === 1) {
-            localStorage.setItem('stage1AdminUnlocked', 'true')
-            // Unlock all T1-T5 sessions with proper durations
-            const stage1Progress = []
-            const stageDurations = [10, 15, 20, 25, 30] // T1=10min, T2=15min, etc.
-            
-            for (let i = 1; i <= 5; i++) {
-              stage1Progress.push({
-                id: i,
-                name: `T${i}`,
-                duration: stageDurations[i-1],
-                minTime: stageDurations[i-1],
-                maxTime: 30,
-                completed: false,
-                unlocked: true,
-                adminUnlocked: true
-              })
-            }
-            localStorage.setItem('stage1Progress', JSON.stringify(stage1Progress))
-          }
-          
-          alert(`Stage ${stageId} has been unlocked for users!`)
-        } else {
-          alert(`Stage ${stageId} is already unlocked`)
-        }
-        break
-      case 'reset':
-        // Reset specific stage progress
-        if (stageId === 1) {
-          // Reset Stage 1 specific data
-          localStorage.removeItem('stage1Progress')
-          localStorage.removeItem('stage1Started')
-          localStorage.removeItem('stage1IntroSeen')
-          localStorage.removeItem('completedSessions')
-          
-          // Remove stage 1 from completed stages
-          const completedStages = parseInt(localStorage.getItem('completedStages') || '0')
-          if (completedStages >= 1) {
-            localStorage.setItem('completedStages', '0')
-          }
-        } else {
-          // Reset PAHM stages (2-6)
-          const pahmProgress = JSON.parse(localStorage.getItem('pahmProgress') || '[]')
-          const filteredProgress = pahmProgress.filter((item: any) => item.stage !== stageId)
-          localStorage.setItem('pahmProgress', JSON.stringify(filteredProgress))
-          
-          // Reset completed PAHM sessions for this stage
-          const completedPAHMSessions = JSON.parse(localStorage.getItem('completedPAHMSessions') || '[]')
-          const filteredSessions = completedPAHMSessions.filter((item: any) => item.stage !== stageId)
-          localStorage.setItem('completedPAHMSessions', JSON.stringify(filteredSessions))
-          
-          // Update completed stages if this stage was completed
-          const completedStages = parseInt(localStorage.getItem('completedStages') || '0')
-          if (completedStages >= stageId) {
-            localStorage.setItem('completedStages', (stageId - 1).toString())
-          }
-        }
-        
-        // Clear session storage
-        sessionStorage.removeItem('sessionSettings')
-        sessionStorage.removeItem('currentSession')
-        sessionStorage.removeItem('pahmData')
-        
-        alert(`Stage ${stageId} progress has been reset!`)
-        break
-      case 'timeskip':
-        // Navigate to stage with admin mode for fast controls
-        if (stageId === 1) {
-          // Stage 1 uses regular timer page, but we need to set up a session first
-          // Set up default session settings for Stage 1
-          const defaultSettings = {
-            posture: 'sitting',
-            duration: 10,
-            bells: true,
-            voiceCommands: true,
-            stage: '1',
-            title: 'T1: Physical Stillness Training'
-          }
-          sessionStorage.setItem('sessionSettings', JSON.stringify(defaultSettings))
-          router.push(`/timer?stage=1&admin=true`)
-        } else if (stageId >= 2 && stageId <= 6) {
-          router.push(`/pahm-timer?stage=${stageId}&admin=true`)
-        }
-        break
+    // Show loading state
+    const actionText = action === 'unlock' ? 'Unlocking' : action === 'reset' ? 'Resetting' : 'Completing'
+    const loadingMessage = `${actionText} stage ${stageId}...`
+    
+    try {
+      // Call the API
+      const response = await fetch('/api/admin/stage-actions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action,
+          stageNumber: stageId
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to perform action')
+      }
+
+      // Show success message
+      alert(data.message)
+      
+      // Reload the page to reflect changes
+      if (action === 'complete') {
+        window.location.reload()
+      }
+    } catch (error) {
+      console.error('Stage action error:', error)
+      alert(`Failed to ${action} stage ${stageId}: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -226,23 +166,23 @@ export default function AdminStageTestingPage() {
           
           <div className="space-y-4">
             <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl transition-all duration-300 hover:bg-blue-50">
-              <span className="font-bold text-blue-600 min-w-20">Unlock:</span>
+              <span className="font-bold text-blue-600 min-w-24">Unlock:</span>
               <span className="text-gray-700 leading-relaxed">
-                Enable access to the stage for users. This allows users to begin or continue their progress through this specific stage of their journey.
+                Enable access to the stage for users in the database. This allows users to begin or continue their progress through this specific stage.
               </span>
             </div>
             
             <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl transition-all duration-300 hover:bg-blue-50">
-              <span className="font-bold text-blue-600 min-w-20">Reset:</span>
+              <span className="font-bold text-blue-600 min-w-24">Complete:</span>
               <span className="text-gray-700 leading-relaxed">
-                Reset the stage to its initial state. All progress, saved data, and completions for this stage will be cleared, returning it to the beginning.
+                Mark the stage as fully completed in the database. This sets all required sessions/hours to the minimum requirement and unlocks the next stage.
               </span>
             </div>
             
             <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl transition-all duration-300 hover:bg-blue-50">
-              <span className="font-bold text-blue-600 min-w-20">Time Skip:</span>
+              <span className="font-bold text-blue-600 min-w-24">Reset:</span>
               <span className="text-gray-700 leading-relaxed">
-                Fast forward through time-dependent elements in the stage. This allows you to bypass waiting periods, session timers, or scheduled content for testing purposes.
+                Reset the stage to its initial state in the database. All progress, saved data, and completions for this stage will be cleared.
               </span>
             </div>
           </div>
@@ -272,24 +212,24 @@ export default function AdminStageTestingPage() {
                   {stage.description}
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <div className="flex flex-col gap-2">
                   <button 
                     onClick={() => handleStageAction(stage.id, 'unlock')}
-                    className="flex-1 p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-green-500 text-white hover:bg-green-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-green-500/30 min-h-[40px] active:bg-green-700"
+                    className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-green-500 text-white hover:bg-green-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-green-500/30 min-h-[40px] active:bg-green-700"
                   >
                     Unlock
                   </button>
                   <button 
-                    onClick={() => handleStageAction(stage.id, 'reset')}
-                    className="flex-1 p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-orange-500 text-white hover:bg-orange-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-orange-500/30 min-h-[40px] active:bg-orange-700"
+                    onClick={() => handleStageAction(stage.id, 'complete')}
+                    className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-blue-500 text-white hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/30 min-h-[40px] active:bg-blue-700"
                   >
-                    Reset
+                    Complete
                   </button>
                   <button 
-                    onClick={() => handleStageAction(stage.id, 'timeskip')}
-                    className="flex-1 p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-blue-500 text-white hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/30 min-h-[40px] active:bg-blue-700"
+                    onClick={() => handleStageAction(stage.id, 'reset')}
+                    className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-orange-500 text-white hover:bg-orange-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-orange-500/30 min-h-[40px] active:bg-orange-700"
                   >
-                    Time Skip
+                    Reset
                   </button>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
+import SessionTimeControls from './SessionTimeControls'
 
 interface TimerState {
   minutes: number
@@ -39,6 +40,9 @@ export default function TimerPage() {
     totalSeconds: 600,
     startedAt: null
   })
+
+  const [timeMultiplier, setTimeMultiplier] = useState(1)
+  const [fastForwardActive, setFastForwardActive] = useState(false)
 
   const [sessionData, setSessionData] = useState<SessionData | null>(null)
   const [sessionSettings, setSessionSettings] = useState<any>(null)
@@ -160,10 +164,10 @@ export default function TimerPage() {
           }
         }
         
-        const newTotal = prev.totalSeconds - 1
+        const newTotal = prev.totalSeconds - timeMultiplier
         return {
           ...prev,
-          totalSeconds: newTotal,
+          totalSeconds: Math.max(0, newTotal),
           minutes: Math.floor(newTotal / 60),
           seconds: newTotal % 60
         }
@@ -201,10 +205,10 @@ export default function TimerPage() {
           }
         }
         
-        const newTotal = prev.totalSeconds - 1
+        const newTotal = prev.totalSeconds - timeMultiplier
         return {
           ...prev,
-          totalSeconds: newTotal,
+          totalSeconds: Math.max(0, newTotal),
           minutes: Math.floor(newTotal / 60),
           seconds: newTotal % 60
         }
@@ -241,6 +245,61 @@ export default function TimerPage() {
     
     // Navigate to reflection page
     router.push(`/stage-1/reflection?stage=${stageId}`)
+  }
+
+  const handleTimeSkip = async () => {
+    if (confirm('Skip to the end of this session? This will mark the session as completed.')) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+      
+      // Set timer to 0
+      setTimer(prev => ({
+        ...prev,
+        totalSeconds: 0,
+        minutes: 0,
+        seconds: 0,
+        isRunning: false
+      }))
+
+      // If we have a sessionId, complete the session immediately via API
+      if (sessionId) {
+        try {
+          // Dynamically import the completeSession function
+          const { completeSession } = await import('@/lib/api/sessions')
+          
+          const actualDurationMinutes = sessionSettings?.duration || 10
+          
+          // Complete the session with minimal data
+          await completeSession({
+            sessionId,
+            qualityRating: 5, // Default rating for time-skipped sessions
+            insights: 'Session completed via Time Skip'
+          })
+
+          // Clear session storage
+          sessionStorage.removeItem('activeSession')
+          sessionStorage.removeItem('actualSessionDuration')
+          
+          // Redirect to home or stage page
+          setTimeout(() => {
+            router.push('/stage-1')
+          }, 1000)
+        } catch (error) {
+          console.error('Error completing skipped session:', error)
+          // Fall back to regular completion flow
+          handleTimerComplete()
+        }
+      } else {
+        // No sessionId, use regular flow
+        handleTimerComplete()
+      }
+    }
+  }
+
+  const handleFastForward = () => {
+    setFastForwardActive(!fastForwardActive)
+    setTimeMultiplier(fastForwardActive ? 1 : 10)
   }
 
   const progress = sessionSettings ? 
@@ -326,37 +385,19 @@ export default function TimerPage() {
               </button>
             </div>
 
+            {/* Session Time Controls - Available for all users */}
+            <SessionTimeControls
+              onTimeSkip={handleTimeSkip}
+              onFastForward={handleFastForward}
+              fastForwardActive={fastForwardActive}
+              isActive={timer.isRunning}
+            />
+
             {/* Admin Controls - Only show in admin mode */}
             {isAdminMode && (
               <div className="bg-red-900/50 rounded-xl p-6 mb-8 border-2 border-red-500">
                 <h3 className="text-red-300 font-bold text-lg mb-4 text-center">🔧 Admin Testing Controls</h3>
                 <div className="flex justify-center gap-4">
-                  <button
-                    onClick={() => {
-                      // Fast forward by 5 minutes
-                      setTimer(prev => ({
-                        ...prev,
-                        totalSeconds: Math.max(0, prev.totalSeconds - 300)
-                      }))
-                    }}
-                    className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
-                  >
-                    ⏩ Fast Forward 5min
-                  </button>
-                  
-                  <button
-                    onClick={() => {
-                      // Skip to end of session
-                      setTimer(prev => ({
-                        ...prev,
-                        totalSeconds: 0
-                      }))
-                    }}
-                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
-                  >
-                    ⏭️ Skip Session
-                  </button>
-                  
                   <button
                     onClick={() => {
                       // Go back to admin page
