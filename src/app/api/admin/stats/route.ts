@@ -47,6 +47,9 @@ export async function GET(request: NextRequest) {
       weeklyActiveUsers,
       monthlyActiveUsers,
       happinessScores,
+      totalDailyNotes,
+      totalPracticeSessions,
+      totalMindRecoverySessions,
     ] = await Promise.all([
       // Basic user counts
       prisma.user.count(),
@@ -77,6 +80,13 @@ export async function GET(request: NextRequest) {
         orderBy: { createdAt: 'desc' },
         take: 1000, // Recent sample for analysis
       }),
+      
+      // Additional counts for admin dashboard
+      prisma.dailyNote.count(),
+      // Count all sessions from session table (total practice sessions)
+      prisma.session.count(),
+      // Count sessions with sessionType = 'mind_recovery'
+      prisma.session.count({ where: { sessionType: 'mind_recovery' } }),
     ]);
 
     // Calculate additional session metrics
@@ -166,6 +176,13 @@ export async function GET(request: NextRequest) {
           totalPracticeHours: Math.round(totalPracticeHours * 100) / 100,
           averageSessionsPerUser: Math.round(averageSessionsPerUser * 100) / 100,
           systemUptime: '99.9%', // Placeholder - would need actual monitoring
+        },
+        
+        dashboardCounts: {
+          practiceSessions: totalPracticeSessions, // Total count of all sessions
+          mindRecoverySessions: totalMindRecoverySessions, // Sessions with sessionType = 'mind_recovery'
+          dailyNotes: totalDailyNotes,
+          totalUsers,
         },
         
         userEngagement: {

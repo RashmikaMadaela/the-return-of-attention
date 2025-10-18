@@ -11,7 +11,7 @@ import { prisma } from '@/lib/prisma';
 export interface AdminUser {
   id: string;
   userId: string;
-  role: 'admin' | 'super_admin';
+  role: 'admin' | 'user';
   permissions: string[];
   isActive: boolean;
   user: {
@@ -39,6 +39,7 @@ export async function getAdminUser(): Promise<AdminUser | null> {
         id: true,
         email: true,
         name: true,
+        role: true,
         isActive: true,
       }
     });
@@ -47,33 +48,29 @@ export async function getAdminUser(): Promise<AdminUser | null> {
       return null;
     }
 
-    // Check if user has admin privileges
-    const adminUser = await prisma.adminUser.findUnique({
-      where: { userId: user.id },
-      select: {
-        id: true,
-        userId: true,
-        role: true,
-        permissions: true,
-        isActive: true,
-      }
-    });
-
-    if (!adminUser || !adminUser.isActive) {
+    // Check if user has admin role
+    if (user.role !== 'admin') {
       return null;
     }
 
-    // Parse permissions from JSON
-    const permissions = Array.isArray(adminUser.permissions) 
-      ? adminUser.permissions as string[]
-      : [];
+    // Define permissions based on role
+    // All admins have basic admin permissions
+    const permissions = [
+      'user_management',
+      'system_monitoring',
+      'analytics_access',
+      'session_management',
+      'users.write',
+      'users.delete',
+      'admin.manage'
+    ];
 
     return {
-      id: adminUser.id,
-      userId: adminUser.userId,
-      role: adminUser.role as 'admin' | 'super_admin',
+      id: user.id,
+      userId: user.id,
+      role: user.role as 'admin' | 'user',
       permissions,
-      isActive: adminUser.isActive,
+      isActive: user.isActive,
       user: {
         id: user.id,
         email: user.email,
@@ -90,8 +87,9 @@ export async function getAdminUser(): Promise<AdminUser | null> {
  * Check if admin user has specific permission
  */
 export function hasPermission(adminUser: AdminUser, permission: string): boolean {
-  // Super admins have all permissions
-  if (adminUser.role === 'super_admin') {
+  // All admins in this system have all permissions
+  // (since we're using a simple role-based system with User.role)
+  if (adminUser.role === 'admin') {
     return true;
   }
 

@@ -1,78 +1,119 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+
+interface StatCard {
+  id: number
+  icon: string
+  number: number
+  label: string
+  subtitle: string
+  gradient: string
+  dataKey: string
+}
 
 export default function AdminUserProgressPage() {
   const router = useRouter()
   
-  const [stats, setStats] = useState([
+  const [stats, setStats] = useState<StatCard[]>([
     {
       id: 1,
       icon: '🔥',
-      number: 67,
+      number: 0,
       label: 'Practice Sessions',
       subtitle: 'ALL users in database',
-      gradient: 'from-blue-500 to-blue-700'
+      gradient: 'from-blue-500 to-blue-700',
+      dataKey: 'practiceSessions'
     },
     {
       id: 2,
       icon: '🌱',
-      number: 5,
+      number: 0,
       label: 'Mind Recovery Sessions',
       subtitle: 'ALL users in database',
-      gradient: 'from-purple-500 to-purple-700'
+      gradient: 'from-purple-500 to-purple-700',
+      dataKey: 'mindRecoverySessions'
     },
     {
       id: 3,
       icon: '📝',
-      number: 132,
+      number: 0,
       label: 'Daily Emotional Notes',
       subtitle: 'ALL users in database',
-      gradient: 'from-orange-500 to-orange-700'
+      gradient: 'from-orange-500 to-orange-700',
+      dataKey: 'dailyNotes'
     },
     {
       id: 4,
-      icon: '📊',
-      number: 5,
-      label: 'User Progress',
-      subtitle: 'ALL users in database',
-      gradient: 'from-green-500 to-green-700'
-    },
-    {
-      id: 5,
-      icon: '👥',
-      number: 11,
+      icon: '',
+      number: 0,
       label: 'Users',
       subtitle: 'ALL users in database',
-      gradient: 'from-pink-500 to-pink-700'
-    },
-    {
-      id: 6,
-      icon: '📋',
-      number: 7,
-      label: 'Questionnaires',
-      subtitle: 'FIXED: Unique users count',
-      gradient: 'from-cyan-500 to-cyan-700'
-    },
-    {
-      id: 7,
-      icon: '🔍',
-      number: 7,
-      label: 'Self Assessments',
-      subtitle: 'FIXED: Unique users count',
-      gradient: 'from-lime-500 to-lime-700'
-    },
-    {
-      id: 8,
-      icon: '📈',
-      number: 15,
-      label: 'Onboarding Progress',
-      subtitle: 'ALL users in database',
-      gradient: 'from-indigo-500 to-indigo-700'
+      gradient: 'from-pink-500 to-pink-700',
+      dataKey: 'totalUsers'
     }
   ])
+
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Fetch statistics from API
+  const fetchStats = async () => {
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const response = await fetch('/api/admin/stats')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch statistics')
+      }
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        const dashboardCounts = data.data.dashboardCounts
+        
+        // Update stats with real data
+        setStats(prevStats => prevStats.map(stat => {
+          let newNumber = 0
+          
+          switch(stat.dataKey) {
+            case 'practiceSessions':
+              newNumber = dashboardCounts.practiceSessions
+              break
+            case 'mindRecoverySessions':
+              newNumber = dashboardCounts.mindRecoverySessions
+              break
+            case 'dailyNotes':
+              newNumber = dashboardCounts.dailyNotes
+              break
+            case 'totalUsers':
+              newNumber = dashboardCounts.totalUsers
+              break
+            default:
+              newNumber = stat.number
+          }
+          
+          return { ...stat, number: newNumber }
+        }))
+      } else {
+        throw new Error(data.error || 'Failed to load statistics')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load statistics')
+      console.error('Error fetching stats:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fetch stats on component mount
+  useEffect(() => {
+    fetchStats()
+  }, [])
 
   const handleNavigation = (page: string) => {
     switch(page) {
@@ -88,13 +129,29 @@ export default function AdminUserProgressPage() {
     }
   }
 
-  const handleClearStat = (statId: number) => {
-    // Database operation would go here
-    setStats(prevStats => 
-      prevStats.map(stat => 
-        stat.id === statId ? { ...stat, number: 0 } : stat
-      )
-    )
+  const handleClearStat = async (statId: number, dataKey: string) => {
+    const statLabel = stats.find(s => s.id === statId)?.label
+    
+    if (!confirm(`⚠️ WARNING: This will permanently delete all ${statLabel} data!\n\nThis action CANNOT be undone. Are you sure?`)) {
+      return
+    }
+
+    // For now, show info message since the clear API requires more complex authentication
+    alert(`The Clear Data feature requires additional authentication.\n\nTo clear ${statLabel}:\n1. Navigate to Admin Settings\n2. Use the Data Management section\n3. Follow the secure deletion process\n\nThis helps prevent accidental data loss.`)
+    
+    /* 
+    // Full implementation would be:
+    const response = await fetch('/api/admin/data/clear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'clear_all_data',
+        targetType: dataKey,
+        reason: `Admin cleared ${statLabel} via dashboard`,
+        confirmationCode: 'ADMIN_CONFIRM'
+      })
+    })
+    */
   }
 
   return (
@@ -127,12 +184,38 @@ export default function AdminUserProgressPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-10">
+      <div className="max-w-7xl mx-auto px-10 pb-10">
         <h1 className="text-white text-4xl font-bold mb-10 text-center drop-shadow-lg">
           User Progress Dashboard
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-white mb-4"></div>
+              <p className="text-white text-xl">Loading statistics...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="bg-red-100 border-2 border-red-400 rounded-xl p-8 text-center max-w-2xl mx-auto">
+            <div className="text-red-600 text-3xl mb-3">⚠️ Error</div>
+            <p className="text-red-700 text-lg mb-4">{error}</p>
+            <button 
+              onClick={fetchStats}
+              className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {/* Stats Grid */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {stats.map((stat, index) => (
             <div 
               key={stat.id} 
@@ -158,7 +241,7 @@ export default function AdminUserProgressPage() {
               </div>
               
               <button 
-                onClick={() => handleClearStat(stat.id)}
+                onClick={() => handleClearStat(stat.id, stat.dataKey)}
                 className="mt-5 px-8 py-3 bg-red-500 text-white border-none rounded-lg cursor-pointer text-sm font-semibold block mx-auto transition-all duration-300 hover:bg-red-600 hover:scale-105 hover:shadow-lg"
               >
                 Clear
@@ -166,6 +249,7 @@ export default function AdminUserProgressPage() {
             </div>
           ))}
         </div>
+        )}
       </div>
     </div>
   )

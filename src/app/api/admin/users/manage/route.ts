@@ -71,19 +71,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if trying to manage another admin (require super_admin permissions)
-    const targetAdminUser = await prisma.adminUser.findUnique({
-      where: { userId: targetUser.id }
-    });
-
-    if (targetAdminUser && !adminUser?.permissions?.includes('admin.manage')) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Insufficient permissions to manage admin users',
-        },
-        { status: 403 }
-      );
+    // Check if trying to manage another admin (prevent admins from deleting other admins accidentally)
+    if (targetUser.id !== adminUser?.userId && !adminUser?.permissions?.includes('admin.manage')) {
+      // Allow managing regular users, but require special permission for admin users
+      const targetUserRole = await prisma.user.findUnique({
+        where: { id: targetUser.id },
+        select: { role: true }
+      });
+      
+      if (targetUserRole?.role === 'admin') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Insufficient permissions to manage admin users',
+          },
+          { status: 403 }
+        );
+      }
     }
 
     let result;
@@ -151,11 +155,6 @@ export async function POST(request: NextRequest) {
           await tx.questionnaire.deleteMany({ where: { userId } });
           await tx.dailyNote.deleteMany({ where: { userId } });
           await tx.account.deleteMany({ where: { userId } });
-          
-          // Delete admin record if exists
-          if (targetAdminUser) {
-            await tx.adminUser.delete({ where: { id: targetAdminUser.id } });
-          }
           
           // Finally delete the user
           return await tx.user.delete({ where: { id: userId } });
