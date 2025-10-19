@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import { LogIn, Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react'
 
 export default function SignInPage() {
   const router = useRouter()
@@ -19,10 +20,18 @@ export default function SignInPage() {
     setFieldErrors({})
 
     const errs: { email?: string; password?: string } = {}
-    if (!email) errs.email = 'Email is required'
-    // basic email format
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = 'Enter a valid email'
-    if (!password) errs.password = 'Password is required'
+    
+    // Validate email - matches backend loginSchema
+    if (!email) {
+      errs.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = 'Invalid email address'
+    }
+    
+    // Validate password - matches backend: min 1 char for login
+    if (!password) {
+      errs.password = 'Password is required'
+    }
 
     if (Object.keys(errs).length) {
       setFieldErrors(errs)
@@ -32,27 +41,75 @@ export default function SignInPage() {
     setLoading(true)
     try {
       const res = await signIn('credentials', { redirect: false, email, password })
-      // res can be undefined if provider not found
+      
+      // Check if sign in was successful
       if (!res) {
-        setError('Sign in failed')
+        setError('Unable to connect to authentication service. Please try again.')
         setLoading(false)
         return
       }
 
-      // NextAuth sets res.error when credentials invalid
-      // Narrow by checking 'error' property exists on the returned value
-      if ((res as unknown) && typeof (res as any).error === 'string') {
-        setError((res as any).error || 'Invalid credentials')
+      // Handle authentication errors with specific messages matching backend CommonErrors
+      if (res.error) {
+        let errorMessage = 'Sign in failed. Please try again.'
+        
+        const errorLower = res.error.toLowerCase()
+        
+        // Map backend error codes to user-friendly messages
+        if (errorLower.includes('invalid email or password') || 
+            errorLower.includes('invalid credentials') ||
+            errorLower.includes('credentials')) {
+          // CommonErrors.invalidCredentials
+          errorMessage = 'Invalid email or password'
+        } else if (errorLower.includes('verify your email') || 
+                   errorLower.includes('email not verified')) {
+          // CommonErrors.emailNotVerified
+          errorMessage = 'Please verify your email address first'
+        } else if (errorLower.includes('account is inactive') || 
+                   errorLower.includes('inactive')) {
+          // CommonErrors.accountInactive
+          errorMessage = 'Account is inactive. Please contact support.'
+        } else if (errorLower.includes('authentication required') || 
+                   errorLower.includes('unauthorized')) {
+          // CommonErrors.unauthorized
+          errorMessage = 'Authentication failed. Please try again.'
+        } else if (errorLower.includes('user') && errorLower.includes('not found')) {
+          // CommonErrors.userNotFound
+          errorMessage = 'No account found with this email. Please sign up first.'
+        } else if (errorLower.includes('network')) {
+          errorMessage = 'Network error. Please check your internet connection.'
+        } else if (errorLower.includes('rate limit') || errorLower.includes('too many')) {
+          // CommonErrors.rateLimitExceeded
+          errorMessage = 'Too many login attempts. Please try again later.'
+        } else if (res.error.length > 10) {
+          // Use the actual error message if it's descriptive
+          errorMessage = res.error
+        }
+        
+        setError(errorMessage)
         setLoading(false)
         return
       }
 
-      // Success
-      router.push('/home')
+      // Check if sign in was successful (no error and ok status)
+      if (res.ok) {
+        // Success - redirect to home
+        router.push('/home')
+      } else {
+        setError('Authentication failed. Please verify your credentials.')
+        setLoading(false)
+      }
     } catch (err) {
       console.error('Sign in error', err)
-      setError('An unexpected error occurred')
-    } finally {
+      
+      // Provide specific error messages based on error type
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('Network error. Please check your internet connection and try again.')
+      } else if (err instanceof Error) {
+        setError(`Error: ${err.message}`)
+      } else {
+        setError('An unexpected error occurred. Please try again later.')
+      }
       setLoading(false)
     }
   }
@@ -66,65 +123,99 @@ export default function SignInPage() {
     router.push('/password-change')
   }
 
-  const handleGoogleSignIn = () => {
-    // TODO: Implement Google sign in
-    console.log('Google Sign In clicked')
+  const handleBackToHome = () => {
+    router.push('/')
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-5">
-      <div className="bg-white rounded-lg shadow-lg p-10 w-full max-w-md">
-        <h1 className="text-center text-3xl mb-8 text-gray-800 font-medium">Sign In</h1>
+    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex justify-center items-center p-4 sm:p-6">
+      {/* Back Button - Top Left */}
+      <button
+        onClick={handleBackToHome}
+        className="fixed top-4 left-4 sm:top-6 sm:left-6 p-2 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full transition-all duration-200 text-white hover:scale-110 z-10 flex items-center gap-2 group"
+      >
+        <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+        <span className="hidden sm:inline-block text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Back
+        </span>
+      </button>
+
+      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-10 w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mb-4 shadow-lg">
+            <LogIn className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
+          <p className="text-sm sm:text-base text-gray-600">Sign in to continue your journey</p>
+        </div>
         
-        <div className="space-y-5">
+        <div className="space-y-4 sm:space-y-5">
           {/* Email Field */}
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Mail className="w-4 h-4 inline mr-1" />
+              Email Address
+            </label>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm sm:text-base transition-all duration-200 focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
             />
-            {fieldErrors.email && <div className="text-xs text-red-500 mt-1">{fieldErrors.email}</div>}
+            {fieldErrors.email && (
+              <div className="text-xs sm:text-sm text-red-500 mt-1 flex items-center gap-1">
+                <span>⚠️</span> {fieldErrors.email}
+              </div>
+            )}
           </div>
 
           {/* Password Field */}
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Lock className="w-4 h-4 inline mr-1" />
+              Password
+            </label>
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm sm:text-base transition-all duration-200 focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
             />
-            {fieldErrors.password && <div className="text-xs text-red-500 mt-1">{fieldErrors.password}</div>}
+            {fieldErrors.password && (
+              <div className="text-xs sm:text-sm text-red-500 mt-1 flex items-center gap-1">
+                <span>⚠️</span> {fieldErrors.password}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Remember Me & Forgot Password */}
-        <div className="flex justify-between items-center my-5">
-          <div className="flex items-center text-xs">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 my-5">
+          <div className="flex items-center text-xs sm:text-sm">
             <input
               type="checkbox"
               id="rememberMe"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="mr-2 w-4 h-4"
+              className="mr-2 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <label htmlFor="rememberMe">Remember me</label>
+            <label htmlFor="rememberMe" className="text-gray-700 cursor-pointer">Remember me</label>
           </div>
           <button 
             onClick={handleForgotPassword}
-            className="text-blue-500 text-xs hover:underline">
+            className="text-blue-600 text-xs sm:text-sm font-medium hover:text-blue-700 hover:underline text-left sm:text-right">
             Forgot Password?
           </button>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="text-red-500 text-sm mb-5 text-center bg-red-50 p-2 rounded">
-            {error}
+          <div className="text-red-600 text-sm mb-5 text-center bg-red-50 p-3 rounded-xl border border-red-200 flex items-center justify-center gap-2">
+            <span>⚠️</span>
+            <span>{error}</span>
           </div>
         )}
 
@@ -132,39 +223,27 @@ export default function SignInPage() {
         <button
           onClick={handleSignIn}
           disabled={loading}
-          className="w-full p-3 bg-blue-500 text-white rounded-full text-sm font-semibold transition-colors hover:bg-blue-600 mb-5 disabled:opacity-60"
+          className="w-full p-3 sm:p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 hover:shadow-xl hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
         >
-          {loading ? 'SIGNING IN...' : 'SIGN IN'}
-        </button>
-
-        {/* Divider */}
-        <div className="text-center my-5 text-gray-500 text-xs relative">
-          <span className="bg-white px-4">Or sign in with</span>
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-        </div>
-
-        {/* Google Sign In Button */}
-        <button 
-          onClick={handleGoogleSignIn}
-          className="w-full p-3 bg-white border border-gray-300 rounded-lg text-sm flex items-center justify-center gap-3 transition-colors hover:bg-gray-50 mb-5"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Continue with Google
+          {loading ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              SIGNING IN...
+            </>
+          ) : (
+            <>
+              SIGN IN
+              <ArrowRight className="w-5 h-5" />
+            </>
+          )}
         </button>
 
         {/* Sign Up Link */}
-        <div className="text-center text-xs text-gray-600">
+        <div className="text-center text-xs sm:text-sm text-gray-600 mt-6">
           Don't have an account?{' '}
           <button 
             onClick={handleSignUp}
-            className="text-blue-500 font-medium hover:underline cursor-pointer">
+            className="text-blue-600 font-semibold hover:text-blue-700 hover:underline cursor-pointer">
             Sign Up
           </button>
         </div>

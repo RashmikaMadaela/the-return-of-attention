@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import { UserPlus, Mail, Lock, User, ArrowRight, Shield, ArrowLeft } from 'lucide-react'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -20,15 +21,46 @@ export default function SignUpPage() {
     setFieldErrors({})
 
     const errs: { name?: string; email?: string; password?: string; confirmPassword?: string } = {}
-    if (!name) errs.name = 'Name is required'
-    if (!email) errs.email = 'Email is required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = 'Enter a valid email'
-    if (!password) errs.password = 'Password is required'
-    else if (password.length < 8) errs.password = 'Password must be at least 8 characters'
-    if (!confirmPassword) errs.confirmPassword = 'Please confirm your password'
-    else if (password !== confirmPassword) errs.confirmPassword = 'Passwords do not match'
+    
+    // Validate name - matches backend: min 2, max 100 characters
+    if (!name) {
+      errs.name = 'Name is required'
+    } else if (name.trim().length < 2) {
+      errs.name = 'Name must be at least 2 characters'
+    } else if (name.trim().length > 100) {
+      errs.name = 'Name cannot exceed 100 characters'
+    }
+    
+    // Validate email - matches backend validation
+    if (!email) {
+      errs.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = 'Invalid email address'
+    }
+    
+    // Validate password - matches backend: min 8 chars, 1 lowercase, 1 uppercase, 1 number
+    if (!password) {
+      errs.password = 'Password is required'
+    } else if (password.length < 8) {
+      errs.password = 'Password must be at least 8 characters'
+    } else if (!/(?=.*[a-z])/.test(password)) {
+      errs.password = 'Password must contain at least one lowercase letter'
+    } else if (!/(?=.*[A-Z])/.test(password)) {
+      errs.password = 'Password must contain at least one uppercase letter'
+    } else if (!/(?=.*\d)/.test(password)) {
+      errs.password = 'Password must contain at least one number'
+    }
+    
+    // Validate confirm password - matches backend refine check
+    if (!confirmPassword) {
+      errs.confirmPassword = 'Please confirm your password'
+    } else if (password !== confirmPassword) {
+      errs.confirmPassword = "Passwords don't match"
+    }
+    
+    // Check terms agreement
     if (!agreeToTerms) {
-      setError('Please agree to the Terms of Service & Privacy Policy')
+      setError('You must agree to the Terms of Service & Privacy Policy to continue')
       return
     }
 
@@ -46,32 +78,72 @@ export default function SignUpPage() {
       })
 
       const data = await response.json()
+      
       if (!response.ok) {
-        setError(data?.message || 'Registration failed')
+        // Handle specific backend error responses
+        let errorMessage = 'Registration failed. Please try again.'
+        
+        if (response.status === 400) {
+          // Validation failed - show backend validation errors
+          if (data.errors && Array.isArray(data.errors)) {
+            // Map backend validation errors to field errors
+            const backendErrors: { name?: string; email?: string; password?: string; confirmPassword?: string } = {}
+            data.errors.forEach((err: any) => {
+              const field = err.path?.[0] || err.field
+              if (field === 'email') backendErrors.email = err.message
+              else if (field === 'password') backendErrors.password = err.message
+              else if (field === 'name') backendErrors.name = err.message
+              else if (field === 'confirmPassword') backendErrors.confirmPassword = err.message
+            })
+            if (Object.keys(backendErrors).length > 0) {
+              setFieldErrors(backendErrors)
+              setLoading(false)
+              return
+            }
+          }
+          errorMessage = data.message || 'Validation failed. Please check your information.'
+        } else if (response.status === 409) {
+          // User already exists (CommonErrors.userExists)
+          errorMessage = data.message || 'An account with this email already exists. Please sign in instead.'
+        } else if (response.status === 500) {
+          errorMessage = 'Server error. Please try again later.'
+        } else if (data.message) {
+          errorMessage = data.message
+        }
+        
+        setError(errorMessage)
         setLoading(false)
         return
       }
 
-      // Auto sign in after successful registration using NextAuth credentials
+      // Auto sign in after successful registration
       const signInRes = await signIn('credentials', {
         redirect: false,
         email,
         password
       })
 
-      if (signInRes && (signInRes as any).error) {
-        // signIn may return an object with an `error` property
-        setError((signInRes as any).error || 'Sign in failed after registration')
+      if (signInRes?.error) {
+        setError('Account created successfully! Please sign in to continue.')
         setLoading(false)
+        // Redirect to sign in page after a delay
+        setTimeout(() => router.push('/signin'), 2000)
         return
       }
 
-      // Redirect to personal-info to collect profile
+      // Success - redirect to personal-info
       router.push('/personal-info')
     } catch (err) {
       console.error('Registration error', err)
-      setError('Registration failed')
-    } finally {
+      
+      // Provide specific error messages based on error type
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('Network error. Please check your internet connection and try again.')
+      } else if (err instanceof Error) {
+        setError(`Registration error: ${err.message}`)
+      } else {
+        setError('An unexpected error occurred during registration. Please try again.')
+      }
       setLoading(false)
     }
   }
@@ -80,83 +152,134 @@ export default function SignUpPage() {
     router.push('/signin')
   }
 
-  const handleGoogleSignUp = () => {
-    // TODO: Implement Google sign up
-    console.log('Google Sign Up clicked')
+  const handleBackToHome = () => {
+    router.push('/')
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-5">
-      <div className="bg-white rounded-lg shadow-lg p-10 w-full max-w-md">
-        <h1 className="text-center text-3xl mb-8 text-gray-800 font-medium">Create Account</h1>
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-purple-500 via-blue-600 to-blue-500 sm:p-6">
+      {/* Back Button - Top Left */}
+      <button
+        onClick={handleBackToHome}
+        className="fixed top-4 left-4 sm:top-6 sm:left-6 p-2 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full transition-all duration-200 text-white hover:scale-110 z-10 flex items-center gap-2 group"
+      >
+        <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+        <span className="hidden sm:inline-block text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Back
+        </span>
+      </button>
+
+      <div className="w-full max-w-md p-6 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl sm:p-10">
+        {/* Header */}
+        <div className="mb-6 text-center sm:mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg sm:w-20 sm:h-20 bg-gradient-to-br from-purple-500 to-blue-600">
+            <UserPlus className="w-8 h-8 text-white sm:w-10 sm:h-10" />
+          </div>
+          <h1 className="mb-2 text-2xl font-bold text-gray-800 sm:text-3xl">Create Account</h1>
+          <p className="text-sm text-gray-600 sm:text-base">Join us on your mindfulness journey</p>
+        </div>
         
-        <div className="space-y-5">
+        <div className="space-y-3 sm:space-y-4">
           {/* Name Field */}
           <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              <User className="inline w-4 h-4 mr-1" />
+              Full Name
+            </label>
             <input
               type="text"
-              placeholder="Full name"
+              placeholder="Enter your full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-lg"
             />
-            {fieldErrors.name && <div className="text-xs text-red-500 mt-1">{fieldErrors.name}</div>}
+            {fieldErrors.name && (
+              <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
+                <span>⚠️</span> {fieldErrors.name}
+              </div>
+            )}
           </div>
+
           {/* Email Field */}
           <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              <Mail className="inline w-4 h-4 mr-1" />
+              Email Address
+            </label>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-lg"
             />
-            {fieldErrors.email && <div className="text-xs text-red-500 mt-1">{fieldErrors.email}</div>}
+            {fieldErrors.email && (
+              <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
+                <span>⚠️</span> {fieldErrors.email}
+              </div>
+            )}
           </div>
 
           {/* Password Field */}
           <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              <Lock className="inline w-4 h-4 mr-1" />
+              Password
+            </label>
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Create a password (min 8 characters)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-lg"
             />
-            {fieldErrors.password && <div className="text-xs text-red-500 mt-1">{fieldErrors.password}</div>}
+            {fieldErrors.password && (
+              <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
+                <span>⚠️</span> {fieldErrors.password}
+              </div>
+            )}
           </div>
 
           {/* Confirm Password Field */}
           <div>
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              <Shield className="inline w-4 h-4 mr-1" />
+              Confirm Password
+            </label>
             <input
               type="password"
-              placeholder="re-enter password"
+              placeholder="Re-enter your password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-3 border border-gray-300 border-l-4 border-l-purple-600 rounded bg-gray-50/50 text-sm transition-colors focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-lg"
             />
-            {fieldErrors.confirmPassword && <div className="text-xs text-red-500 mt-1">{fieldErrors.confirmPassword}</div>}
+            {fieldErrors.confirmPassword && (
+              <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
+                <span>⚠️</span> {fieldErrors.confirmPassword}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Terms Checkbox */}
-        <div className="flex items-start mt-6 mb-5 text-xs">
+        <div className="flex items-start mt-5 mb-4 text-xs sm:mt-6 sm:mb-5 sm:text-sm">
           <input
             type="checkbox"
             id="agreeTerms"
             checked={agreeToTerms}
             onChange={(e) => setAgreeToTerms(e.target.checked)}
-            className="mr-2 w-4 h-4 mt-0.5"
+            className="mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 mt-0.5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
           />
-          <label htmlFor="agreeTerms" className="leading-relaxed cursor-pointer">
-            I agree to the Terms of Service & Privacy Policy
+          <label htmlFor="agreeTerms" className="leading-relaxed text-gray-700 cursor-pointer">
+            I agree to the <span className="font-medium text-purple-600">Terms of Service</span> & <span className="font-medium text-purple-600">Privacy Policy</span>
           </label>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="text-red-500 text-sm mb-5 text-center bg-red-50 p-2 rounded">
-            {error}
+          <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-red-600 border border-red-200 bg-red-50 rounded-xl">
+            <span>⚠️</span>
+            <span>{error}</span>
           </div>
         )}
 
@@ -164,40 +287,28 @@ export default function SignUpPage() {
         <button
           onClick={handleSignUp}
           disabled={loading}
-          className="w-full p-3 bg-blue-500 text-white rounded-full text-sm font-semibold transition-colors hover:bg-blue-600 mb-5 disabled:opacity-60"
+          className="w-full p-3 sm:p-4 bg-gradient-to-r from-purple-500 to-blue-600 text-white rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 hover:shadow-xl hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
         >
-          {loading ? 'CREATING ACCOUNT...' : 'SIGN UP'}
-        </button>
-
-        {/* Divider */}
-        <div className="text-center my-5 text-gray-500 text-xs relative">
-          <span className="bg-white px-4">Or sign up with</span>
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-        </div>
-
-        {/* Google Sign Up Button */}
-        <button 
-          onClick={handleGoogleSignUp}
-          className="w-full p-3 bg-white border border-gray-300 rounded-lg text-sm flex items-center justify-center gap-3 transition-colors hover:bg-gray-50 mb-5"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Continue with Google
+          {loading ? (
+            <>
+              <div className="w-5 h-5 border-2 rounded-full border-white/30 border-t-white animate-spin"></div>
+              CREATING ACCOUNT...
+            </>
+          ) : (
+            <>
+              CREATE ACCOUNT
+              <ArrowRight className="w-5 h-5" />
+            </>
+          )}
         </button>
 
         {/* Sign In Link */}
-        <div className="text-center text-xs text-gray-600">
+        <div className="mt-6 text-xs text-center text-gray-600 sm:text-sm">
           Already have an account?{' '}
           <button 
             onClick={handleSignIn}
-            className="text-blue-500 font-medium hover:underline cursor-pointer">
-            Sign in
+            className="font-semibold text-purple-600 cursor-pointer hover:text-purple-700 hover:underline">
+            Sign In
           </button>
         </div>
       </div>
