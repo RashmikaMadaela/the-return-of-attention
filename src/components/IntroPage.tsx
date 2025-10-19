@@ -1,10 +1,24 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 export default function IntroPage() {
   const router = useRouter()
+  const { data: session, status } = useSession()
+
+  // Redirect logged-in users to home page
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      router.push('/home')
+    }
+  }, [status, session, router])
+
+  // Show nothing while checking auth status or redirecting
+  if (status === 'loading' || status === 'authenticated') {
+    return null
+  }
 
   const handleRegister = () => {
     router.push('/signup')

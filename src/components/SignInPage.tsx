@@ -40,7 +40,12 @@ export default function SignInPage() {
 
     setLoading(true)
     try {
-      const res = await signIn('credentials', { redirect: false, email, password })
+      const res = await signIn('credentials', { 
+        redirect: false, 
+        email, 
+        password,
+        rememberMe: String(rememberMe) // Pass rememberMe as string
+      })
       
       // Check if sign in was successful
       if (!res) {
@@ -128,33 +133,33 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex justify-center items-center p-4 sm:p-6">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 sm:p-6">
       {/* Back Button - Top Left */}
       <button
         onClick={handleBackToHome}
-        className="fixed top-4 left-4 sm:top-6 sm:left-6 p-2 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full transition-all duration-200 text-white hover:scale-110 z-10 flex items-center gap-2 group"
+        className="fixed z-10 flex items-center gap-2 p-2 text-white transition-all duration-200 rounded-full top-4 left-4 sm:top-6 sm:left-6 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm hover:scale-110 group"
       >
         <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-        <span className="hidden sm:inline-block text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <span className="hidden text-sm font-medium transition-opacity duration-200 opacity-0 sm:inline-block group-hover:opacity-100">
           Back
         </span>
       </button>
 
-      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-10 w-full max-w-md">
+      <div className="w-full max-w-md p-6 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl sm:p-10">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mb-4 shadow-lg">
-            <LogIn className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600">
+            <LogIn className="w-8 h-8 text-white sm:w-10 sm:h-10" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
-          <p className="text-sm sm:text-base text-gray-600">Sign in to continue your journey</p>
+          <h1 className="mb-2 text-2xl font-bold text-gray-800 sm:text-3xl">Welcome Back</h1>
+          <p className="text-sm text-gray-600 sm:text-base">Sign in to continue your journey</p>
         </div>
         
         <div className="space-y-4 sm:space-y-5">
           {/* Email Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Mail className="w-4 h-4 inline mr-1" />
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              <Mail className="inline w-4 h-4 mr-1" />
               Email Address
             </label>
             <input
@@ -162,10 +167,10 @@ export default function SignInPage() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm sm:text-base transition-all duration-200 focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
+              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
             />
             {fieldErrors.email && (
-              <div className="text-xs sm:text-sm text-red-500 mt-1 flex items-center gap-1">
+              <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
                 <span>⚠️</span> {fieldErrors.email}
               </div>
             )}
@@ -173,8 +178,8 @@ export default function SignInPage() {
 
           {/* Password Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Lock className="w-4 h-4 inline mr-1" />
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              <Lock className="inline w-4 h-4 mr-1" />
               Password
             </label>
             <input
@@ -182,10 +187,10 @@ export default function SignInPage() {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm sm:text-base transition-all duration-200 focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
+              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
             />
             {fieldErrors.password && (
-              <div className="text-xs sm:text-sm text-red-500 mt-1 flex items-center gap-1">
+              <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
                 <span>⚠️</span> {fieldErrors.password}
               </div>
             )}
@@ -193,27 +198,27 @@ export default function SignInPage() {
         </div>
 
         {/* Remember Me & Forgot Password */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 my-5">
+        <div className="flex flex-col gap-3 my-5 sm:flex-row sm:justify-between sm:items-center">
           <div className="flex items-center text-xs sm:text-sm">
             <input
               type="checkbox"
               id="rememberMe"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="mr-2 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="w-4 h-4 mr-2 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label htmlFor="rememberMe" className="text-gray-700 cursor-pointer">Remember me</label>
           </div>
           <button 
             onClick={handleForgotPassword}
-            className="text-blue-600 text-xs sm:text-sm font-medium hover:text-blue-700 hover:underline text-left sm:text-right">
+            className="text-xs font-medium text-left text-blue-600 sm:text-sm hover:text-blue-700 hover:underline sm:text-right">
             Forgot Password?
           </button>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="text-red-600 text-sm mb-5 text-center bg-red-50 p-3 rounded-xl border border-red-200 flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-red-600 border border-red-200 bg-red-50 rounded-xl">
             <span>⚠️</span>
             <span>{error}</span>
           </div>
@@ -227,7 +232,7 @@ export default function SignInPage() {
         >
           {loading ? (
             <>
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 rounded-full border-white/30 border-t-white animate-spin"></div>
               SIGNING IN...
             </>
           ) : (
@@ -239,11 +244,11 @@ export default function SignInPage() {
         </button>
 
         {/* Sign Up Link */}
-        <div className="text-center text-xs sm:text-sm text-gray-600 mt-6">
+        <div className="mt-6 text-xs text-center text-gray-600 sm:text-sm">
           Don't have an account?{' '}
           <button 
             onClick={handleSignUp}
-            className="text-blue-600 font-semibold hover:text-blue-700 hover:underline cursor-pointer">
+            className="font-semibold text-blue-600 cursor-pointer hover:text-blue-700 hover:underline">
             Sign Up
           </button>
         </div>
