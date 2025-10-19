@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { UserCircle, Calendar, Users, Globe, MapPin, ArrowRight, ArrowLeft } from 'lucide-react'
+import { NATIONALITIES } from '@/lib/constants/nationalities'
 
 export default function PersonalInfoPage() {
   const router = useRouter()
@@ -49,34 +51,85 @@ export default function PersonalInfoPage() {
     router.push('/signup')
   }
 
+  // List of countries for the dropdown
+  const COUNTRIES = [
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
+    "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain",
+    "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+    "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria",
+    "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde",
+    "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros",
+    "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic",
+    "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica",
+    "Dominican Republic", "East Timor", "Ecuador", "Egypt", "El Salvador",
+    "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Fiji", "Finland",
+    "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada",
+    "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hungary",
+    "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy",
+    "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait",
+    "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya",
+    "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia",
+    "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius",
+    "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco",
+    "Mozambique", "Myanmar", "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand",
+    "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway",
+    "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay",
+    "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda",
+    "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines",
+    "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal",
+    "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia",
+    "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan",
+    "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria",
+    "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Togo", "Tonga",
+    "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda",
+    "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay",
+    "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen",
+    "Zambia", "Zimbabwe", "Other"
+  ];
+
   return (
-    <div className="flex items-center justify-center min-h-screen p-5 bg-gray-100">
-      <div className="w-full max-w-md p-10 bg-white rounded-lg shadow-lg">
-        <h1 className="mb-8 text-3xl font-medium text-center text-gray-800">Personal Information</h1>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-10">
+        {/* Header */}
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500 to-pink-500 rounded-full mb-4 shadow-lg">
+            <UserCircle className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Personal Information</h1>
+          <p className="text-sm sm:text-base text-gray-600">Help us personalize your experience</p>
+        </div>
 
-        <div className="space-y-5">
-
+        <div className="space-y-4">
           {/* Age Field */}
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Calendar className="w-4 h-4 inline mr-1" />
+              Age
+            </label>
             <input
               type="number"
-              placeholder="Age"
+              placeholder="Enter your age"
               value={age}
               onChange={(e) => setAge(Number(e.target.value))}
               min={13}
+              max={120}
               step={1}
-              className="w-full p-3 text-sm transition-colors border border-l-4 border-gray-300 rounded border-l-purple-600 bg-gray-50/50 focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm sm:text-base transition-all duration-200 focus:outline-none focus:border-indigo-500 focus:bg-white focus:shadow-lg"
             />
           </div>
 
           {/* Gender Dropdown */}
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Users className="w-4 h-4 inline mr-1" />
+              Gender
+            </label>
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full p-3 text-sm text-gray-600 transition-colors border border-l-4 border-gray-300 rounded cursor-pointer border-l-purple-600 bg-gray-50/50 focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm sm:text-base text-gray-600 transition-all duration-200 cursor-pointer focus:outline-none focus:border-indigo-500 focus:bg-white focus:shadow-lg"
             >
-              <option value="">Select Your Gender</option>
+              <option value="">Select your gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
@@ -84,215 +137,83 @@ export default function PersonalInfoPage() {
             </select>
           </div>
 
-          {/* Nationality (free-text) */}
+          {/* Nationality Dropdown */}
           <div>
-            <textarea
-              placeholder="Nationality"
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Globe className="w-4 h-4 inline mr-1" />
+              Nationality
+            </label>
+            <select
               value={nationality}
               onChange={(e) => setNationality(e.target.value)}
-              rows={2}
-              className="w-full p-3 text-sm text-gray-600 transition-colors border border-l-4 border-gray-300 rounded resize-none border-l-purple-600 bg-gray-50/50 focus:outline-none focus:border-l-purple-700"
-            />
+              className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm sm:text-base text-gray-600 transition-all duration-200 cursor-pointer focus:outline-none focus:border-indigo-500 focus:bg-white focus:shadow-lg"
+            >
+              <option value="">Select your nationality</option>
+              {NATIONALITIES.map((nat) => (
+                <option key={nat} value={nat}>
+                  {nat}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Current Country Dropdown */}
           <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <MapPin className="w-4 h-4 inline mr-1" />
+              Current Country
+            </label>
             <select
               value={currentCountry}
               onChange={(e) => setCurrentCountry(e.target.value)}
-              className="w-full p-3 text-sm text-gray-600 transition-colors border border-l-4 border-gray-300 rounded cursor-pointer border-l-purple-600 bg-gray-50/50 focus:outline-none focus:border-l-purple-700"
+              className="w-full p-3 sm:p-4 border-2 border-gray-200 rounded-xl bg-gray-50 text-sm sm:text-base text-gray-600 transition-all duration-200 cursor-pointer focus:outline-none focus:border-indigo-500 focus:bg-white focus:shadow-lg"
             >
-              <option value="">Current Country</option>
-              <option value="Afghanistan">Afghanistan</option>
-              <option value="Albania">Albania</option>
-              <option value="Algeria">Algeria</option>
-              <option value="Andorra">Andorra</option>
-              <option value="Angola">Angola</option>
-              <option value="Antigua and Barbuda">Antigua and Barbuda</option>
-              <option value="Argentina">Argentina</option>
-              <option value="Armenia">Armenia</option>
-              <option value="Australia">Australia</option>
-              <option value="Austria">Austria</option>
-              <option value="Azerbaijan">Azerbaijan</option>
-              <option value="Bahamas">Bahamas</option>
-              <option value="Bahrain">Bahrain</option>
-              <option value="Bangladesh">Bangladesh</option>
-              <option value="Barbados">Barbados</option>
-              <option value="Belarus">Belarus</option>
-              <option value="Belgium">Belgium</option>
-              <option value="Belize">Belize</option>
-              <option value="Benin">Benin</option>
-              <option value="Bhutan">Bhutan</option>
-              <option value="Bolivia">Bolivia</option>
-              <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
-              <option value="Botswana">Botswana</option>
-              <option value="Brazil">Brazil</option>
-              <option value="Brunei">Brunei</option>
-              <option value="Bulgaria">Bulgaria</option>
-              <option value="Burkina Faso">Burkina Faso</option>
-              <option value="Burundi">Burundi</option>
-              <option value="Cambodia">Cambodia</option>
-              <option value="Cameroon">Cameroon</option>
-              <option value="Canada">Canada</option>
-              <option value="Cape Verde">Cape Verde</option>
-              <option value="Central African Republic">Central African Republic</option>
-              <option value="Chad">Chad</option>
-              <option value="Chile">Chile</option>
-              <option value="China">China</option>
-              <option value="Colombia">Colombia</option>
-              <option value="Comoros">Comoros</option>
-              <option value="Congo">Congo</option>
-              <option value="Costa Rica">Costa Rica</option>
-              <option value="Croatia">Croatia</option>
-              <option value="Cuba">Cuba</option>
-              <option value="Cyprus">Cyprus</option>
-              <option value="Czech Republic">Czech Republic</option>
-              <option value="Democratic Republic of the Congo">Democratic Republic of the Congo</option>
-              <option value="Denmark">Denmark</option>
-                    <option value="Ireland">Ireland</option>
-                    <option value="Israel">Israel</option>
-                    <option value="Italy">Italy</option>
-                    <option value="Jamaica">Jamaica</option>
-                    <option value="Japan">Japan</option>
-                    <option value="Jordan">Jordan</option>
-                    <option value="Kazakhstan">Kazakhstan</option>
-                    <option value="Kenya">Kenya</option>
-                    <option value="Kiribati">Kiribati</option>
-                    <option value="Kuwait">Kuwait</option>
-                    <option value="Kyrgyzstan">Kyrgyzstan</option>
-                    <option value="Laos">Laos</option>
-                    <option value="Latvia">Latvia</option>
-                    <option value="Lebanon">Lebanon</option>
-                    <option value="Lesotho">Lesotho</option>
-                    <option value="Liberia">Liberia</option>
-                    <option value="Libya">Libya</option>
-                    <option value="Liechtenstein">Liechtenstein</option>
-                    <option value="Lithuania">Lithuania</option>
-                    <option value="Luxembourg">Luxembourg</option>
-                    <option value="Madagascar">Madagascar</option>
-                    <option value="Malawi">Malawi</option>
-                    <option value="Malaysia">Malaysia</option>
-                    <option value="Maldives">Maldives</option>
-                    <option value="Mali">Mali</option>
-                    <option value="Malta">Malta</option>
-                    <option value="Marshall Islands">Marshall Islands</option>
-                    <option value="Mauritania">Mauritania</option>
-                    <option value="Mauritius">Mauritius</option>
-                    <option value="Mexico">Mexico</option>
-                    <option value="Micronesia">Micronesia</option>
-                    <option value="Moldova">Moldova</option>
-                    <option value="Monaco">Monaco</option>
-                    <option value="Mongolia">Mongolia</option>
-                    <option value="Montenegro">Montenegro</option>
-                    <option value="Morocco">Morocco</option>
-                    <option value="Mozambique">Mozambique</option>
-                    <option value="Myanmar">Myanmar</option>
-                    <option value="Namibia">Namibia</option>
-                    <option value="Nauru">Nauru</option>
-                    <option value="Nepal">Nepal</option>
-                    <option value="Netherlands">Netherlands</option>
-                    <option value="New Zealand">New Zealand</option>
-                    <option value="Nicaragua">Nicaragua</option>
-                    <option value="Niger">Niger</option>
-                    <option value="Nigeria">Nigeria</option>
-                    <option value="North Korea">North Korea</option>
-                    <option value="North Macedonia">North Macedonia</option>
-                    <option value="Norway">Norway</option>
-                    <option value="Oman">Oman</option>
-                    <option value="Pakistan">Pakistan</option>
-                    <option value="Palau">Palau</option>
-                    <option value="Palestine">Palestine</option>
-                    <option value="Panama">Panama</option>
-                    <option value="Papua New Guinea">Papua New Guinea</option>
-                    <option value="Paraguay">Paraguay</option>
-                    <option value="Peru">Peru</option>
-                    <option value="Philippines">Philippines</option>
-                    <option value="Poland">Poland</option>
-                    <option value="Portugal">Portugal</option>
-                    <option value="Qatar">Qatar</option>
-                    <option value="Romania">Romania</option>
-                    <option value="Russia">Russia</option>
-                    <option value="Rwanda">Rwanda</option>
-                    <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
-                    <option value="Saint Lucia">Saint Lucia</option>
-                    <option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option>
-                    <option value="Samoa">Samoa</option>
-                    <option value="San Marino">San Marino</option>
-                    <option value="Sao Tome and Principe">Sao Tome and Principe</option>
-                    <option value="Saudi Arabia">Saudi Arabia</option>
-                    <option value="Senegal">Senegal</option>
-                    <option value="Serbia">Serbia</option>
-                    <option value="Seychelles">Seychelles</option>
-                    <option value="Sierra Leone">Sierra Leone</option>
-                    <option value="Singapore">Singapore</option>
-                    <option value="Slovakia">Slovakia</option>
-                    <option value="Slovenia">Slovenia</option>
-                    <option value="Solomon Islands">Solomon Islands</option>
-                    <option value="Somalia">Somalia</option>
-                    <option value="South Africa">South Africa</option>
-                    <option value="South Korea">South Korea</option>
-                    <option value="South Sudan">South Sudan</option>
-                    <option value="Spain">Spain</option>
-                    <option value="Sri Lanka">Sri Lanka</option>
-                    <option value="Sudan">Sudan</option>
-                    <option value="Suriname">Suriname</option>
-                    <option value="Sweden">Sweden</option>
-                    <option value="Switzerland">Switzerland</option>
-                    <option value="Syria">Syria</option>
-                    <option value="Taiwan">Taiwan</option>
-                    <option value="Tajikistan">Tajikistan</option>
-                    <option value="Tanzania">Tanzania</option>
-                    <option value="Thailand">Thailand</option>
-                    <option value="Togo">Togo</option>
-                    <option value="Tonga">Tonga</option>
-                    <option value="Trinidad and Tobago">Trinidad and Tobago</option>
-                    <option value="Tunisia">Tunisia</option>
-                    <option value="Turkey">Turkey</option>
-                    <option value="Turkmenistan">Turkmenistan</option>
-                    <option value="Tuvalu">Tuvalu</option>
-                    <option value="Uganda">Uganda</option>
-                    <option value="Ukraine">Ukraine</option>
-                    <option value="United Arab Emirates">United Arab Emirates</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="United States">United States</option>
-                    <option value="Uruguay">Uruguay</option>
-                    <option value="Uzbekistan">Uzbekistan</option>
-                    <option value="Vanuatu">Vanuatu</option>
-                    <option value="Vatican City">Vatican City</option>
-                    <option value="Venezuela">Venezuela</option>
-                    <option value="Vietnam">Vietnam</option>
-                    <option value="Yemen">Yemen</option>
-                    <option value="Zambia">Zambia</option>
-                    <option value="Zimbabwe">Zimbabwe</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Error Message */}
-              {error && (
-                <div className="p-2 mt-5 text-sm text-center text-red-500 rounded bg-red-50">
-                  {error}
-                </div>
-              )}
-
-              {/* Button Group */}
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={handleBack}
-                  className="flex-1 p-3 text-sm font-semibold text-blue-500 transition-colors bg-white border-2 border-blue-500 rounded-full hover:bg-blue-50"
-                >
-                  BACK
-                </button>
-                <button
-                  onClick={handleFinishUp}
-                  disabled={loading}
-                  className="flex-1 p-3 text-sm font-semibold text-white transition-colors bg-blue-500 rounded-full hover:bg-blue-600 disabled:opacity-60"
-                >
-                  {loading ? 'SAVING...' : 'FINISH UP'}
-                </button>
-              </div>
-            </div>
+              <option value="">Select your current country</option>
+              {COUNTRIES.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
           </div>
-        )
-      }
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="p-3 mt-5 text-sm text-center text-red-600 rounded-xl bg-red-50 border border-red-200 flex items-center justify-center gap-2">
+            <span>⚠️</span>
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Button Group */}
+        <div className="flex gap-3 mt-6 sm:mt-8">
+          <button
+            onClick={handleBack}
+            className="flex-1 p-3 sm:p-4 text-sm sm:text-base font-semibold text-indigo-600 transition-all duration-200 bg-white border-2 border-indigo-500 rounded-xl hover:bg-indigo-50 hover:shadow-lg flex items-center justify-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            BACK
+          </button>
+          <button
+            onClick={handleFinishUp}
+            disabled={loading}
+            className="flex-1 p-3 sm:p-4 text-sm sm:text-base font-semibold text-white transition-all duration-200 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-xl hover:shadow-xl hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                SAVING...
+              </>
+            ) : (
+              <>
+                FINISH UP
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
