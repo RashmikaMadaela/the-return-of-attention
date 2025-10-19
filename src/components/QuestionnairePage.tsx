@@ -228,21 +228,21 @@ export default function QuestionnairePage() {
       {/* Navigation */}
       <Navigation currentPage="questionnaire" />
       
-      <div className="p-4 pt-24">
+      <div className="p-3 pt-20 sm:p-4 sm:pt-24">
         <div className="max-w-4xl mx-auto">
           {/* Progress Bar */}
-          <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg">
+          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6 shadow-lg">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-700 font-semibold">Question {getQuestionRange()}</span>
-              <span className="text-blue-600 font-bold">{getProgress()}%</span>
+              <span className="text-gray-700 font-semibold text-sm sm:text-base">Question {getQuestionRange()}</span>
+              <span className="text-blue-600 font-bold text-sm sm:text-base">{getProgress()}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+            <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 mb-2">
               <div 
-                className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+                className="bg-blue-600 h-2 sm:h-3 rounded-full transition-all duration-300"
                 style={{ width: `${getProgress()}%` }}
               ></div>
             </div>
-            <div className="text-sm text-blue-600 font-semibold">{getPhaseTitle()}</div>
+            <div className="text-xs sm:text-sm text-blue-600 font-semibold">{getPhaseTitle()}</div>
           </div>
 
           {/* Page 1 Content */}
@@ -261,10 +261,10 @@ export default function QuestionnairePage() {
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between mt-6 pb-8">
+          <div className="flex justify-between mt-4 sm:mt-5 md:mt-6 pb-6 sm:pb-8">
             <button
               onClick={handleBack}
-              className="bg-purple-400 hover:bg-purple-500 text-white font-bold px-10 py-4 rounded-xl transition-colors"
+              className="bg-purple-400 hover:bg-purple-500 text-white font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
             >
               Back
             </button>
@@ -272,14 +272,14 @@ export default function QuestionnairePage() {
             {currentPage < 3 ? (
               <button
                 onClick={handleNext}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-10 py-4 rounded-xl transition-colors"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
               >
                 Next
               </button>
             ) : (
               <button
                 onClick={handleFinish}
-                className="bg-green-500 hover:bg-green-600 text-white font-bold px-10 py-4 rounded-xl transition-colors"
+                className="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
               >
                 Finish
               </button>
@@ -300,10 +300,10 @@ interface Page1Props {
 
 function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5 md:space-y-6">
       {/* Experience Level */}
       <QuestionCard title="Experience Level" subtitle="How would you rate your meditation/mindfulness experience level?">
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <input
             type="range"
             min="1"
@@ -312,7 +312,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
             onChange={(e) => onSliderChange('experienceLevel', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-sm text-gray-600">
+          <div className="flex justify-between text-[10px] sm:text-xs md:text-sm text-gray-600">
             <span>Complete Beginner (1)</span>
             <span className="text-blue-600 font-bold">Current: {answers.experienceLevel || 1}/10</span>
             <span>Advanced (8)</span>
@@ -323,7 +323,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Goals */}
       <QuestionCard title="Goals" subtitle="What are your main goals? (Select all that apply)">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Stress Reduction', 'Better Sleep', 'Emotional Balance', 'Spiritual Growth', 'Inner Peace', 'Liberation'].map(goal => (
             <CheckboxOption
               key={goal}
@@ -337,7 +337,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Age Range */}
       <QuestionCard title="Age Range" subtitle="What is your age range?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['18-24 years', '25-34 years', '35-44 years', '45-54 years', '55-64 years', '65+ years'].map(age => (
             <RadioOption
               key={age}
@@ -351,7 +351,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Location */}
       <QuestionCard title="Location" subtitle="Where do you live?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Urban area', 'Suburban area', 'Rural area', 'Quiet suburb', 'Busy city center'].map(loc => (
             <RadioOption
               key={loc}
@@ -365,7 +365,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Occupation */}
       <QuestionCard title="Occupation" subtitle="What is your occupation?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Software Developer', 'Teacher', 'Sales Associate', 'Healthcare Worker', 'Student', 'Yoga Instructor / Spiritual Counselor', 'Business Professional', 'Creative Professional', 'Service Industry', 'Retired', 'Other'].map(occ => (
             <RadioOption
               key={occ}
@@ -379,7 +379,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Education Level */}
       <QuestionCard title="Education Level" subtitle="What is your highest education level?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['High school', "Bachelor's degree", "Master's degree", 'PhD/Doctorate', 'Other'].map(edu => (
             <RadioOption
               key={edu}
@@ -393,7 +393,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Meditation Background */}
       <QuestionCard title="Meditation Background" subtitle="Describe your meditation background">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Never tried meditation', 'Some guided meditation experience', 'Regular practice with apps', '1-3 years of practice', '3-10 years of practice', '10+ years of daily practice', 'Advanced Vipassana and Zen practice'].map(bg => (
             <RadioOption
               key={bg}
@@ -407,7 +407,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Sleep Pattern */}
       <QuestionCard title="Sleep Pattern" subtitle="How would you rate your sleep quality?">
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <input
             type="range"
             min="1"
@@ -416,7 +416,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
             onChange={(e) => onSliderChange('sleepPattern', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-sm text-gray-600">
+          <div className="flex justify-between text-[10px] sm:text-xs md:text-sm text-gray-600">
             <span>Very Poor (1)</span>
             <span>Poor (4)</span>
             <span className="text-blue-600 font-bold">Current: {answers.sleepPattern || 5}/10</span>
@@ -428,7 +428,7 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Physical Activity */}
       <QuestionCard title="Physical Activity" subtitle="How would you describe your physical activity level?">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
           {['Sedentary (minimal exercise)', 'Light (occasional walks)', 'Moderate (regular exercise)', 'Active (frequent exercise)', 'Very Active (yoga, meditation)'].map(activity => (
             <RadioOption
               key={activity}
@@ -446,10 +446,10 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 // Page 2 Component
 function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5 md:space-y-6">
       {/* Stress Triggers */}
       <QuestionCard title="Stress Triggers" subtitle="What are your main stress triggers? (Select all that apply)">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Work Pressure', 'Traffic', 'Social Media', 'Finances', 'Relationships', 'Loud Noises'].map(trigger => (
             <CheckboxOption
               key={trigger}
@@ -463,7 +463,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Daily Routine */}
       <QuestionCard title="Daily Routine" subtitle="How would you describe your daily routine?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Structured but flexible', 'Very structured and disciplined', 'Disciplined practice schedule', 'Somewhat organized', 'Chaotic and unpredictable', 'Varies by day'].map(routine => (
             <RadioOption
               key={routine}
@@ -477,7 +477,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Diet Pattern */}
       <QuestionCard title="Diet Pattern" subtitle="How would you describe your eating habits?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Balanced with occasional treats', 'Mindful eating, mostly vegetarian', 'Very healthy and disciplined', 'Mostly healthy with some flexibility', 'Fast food and convenience meals', 'Irregular eating patterns'].map(diet => (
             <RadioOption
               key={diet}
@@ -491,7 +491,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Screen Time */}
       <QuestionCard title="Screen Time" subtitle="How much time do you spend on screens daily?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['1-2 hours daily', '3-4 hours daily', '5-6 hours daily', '6-8 hours daily', '10+ hours daily', '12+ hours daily'].map(time => (
             <RadioOption
               key={time}
@@ -505,7 +505,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Social Connections */}
       <QuestionCard title="Social Connections" subtitle="How would you describe your social relationships?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Good friends and family relationships', 'Deep, meaningful relationships', 'Strong support network', 'Few but close relationships', 'Superficial social media connections', 'Mostly isolated'].map(social => (
             <RadioOption
               key={social}
@@ -519,7 +519,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Work Life Balance */}
       <QuestionCard title="Work Life Balance" subtitle="How would you describe your work-life balance?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Sometimes struggle but generally good', 'Perfect integration of work and practice', 'Excellent balance', 'Good boundaries', 'Work dominates everything', 'Struggling to find balance'].map(balance => (
             <RadioOption
               key={balance}
@@ -533,7 +533,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Emotional Awareness */}
       <QuestionCard title="Emotional Awareness" subtitle="How aware are you of your emotions throughout the day?">
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <input
             type="range"
             min="3"
@@ -542,7 +542,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
             onChange={(e) => onSliderChange('emotionalAwareness', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-sm text-gray-600">
+          <div className="flex justify-between text-[10px] sm:text-xs md:text-sm text-gray-600">
             <span>Low Awareness (1)</span>
             <span>Good Awareness (5)</span>
             <span className="text-blue-600 font-bold">Current: {answers.emotionalAwareness || 5}/10</span>
@@ -553,7 +553,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Stress Response */}
       <QuestionCard title="Stress Response" subtitle="How do you typically respond to stress?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Usually manage well', 'Observe and let go', 'Take deep breaths and calm down', 'Talk to someone', 'Get overwhelmed easily', 'React emotionally'].map(response => (
             <RadioOption
               key={response}
@@ -567,7 +567,7 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Decision Making */}
       <QuestionCard title="Decision Making" subtitle="How do you typically make decisions?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Balanced approach', 'Intuitive with mindful consideration', 'Careful analysis', 'Ask for advice', 'Impulsive decisions', 'Overthink everything'].map(decision => (
             <RadioOption
               key={decision}
@@ -585,10 +585,10 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 // Page 3 Component
 function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-5 md:space-y-6">
       {/* Self Reflection */}
       <QuestionCard title="Self Reflection" subtitle="How often do you engage in self-reflection?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Regular journaling', 'Daily meditation and contemplation', 'Weekly reflection time', 'Occasional deep thinking', 'Rarely think deeply', 'Avoid self-reflection'].map(reflection => (
             <RadioOption
               key={reflection}
@@ -602,7 +602,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Thought Patterns */}
       <QuestionCard title="Thought Patterns" subtitle="How would you describe your typical thought patterns?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Generally positive with some worry', 'Peaceful and accepting', 'Optimistic and hopeful', 'Mixed emotions', 'Anxious and scattered', 'Negative and pessimistic'].map(pattern => (
             <RadioOption
               key={pattern}
@@ -616,7 +616,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Mindfulness in Daily Life */}
       <QuestionCard title="Mindfulness in Daily Life" subtitle="How mindful are you during daily activities?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Occasionally remember to be present', 'Constant awareness and presence', 'Regular mindful moments', 'Try to be mindful but forget', 'Always distracted and multitasking', 'Live on autopilot'].map(mindful => (
             <RadioOption
               key={mindful}
@@ -630,7 +630,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Mindfulness Experience */}
       <QuestionCard title="Mindfulness Experience" subtitle="How would you rate your mindfulness experience level?">
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <input
             type="range"
             min="1"
@@ -639,7 +639,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
             onChange={(e) => onSliderChange('mindfulnessExperience', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-sm text-gray-600">
+          <div className="flex justify-between text-[10px] sm:text-xs md:text-sm text-gray-600">
             <span>No Experience (1)</span>
             <span>Some Training (5)</span>
             <span className="text-blue-600 font-bold">Current: {answers.mindfulnessExperience || 1}/10</span>
@@ -650,7 +650,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Meditation Background Detail */}
       <QuestionCard title="Meditation Background Detail" subtitle="Describe your meditation experience in detail">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['None', 'Guided meditations, apps', 'Some formal training', 'Regular retreat experience', 'Teacher training', '1-3 years of practice', '3-10 years of practice', '10+ years of daily practice', 'Advanced Vipassana and Zen practice'].map(bg => (
             <RadioOption
               key={bg}
@@ -664,7 +664,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Practice Goals */}
       <QuestionCard title="Practice Goals" subtitle="What are your meditation practice goals?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Daily 15-20 minutes', 'Liberation from suffering', 'Quick stress relief', 'Improve focus', 'Better sleep', 'Spiritual awakening'].map(goal => (
             <RadioOption
               key={goal}
@@ -678,7 +678,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Preferred Duration */}
       <QuestionCard title="Preferred Duration" subtitle="How long would you like to meditate (in minutes)?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['5 minutes', '10 minutes', '20 minutes', '30 minutes', '60 minutes'].map(duration => (
             <RadioOption
               key={duration}
@@ -692,7 +692,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Biggest Challenges */}
       <QuestionCard title="Biggest Challenges" subtitle="What do you think will be your biggest challenges?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Finding time and staying consistent', 'None, practice is integrated', "Can't sit still, mind too busy", 'Getting distracted', 'Physical discomfort', 'Remembering to practice'].map(challenge => (
             <RadioOption
               key={challenge}
@@ -706,7 +706,7 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
 
       {/* Motivation */}
       <QuestionCard title="Motivation" subtitle="What motivates you to start this mindfulness journey?">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {['Service to others and spiritual awakening', 'Personal growth', 'Stress reduction and emotional balance', 'Better relationships', 'Improve focus and productivity', 'Doctor recommended for anxiety'].map(motivationOption => (
             <RadioOption
               key={motivationOption}
@@ -731,11 +731,11 @@ interface QuestionCardProps {
 
 function QuestionCard({ title, subtitle, children, optional = false }: QuestionCardProps) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-lg">
-      <h3 className="text-gray-800 font-bold text-lg mb-1">
-        {title} {optional && <span className="text-gray-400 text-sm font-normal">(Optional)</span>}
+    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg">
+      <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-1">
+        {title} {optional && <span className="text-gray-400 text-xs sm:text-sm font-normal">(Optional)</span>}
       </h3>
-      <p className="text-gray-600 text-sm mb-4">{subtitle}</p>
+      <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4">{subtitle}</p>
       {children}
     </div>
   )
@@ -751,7 +751,7 @@ function RadioOption({ label, selected, onChange }: RadioOptionProps) {
   return (
     <button
       onClick={onChange}
-      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+      className={`p-2 sm:p-2.5 md:p-3 rounded-lg border-2 text-xs sm:text-sm font-medium transition-all ${
         selected
           ? 'bg-blue-500 border-blue-600 text-white shadow-md'
           : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
@@ -772,7 +772,7 @@ function CheckboxOption({ label, checked, onChange }: CheckboxOptionProps) {
   return (
     <button
       onClick={onChange}
-      className={`p-3 rounded-lg border-2 text-sm font-medium transition-all ${
+      className={`p-2 sm:p-2.5 md:p-3 rounded-lg border-2 text-xs sm:text-sm font-medium transition-all ${
         checked
           ? 'bg-blue-500 border-blue-600 text-white shadow-md'
           : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
