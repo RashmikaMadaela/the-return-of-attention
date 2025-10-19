@@ -1,22 +1,35 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 
 export default function IntroPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const [isChecking, setIsChecking] = useState(true)
 
-  // Redirect logged-in users to home page
+  // Check if user is logged in and redirect to home
   useEffect(() => {
-    if (status === 'authenticated' && session?.user) {
-      router.push('/home')
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/session')
+        const session = await response.json()
+        
+        if (session?.user) {
+          router.push('/home')
+        } else {
+          setIsChecking(false)
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error)
+        setIsChecking(false)
+      }
     }
-  }, [status, session, router])
 
-  // Show nothing while checking auth status or redirecting
-  if (status === 'loading' || status === 'authenticated') {
+    checkAuth()
+  }, [router])
+
+  // Show nothing while checking auth status
+  if (isChecking) {
     return null
   }
 

@@ -13,6 +13,7 @@
 import React, { useState, useEffect } from 'react'
 import { User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 import Navigation from './Navigation'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import { ProfilePageSkeleton } from './LoadingSkeletons'
@@ -219,10 +220,22 @@ export default function UserProfilePageOptimized() {
     }
   }
 
-  const handleLogout = () => {
-    localStorage.clear()
-    sessionStorage.clear()
-    router.push('/')
+  const handleLogout = async () => {
+    try {
+      // Clear local storage and session storage
+      localStorage.clear()
+      sessionStorage.clear()
+      
+      // Sign out using NextAuth - this will clear the session cookie
+      await signOut({ 
+        redirect: true,
+        callbackUrl: '/' // Redirect to landing page after logout
+      })
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Fallback: redirect manually if signOut fails
+      router.push('/')
+    }
   }
 
   const handleBack = () => {
@@ -273,20 +286,20 @@ export default function UserProfilePageOptimized() {
             {userProfile.role === 'admin' && (
               <button 
                 onClick={handleAdmin}
-                className="px-3 py-2 text-xs font-bold text-black transition-colors bg-yellow-400 sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-yellow-500 rounded-lg sm:rounded-xl sm:text-sm md:text-base"
+                className="px-3 py-2 text-xs font-bold text-black transition-colors bg-yellow-400 rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-yellow-500 sm:rounded-xl sm:text-sm md:text-base"
               >
                 ADMIN
               </button>
             )}
             <button 
               onClick={handleBack}
-              className="px-3 py-2 text-xs font-bold text-blue-600 transition-colors bg-white sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-gray-100 rounded-lg sm:rounded-xl sm:text-sm md:text-base"
+              className="px-3 py-2 text-xs font-bold text-blue-600 transition-colors bg-white rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-gray-100 sm:rounded-xl sm:text-sm md:text-base"
             >
               ← Back
             </button>
             <button 
               onClick={handlePrivacy}
-              className="px-3 py-2 text-xs font-bold text-white transition-colors bg-blue-600 sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-blue-700 rounded-lg sm:rounded-xl sm:text-sm md:text-base"
+              className="px-3 py-2 text-xs font-bold text-white transition-colors bg-blue-600 rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-blue-700 sm:rounded-xl sm:text-sm md:text-base"
             >
               Privacy
             </button>
@@ -298,40 +311,40 @@ export default function UserProfilePageOptimized() {
               {/* Profile Card */}
               <div className="p-4 bg-blue-600 shadow-lg sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl">
                 <div className="flex justify-center mb-4 sm:mb-6">
-                  <div className="flex items-center justify-center bg-white rounded-full shadow-lg w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32">
+                  <div className="flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg sm:w-24 sm:h-24 md:w-32 md:h-32">
                     <User className="w-12 h-12 text-blue-600 sm:w-16 sm:h-16 md:w-20 md:h-20" />
                   </div>
                 </div>
 
                 <div className="p-4 space-y-4 bg-white sm:p-5 md:p-6 sm:space-y-5 md:space-y-6 rounded-xl sm:rounded-2xl">
-                  <div className="pb-2 text-center border-b-2 sm:pb-3 sm:border-b-4 border-blue-500">
+                  <div className="pb-2 text-center border-b-2 border-blue-500 sm:pb-3 sm:border-b-4">
                     <h1 className="text-xl font-bold text-gray-800 sm:text-2xl md:text-3xl">Hello {userProfile.name}</h1>
                   </div>
 
                   {/* User Details */}
                   {!isEditing ? (
                     <div className="space-y-3 sm:space-y-4">
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Email :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.email}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Age :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.age}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Gender :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.gender}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Nationality :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.nationality}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Current Country :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.currentCountry}</span>
                       </div>
@@ -339,7 +352,7 @@ export default function UserProfilePageOptimized() {
                   ) : (
                     <div className="space-y-3 sm:space-y-4">
                       {/* Name Field */}
-                      <div className="py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Name <span className="text-red-500">*</span>:</span>
                         <input
                           type="text"
@@ -352,7 +365,7 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Email Field */}
-                      <div className="py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Email <span className="text-red-500">*</span>:</span>
                         <input
                           type="email"
@@ -366,7 +379,7 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Age Field */}
-                      <div className="py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Age <span className="text-red-500">*</span>:</span>
                         <input
                           type="number"
@@ -381,7 +394,7 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Gender Field */}
-                      <div className="py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Gender :</span>
                         <select
                           value={editForm.gender}
@@ -396,7 +409,7 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Nationality Field */}
-                      <div className="py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Nationality :</span>
                         <select
                           value={editForm.nationality}
@@ -420,7 +433,7 @@ export default function UserProfilePageOptimized() {
                       </div>
 
                       {/* Current Country Field */}
-                      <div className="py-2 pl-3 border-l-2 sm:pl-4 sm:border-l-4 border-blue-500">
+                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Current Country :</span>
                         <select
                           value={editForm.currentCountry}
@@ -448,7 +461,7 @@ export default function UserProfilePageOptimized() {
                   <div className="flex items-center justify-between pt-3 sm:pt-4">
                     <button 
                       onClick={handleLogout}
-                      className="px-4 py-2 text-xs font-bold text-white transition-colors bg-blue-600 sm:px-6 sm:py-2 md:px-8 md:py-3 hover:bg-blue-700 rounded-lg sm:rounded-xl sm:text-sm md:text-base"
+                      className="px-4 py-2 text-xs font-bold text-white transition-colors bg-blue-600 rounded-lg sm:px-6 sm:py-2 md:px-8 md:py-3 hover:bg-blue-700 sm:rounded-xl sm:text-sm md:text-base"
                     >
                       Log Out
                     </button>
@@ -471,7 +484,7 @@ export default function UserProfilePageOptimized() {
                         <button 
                           onClick={handleSave}
                           disabled={isSaving}
-                          className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white transition-colors bg-green-600 sm:px-5 sm:py-2 md:px-6 hover:bg-green-700 disabled:bg-gray-400 rounded-lg sm:rounded-xl sm:text-sm md:text-base"
+                          className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white transition-colors bg-green-600 rounded-lg sm:px-5 sm:py-2 md:px-6 hover:bg-green-700 disabled:bg-gray-400 sm:rounded-xl sm:text-sm md:text-base"
                         >
                           {isSaving ? (
                             <>
