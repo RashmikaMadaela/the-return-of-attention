@@ -144,21 +144,21 @@ export default function SessionSetupPage() {
           <div className="bg-blue-900 rounded-2xl p-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Posture Selection */}
-              <div className="bg-white rounded-xl p-6">
-                <h2 className="text-2xl font-bold mb-6">Select Your Posture</h2>
-                <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="bg-white rounded-xl p-4 sm:p-6">
+                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Select Your Posture</h2>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
                   {postures.map(posture => (
                     <button
                       key={posture.id}
                       onClick={() => setSessionSettings(prev => ({ ...prev, posture: posture.id }))}
-                      className={`p-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all ${
+                      className={`aspect-square p-2 sm:p-3 md:p-4 rounded-lg border-2 flex flex-col items-center justify-center gap-1 sm:gap-2 transition-all ${
                         sessionSettings.posture === posture.id 
                           ? 'bg-cyan-400 border-cyan-600' 
                           : 'bg-cyan-300 border-cyan-400 hover:bg-cyan-400'
                       }`}
                     >
-                      <span className="text-3xl">{posture.icon}</span>
-                      <span className="text-sm font-semibold text-center">{posture.label}</span>
+                      <span className="text-2xl sm:text-3xl md:text-4xl">{posture.icon}</span>
+                      <span className="text-[10px] sm:text-xs md:text-sm font-medium text-center leading-tight">{posture.label}</span>
                     </button>
                   ))}
                 </div>
@@ -201,7 +201,7 @@ export default function SessionSetupPage() {
                   <h2 className="text-2xl font-bold mb-6">Audio Settings</h2>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold">Authentic Meditation Bells</span>
+                      <span className="font-semibold">Meditation Bells</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, bells: !prev.bells }))}
                         className={`w-14 h-8 rounded-full transition-colors ${

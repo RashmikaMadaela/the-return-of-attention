@@ -18,6 +18,8 @@ export default function AdminStageTestingPage() {
   const router = useRouter()
   const { showSuccess, showError, ToastContainer } = useToast()
   
+  const [mobileAdminMenuOpen, setMobileAdminMenuOpen] = useState(false)
+  
   const [stages] = useState<Stage[]>([
     {
       id: 1,
@@ -130,8 +132,8 @@ export default function AdminStageTestingPage() {
       {/* Navigation */}
       <Navigation currentPage="admin" />
 
-      {/* Secondary Navigation */}
-      <div className="bg-white/95 py-5 shadow-lg mb-10 pt-24">
+      {/* Desktop Secondary Navigation */}
+      <div className="hidden lg:block bg-white/95 py-5 shadow-lg mb-10 pt-24">
         <div className="max-w-7xl mx-auto px-10 flex gap-8 justify-center">
           <button 
             onClick={() => handleNavigation('user-progress')}
@@ -154,8 +156,50 @@ export default function AdminStageTestingPage() {
         </div>
       </div>
 
+      {/* Mobile Admin Navigation */}
+      <div className="lg:hidden bg-white/95 shadow-lg mb-6 pt-20">
+        <div className="px-4 py-3">
+          <button 
+            onClick={() => setMobileAdminMenuOpen(!mobileAdminMenuOpen)}
+            className="w-full flex items-center justify-between px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold"
+          >
+            <span>Admin Menu</span>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {mobileAdminMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              )}
+            </svg>
+          </button>
+          
+          {mobileAdminMenuOpen && (
+            <div className="mt-2 space-y-2">
+              <button 
+                onClick={() => handleNavigation('user-progress')}
+                className="w-full px-4 py-3 text-left text-blue-600 border-2 border-blue-600 rounded-lg font-semibold hover:bg-blue-50"
+              >
+                User Progress
+              </button>
+              <button 
+                onClick={() => handleNavigation('user-management')}
+                className="w-full px-4 py-3 text-left text-blue-600 border-2 border-blue-600 rounded-lg font-semibold hover:bg-blue-50"
+              >
+                User Management
+              </button>
+              <button 
+                onClick={() => handleNavigation('stage-testing')}
+                className="w-full px-4 py-3 text-left bg-blue-600 text-white rounded-lg font-semibold"
+              >
+                Stage Testing
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
         <h1 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 text-center drop-shadow-lg px-4">
           Stage-by-Stage Testing Suite
         </h1>
@@ -163,38 +207,8 @@ export default function AdminStageTestingPage() {
           Manage and test all journey stages with advanced controls
         </p>
 
-        {/* Info Panel */}
-        <div className="bg-white rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-10 max-w-6xl mx-auto shadow-2xl">
-          <div className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-5 pb-3 sm:pb-4 border-b-2 border-gray-100">
-            Stage Control Definitions
-          </div>
-          
-          <div className="space-y-4">
-            <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl transition-all duration-300 hover:bg-blue-50">
-              <span className="font-bold text-blue-600 min-w-24">Unlock:</span>
-              <span className="text-gray-700 leading-relaxed">
-                Enable access to the stage for users in the database. This allows users to begin or continue their progress through this specific stage.
-              </span>
-            </div>
-            
-            <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl transition-all duration-300 hover:bg-blue-50">
-              <span className="font-bold text-blue-600 min-w-24">Complete:</span>
-              <span className="text-gray-700 leading-relaxed">
-                Mark the stage as fully completed in the database. This sets all required sessions/hours to the minimum requirement and unlocks the next stage.
-              </span>
-            </div>
-            
-            <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl transition-all duration-300 hover:bg-blue-50">
-              <span className="font-bold text-blue-600 min-w-24">Reset:</span>
-              <span className="text-gray-700 leading-relaxed">
-                Reset the stage to its initial state in the database. All progress, saved data, and completions for this stage will be cleared.
-              </span>
-            </div>
-          </div>
-        </div>
-
         {/* Stages Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto px-4 mb-8 sm:mb-12">
           {stages.map((stage) => (
             <div 
               key={stage.id}
@@ -240,6 +254,36 @@ export default function AdminStageTestingPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Info Panel - Moved to Bottom */}
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto shadow-2xl">
+          <div className="text-base sm:text-lg lg:text-xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-5 pb-2 sm:pb-3 lg:pb-4 border-b-2 border-gray-100">
+            Stage Control Definitions
+          </div>
+          
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-blue-50">
+              <span className="font-bold text-blue-600 text-sm sm:text-base min-w-fit sm:min-w-24">Unlock:</span>
+              <span className="text-gray-700 text-xs sm:text-sm lg:text-base leading-relaxed">
+                Enable access to the stage for users in the database. This allows users to begin or continue their progress through this specific stage.
+              </span>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-blue-50">
+              <span className="font-bold text-blue-600 text-sm sm:text-base min-w-fit sm:min-w-24">Complete:</span>
+              <span className="text-gray-700 text-xs sm:text-sm lg:text-base leading-relaxed">
+                Mark the stage as fully completed in the database. This sets all required sessions/hours to the minimum requirement and unlocks the next stage.
+              </span>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg sm:rounded-xl transition-all duration-300 hover:bg-blue-50">
+              <span className="font-bold text-blue-600 text-sm sm:text-base min-w-fit sm:min-w-24">Reset:</span>
+              <span className="text-gray-700 text-xs sm:text-sm lg:text-base leading-relaxed">
+                Reset the stage to its initial state in the database. All progress, saved data, and completions for this stage will be cleared.
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -366,29 +366,33 @@ export default function TimerPage() {
             </div>
 
             {/* Timer Controls */}
-            <div className="flex justify-center gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 px-4">
               {!timer.isRunning ? (
                 timer.startedAt ? (
                   <button
                     onClick={resumeTimer}
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                   >
-                    ▶️ Resume
+                    <span>▶️</span>
+                    <span>Resume</span>
                   </button>
                 ) : (
                   <button
                     onClick={startTimer}
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                   >
-                    ▶️ Start Meditation
+                    <span>▶️</span>
+                    <span className="hidden sm:inline">Start Meditation</span>
+                    <span className="sm:hidden">Start</span>
                   </button>
                 )
               ) : (
                 <button
                   onClick={pauseTimer}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                 >
-                  ⏸️ Pause
+                  <span>⏸️</span>
+                  <span>Pause</span>
                 </button>
               )}
               
@@ -405,9 +409,10 @@ export default function TimerPage() {
                     router.push(`/stage-1/reflection?stage=${stageId}`)
                   }
                 }}
-                className="bg-pink-600 hover:bg-pink-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
               >
-                ✓ Complete
+                <span>✓</span>
+                <span>Complete</span>
               </button>
             </div>
 

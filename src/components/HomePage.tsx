@@ -205,29 +205,29 @@ export default function HomePageOptimized() {
 
       {/* Hero Section */}
       <div 
-        className="bg-cover bg-center bg-no-repeat pt-24" 
+        className="bg-cover bg-center bg-no-repeat pt-20 sm:pt-24" 
         style={{ backgroundImage: "url('/png_images/dcds.png')" }}
       >
-        <div className="max-w-7xl mx-auto px-4 py-16">
-          <div className="flex items-center justify-center space-x-8">
-            <div className="bg-purple-400 p-8 rounded-2xl">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="w-12 h-12 bg-orange-300 rounded-xl animate-pulse"></div>
-                <div className="w-12 h-12 bg-teal-300 rounded-xl animate-pulse delay-100"></div>
-                <div className="w-12 h-12 bg-purple-300 rounded-xl animate-pulse delay-200"></div>
-                <div className="w-12 h-12 bg-yellow-300 rounded-xl animate-pulse delay-300"></div>
-                <div className="w-12 h-12 bg-gray-100 rounded-xl animate-pulse delay-400"></div>
-                <div className="w-12 h-12 bg-blue-200 rounded-xl animate-pulse delay-500"></div>
-                <div className="w-12 h-12 bg-orange-200 rounded-xl animate-pulse delay-700"></div>
-                <div className="w-12 h-12 bg-pink-200 rounded-xl animate-pulse delay-800"></div>
-                <div className="w-12 h-12 bg-purple-200 rounded-xl animate-pulse delay-1000"></div>
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12 md:py-16">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 sm:gap-6 md:gap-8">
+            <div className="bg-purple-400 p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-orange-300 rounded-lg sm:rounded-xl animate-pulse"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-teal-300 rounded-lg sm:rounded-xl animate-pulse delay-100"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-purple-300 rounded-lg sm:rounded-xl animate-pulse delay-200"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-yellow-300 rounded-lg sm:rounded-xl animate-pulse delay-300"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gray-100 rounded-lg sm:rounded-xl animate-pulse delay-400"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-blue-200 rounded-lg sm:rounded-xl animate-pulse delay-500"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-orange-200 rounded-lg sm:rounded-xl animate-pulse delay-700"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-pink-200 rounded-lg sm:rounded-xl animate-pulse delay-800"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-purple-200 rounded-lg sm:rounded-xl animate-pulse delay-1000"></div>
               </div>
             </div>
             
-            <div className="text-white">
-              <h1 className="text-5xl font-bold mb-2">The Return</h1>
-              <h1 className="text-5xl font-bold mb-4">Of Attention</h1>
-              <p className="text-xl">Practices for the Happiness that Stays</p>
+            <div className="text-white text-center md:text-left">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2">The Return</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 md:mb-4">Of Attention</h1>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl">Practices for the Happiness that Stays</p>
             </div>
           </div>
         </div>

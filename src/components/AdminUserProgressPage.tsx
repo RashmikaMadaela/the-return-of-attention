@@ -20,6 +20,8 @@ export default function AdminUserProgressPage() {
   const router = useRouter()
   const { showInfo, ToastContainer } = useToast()
   
+  const [mobileAdminMenuOpen, setMobileAdminMenuOpen] = useState(false)
+  
   // Confirmation dialog state
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean
@@ -212,8 +214,8 @@ export default function AdminUserProgressPage() {
       {/* Navigation */}
       <Navigation currentPage="admin" />
 
-      {/* Secondary Navigation */}
-      <div className="bg-white/95 py-5 shadow-lg mb-10 pt-24">
+      {/* Desktop Secondary Navigation */}
+      <div className="hidden lg:block bg-white/95 py-5 shadow-lg mb-10 pt-24">
         <div className="max-w-7xl mx-auto px-10 flex gap-8 justify-center">
           <button 
             onClick={() => handleNavigation('user-progress')}
@@ -236,9 +238,51 @@ export default function AdminUserProgressPage() {
         </div>
       </div>
 
+      {/* Mobile Admin Navigation */}
+      <div className="lg:hidden bg-white/95 shadow-lg mb-6 pt-20">
+        <div className="px-4 py-3">
+          <button 
+            onClick={() => setMobileAdminMenuOpen(!mobileAdminMenuOpen)}
+            className="w-full flex items-center justify-between px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold"
+          >
+            <span>Admin Menu</span>
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {mobileAdminMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              )}
+            </svg>
+          </button>
+          
+          {mobileAdminMenuOpen && (
+            <div className="mt-2 space-y-2">
+              <button 
+                onClick={() => handleNavigation('user-progress')}
+                className="w-full px-4 py-3 text-left bg-blue-600 text-white rounded-lg font-semibold"
+              >
+                User Progress
+              </button>
+              <button 
+                onClick={() => handleNavigation('user-management')}
+                className="w-full px-4 py-3 text-left text-blue-600 border-2 border-blue-600 rounded-lg font-semibold hover:bg-blue-50"
+              >
+                User Management
+              </button>
+              <button 
+                onClick={() => handleNavigation('stage-testing')}
+                className="w-full px-4 py-3 text-left text-blue-600 border-2 border-blue-600 rounded-lg font-semibold hover:bg-blue-50"
+              >
+                Stage Testing
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-10 pb-10">
-        <h1 className="text-white text-4xl font-bold mb-10 text-center drop-shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pb-10">
+        <h1 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center drop-shadow-lg px-4">
           User Progress Dashboard
         </h1>
 

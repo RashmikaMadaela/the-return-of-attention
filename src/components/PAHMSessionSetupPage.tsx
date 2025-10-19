@@ -292,7 +292,7 @@ export default function PAHMSessionSetupPage() {
                   <h2 className="text-2xl font-bold mb-6">Audio Settings</h2>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold">Authentic Meditation Bells</span>
+                      <span className="font-semibold">Meditation Bells</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, bells: !prev.bells }))}
                         className={`w-14 h-8 rounded-full transition-colors ${

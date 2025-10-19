@@ -250,21 +250,21 @@ export default function DailyNotesPage() {
 
           {/* Quick Log View */}
           {viewMode === 'quick' && (
-            <div className="bg-white rounded-3xl p-8 mb-8 shadow-xl">
-              <h2 className="text-gray-800 font-bold text-xl mb-6">How are you feeling right now?</h2>
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-xl">
+              <h2 className="text-gray-800 font-bold text-lg sm:text-xl mb-4 sm:mb-6">How are you feeling right now?</h2>
               
-              <div className="grid grid-cols-5 gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
                 {emotions.map((emotion) => (
                   <button
                     key={emotion.name}
                     onClick={() => handleQuickLog(emotion.name)}
                     disabled={isLoading}
-                    className="bg-cyan-200 hover:bg-cyan-300 rounded-2xl p-6 flex flex-col items-center justify-center transition-all transform hover:scale-110 hover:shadow-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group"
+                    className="bg-cyan-200 hover:bg-cyan-300 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 flex flex-col items-center justify-center transition-all transform hover:scale-110 hover:shadow-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
-                    <div className="text-5xl mb-3 transition-transform group-hover:scale-110">
+                    <div className="text-3xl sm:text-4xl md:text-5xl mb-1 sm:mb-2 md:mb-3 transition-transform group-hover:scale-110">
                       {emotion.emoji}
                     </div>
-                    <div className="text-gray-800 font-semibold text-sm transition-colors group-hover:text-blue-600">
+                    <div className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm transition-colors group-hover:text-blue-600">
                       {emotion.name}
                     </div>
                   </button>
@@ -281,28 +281,28 @@ export default function DailyNotesPage() {
 
           {/* Detailed View */}
           {viewMode === 'detailed' && (
-            <div className="bg-white rounded-3xl p-8 mb-8 shadow-xl">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-xl">
               {/* What's happening */}
-              <div className="mb-6">
-                <h3 className="text-gray-800 font-bold text-lg mb-3">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
                   What's happening Today (optional)
                 </h3>
                 <textarea
                   value={detailedForm.description}
                   onChange={(e) => setDetailedForm({ ...detailedForm, description: e.target.value })}
                   placeholder="Describe what trigger's this emotion or what's on your mind"
-                  className="w-full h-32 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-gray-600"
+                  className="w-full h-24 sm:h-32 p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm sm:text-base text-gray-600"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
                 {/* Emotion Dropdown */}
                 <div>
-                  <h3 className="text-gray-800 font-bold text-lg mb-3">Emotion</h3>
+                  <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">Emotion</h3>
                   <select
                     value={detailedForm.emotion}
                     onChange={(e) => setDetailedForm({ ...detailedForm, emotion: e.target.value })}
-                    className="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-gray-600"
+                    className="w-full p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base text-gray-600"
                   >
                     <option value="">How are you feeling?</option>
                     {emotions.map((emotion) => (
@@ -315,7 +315,7 @@ export default function DailyNotesPage() {
 
                 {/* Intensity Slider */}
                 <div>
-                  <h3 className="text-gray-800 font-bold text-lg mb-3">
+                  <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
                     Intensity: {detailedForm.intensity}/10
                   </h3>
                   <input
@@ -326,7 +326,7 @@ export default function DailyNotesPage() {
                     onChange={(e) => setDetailedForm({ ...detailedForm, intensity: parseInt(e.target.value) })}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
-                  <div className="flex justify-between text-sm text-gray-600 mt-1">
+                  <div className="flex justify-between text-xs sm:text-sm text-gray-600 mt-1">
                     <span>Mild</span>
                     <span>Intense</span>
                   </div>
@@ -334,14 +334,14 @@ export default function DailyNotesPage() {
               </div>
 
               {/* Trigger Dropdown */}
-              <div className="mb-6">
-                <h3 className="text-gray-800 font-bold text-lg mb-3">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
                   What triggered this? (Optional)
                 </h3>
                 <select
                   value={detailedForm.trigger}
                   onChange={(e) => setDetailedForm({ ...detailedForm, trigger: e.target.value })}
-                  className="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-gray-600"
+                  className="w-full p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base text-gray-600"
                 >
                   <option value="">Select a trigger</option>
                   {triggers.map((trigger) => (
@@ -379,30 +379,30 @@ export default function DailyNotesPage() {
                 <p className="text-gray-600">No entries yet today. Log your first emotion to begin tracking your daily emotional patterns.</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {emotionalJourney.map((entry) => (
-                  <div key={entry.id} className="bg-cyan-100 rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow">
-                    <div className="flex justify-between items-start mb-2">
+                  <div key={entry.id} className="bg-cyan-100 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-md hover:shadow-lg transition-shadow">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl">
+                        <span className="text-xl sm:text-2xl">
                           {emotions.find(e => e.name === entry.emotion)?.emoji || '😐'}
                         </span>
-                        <span className="text-gray-800 font-bold text-lg">{entry.emotion}</span>
-                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">
+                        <span className="text-gray-800 font-bold text-base sm:text-lg">{entry.emotion}</span>
+                        <span className="bg-blue-100 text-blue-800 text-[10px] sm:text-xs px-2 py-1 rounded-full font-semibold">
                           {entry.type === 'emoji' ? 'Quick' : 'Detailed'}
                         </span>
                       </div>
-                      <div className="text-right">
-                        <div className="text-gray-700 font-semibold text-sm">
+                      <div className="text-left sm:text-right">
+                        <div className="text-gray-700 font-semibold text-xs sm:text-sm">
                           Intensity: {entry.intensity}/10
                         </div>
-                        <div className="text-gray-600 text-sm">{entry.timestamp}</div>
+                        <div className="text-gray-600 text-xs sm:text-sm">{entry.timestamp}</div>
                       </div>
                     </div>
                     {entry.description && (
-                      <div className="text-gray-800 mb-2">{entry.description}</div>
+                      <div className="text-gray-800 text-sm sm:text-base mb-2">{entry.description}</div>
                     )}
-                    <div className="text-gray-600 text-sm">
+                    <div className="text-gray-600 text-xs sm:text-sm">
                       Triggered by: {entry.trigger}
                     </div>
                   </div>
