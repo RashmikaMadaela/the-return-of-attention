@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { LogIn, Mail, Lock, ArrowRight } from 'lucide-react'
+import { LogIn, Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react'
 
 export default function SignInPage() {
   const router = useRouter()
@@ -123,8 +123,23 @@ export default function SignInPage() {
     router.push('/password-change')
   }
 
+  const handleBackToHome = () => {
+    router.push('/')
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 flex justify-center items-center p-4 sm:p-6">
+      {/* Back Button - Top Left */}
+      <button
+        onClick={handleBackToHome}
+        className="fixed top-4 left-4 sm:top-6 sm:left-6 p-2 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full transition-all duration-200 text-white hover:scale-110 z-10 flex items-center gap-2 group"
+      >
+        <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+        <span className="hidden sm:inline-block text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Back
+        </span>
+      </button>
+
       <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-6 sm:p-10 w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">

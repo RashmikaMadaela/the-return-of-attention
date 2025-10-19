@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { UserPlus, Mail, Lock, User, ArrowRight, Shield } from 'lucide-react'
+import { UserPlus, Mail, Lock, User, ArrowRight, Shield, ArrowLeft } from 'lucide-react'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -152,8 +152,23 @@ export default function SignUpPage() {
     router.push('/signin')
   }
 
+  const handleBackToHome = () => {
+    router.push('/')
+  }
+
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-purple-500 via-blue-600 to-blue-500 sm:p-6">
+      {/* Back Button - Top Left */}
+      <button
+        onClick={handleBackToHome}
+        className="fixed top-4 left-4 sm:top-6 sm:left-6 p-2 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full transition-all duration-200 text-white hover:scale-110 z-10 flex items-center gap-2 group"
+      >
+        <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+        <span className="hidden sm:inline-block text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          Back
+        </span>
+      </button>
+
       <div className="w-full max-w-md p-6 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl sm:p-10">
         {/* Header */}
         <div className="mb-6 text-center sm:mb-8">
