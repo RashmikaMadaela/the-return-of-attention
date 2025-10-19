@@ -16,14 +16,70 @@ export default function PersonalInfoPage() {
 
   const handleFinishUp = async () => {
     setError('')
-    if (!gender || !nationality || !currentCountry || !Number.isFinite(age) || age < 13) {
-      setError('Please fill in all fields and ensure age is 13 or older')
+    
+    // Comprehensive validation matching backend schema
+    // Backend expects: age (13-120), gender (enum), nationality (min 1), country (min 1)
+    
+    if (!gender) {
+      setError('Please select your gender')
+      return
+    }
+    
+    // Validate gender enum matches backend
+    if (!['male', 'female', 'other', 'prefer-not-to-say'].includes(gender)) {
+      setError('Please select a valid gender option')
+      return
+    }
+    
+    if (!nationality) {
+      setError('Please select your nationality')
+      return
+    }
+    
+    if (nationality.length < 2) {
+      setError('Nationality must be at least 2 characters')
+      return
+    }
+    
+    if (nationality.length > 100) {
+      setError('Nationality cannot exceed 100 characters')
+      return
+    }
+    
+    if (!currentCountry) {
+      setError('Please select your current country')
+      return
+    }
+    
+    if (currentCountry.length < 2) {
+      setError('Country must be at least 2 characters')
+      return
+    }
+    
+    if (currentCountry.length > 100) {
+      setError('Country cannot exceed 100 characters')
+      return
+    }
+    
+    if (!Number.isFinite(age)) {
+      setError('Please enter a valid age')
+      return
+    }
+    
+    // Backend validation: min 13, max 120
+    if (age < 13) {
+      setError('Must be at least 13 years old')
+      return
+    }
+    
+    if (age > 120) {
+      setError('Age cannot exceed 120')
       return
     }
 
     setLoading(true)
     try {
-      // Create or update personal info
+      // Create or update personal info (using POST as per implementation)
       const response = await fetch('/api/user/personal-info', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -31,18 +87,80 @@ export default function PersonalInfoPage() {
       })
 
       const data = await response.json()
+      
       if (!response.ok) {
-        setError(data?.message || 'Failed to save personal information')
+        // Handle specific backend error responses
+        let errorMessage = 'Failed to save your information. Please try again.'
+        
+        if (response.status === 401) {
+          // UNAUTHORIZED - session expired
+          errorMessage = 'Your session has expired. Please sign in again.'
+          setTimeout(() => router.push('/signin'), 2000)
+        } else if (response.status === 400) {
+          // VALIDATION_ERROR - backend validation failed
+          if (data.errors && Array.isArray(data.errors)) {
+            // Show first validation error
+            const firstError = data.errors[0]
+            if (firstError?.message) {
+              errorMessage = firstError.message
+            }
+          } else if (data.message) {
+            errorMessage = data.message
+          } else {
+            errorMessage = 'Validation failed. Please check your information.'
+          }
+        } else if (response.status === 404) {
+          // USER_NOT_FOUND
+          errorMessage = 'User not found. Please sign in again.'
+          setTimeout(() => router.push('/signin'), 2000)
+        } else if (response.status === 409) {
+          // PROFILE_EXISTS - profile already exists, use PUT instead
+          // Try updating with PUT
+          try {
+            const updateResponse = await fetch('/api/user/personal-info', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ age, gender, nationality, country: currentCountry })
+            })
+            
+            if (updateResponse.ok) {
+              router.push('/home')
+              return
+            }
+            
+            const updateData = await updateResponse.json()
+            errorMessage = updateData.message || 'Failed to update personal information.'
+          } catch (updateErr) {
+            errorMessage = 'Failed to update personal information.'
+          }
+        } else if (response.status === 429) {
+          // RATE_LIMIT_EXCEEDED
+          errorMessage = data.message || 'Too many requests. Please try again later.'
+        } else if (response.status === 500) {
+          // INTERNAL_ERROR
+          errorMessage = 'Server error. Please try again later.'
+        } else if (data.message) {
+          errorMessage = data.message
+        }
+        
+        setError(errorMessage)
         setLoading(false)
         return
       }
 
+      // Success - redirect to home
       router.push('/home')
     } catch (err: unknown) {
-      // Prefer a safe message and log the actual error for debugging
       console.error('Personal info save error', err)
-      setError('Failed to save personal information')
-    } finally {
+      
+      // Provide specific error messages based on error type
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('Network error. Please check your internet connection and try again.')
+      } else if (err instanceof Error) {
+        setError(`Error: ${err.message}`)
+      } else {
+        setError('An unexpected error occurred. Please try again.')
+      }
       setLoading(false)
     }
   }

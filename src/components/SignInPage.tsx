@@ -20,10 +20,18 @@ export default function SignInPage() {
     setFieldErrors({})
 
     const errs: { email?: string; password?: string } = {}
-    if (!email) errs.email = 'Email is required'
-    // basic email format
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = 'Enter a valid email'
-    if (!password) errs.password = 'Password is required'
+    
+    // Validate email - matches backend loginSchema
+    if (!email) {
+      errs.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = 'Invalid email address'
+    }
+    
+    // Validate password - matches backend: min 1 char for login
+    if (!password) {
+      errs.password = 'Password is required'
+    }
 
     if (Object.keys(errs).length) {
       setFieldErrors(errs)
@@ -33,27 +41,75 @@ export default function SignInPage() {
     setLoading(true)
     try {
       const res = await signIn('credentials', { redirect: false, email, password })
-      // res can be undefined if provider not found
+      
+      // Check if sign in was successful
       if (!res) {
-        setError('Sign in failed')
+        setError('Unable to connect to authentication service. Please try again.')
         setLoading(false)
         return
       }
 
-      // NextAuth sets res.error when credentials invalid
-      // Narrow by checking 'error' property exists on the returned value
-      if ((res as unknown) && typeof (res as any).error === 'string') {
-        setError((res as any).error || 'Invalid credentials')
+      // Handle authentication errors with specific messages matching backend CommonErrors
+      if (res.error) {
+        let errorMessage = 'Sign in failed. Please try again.'
+        
+        const errorLower = res.error.toLowerCase()
+        
+        // Map backend error codes to user-friendly messages
+        if (errorLower.includes('invalid email or password') || 
+            errorLower.includes('invalid credentials') ||
+            errorLower.includes('credentials')) {
+          // CommonErrors.invalidCredentials
+          errorMessage = 'Invalid email or password'
+        } else if (errorLower.includes('verify your email') || 
+                   errorLower.includes('email not verified')) {
+          // CommonErrors.emailNotVerified
+          errorMessage = 'Please verify your email address first'
+        } else if (errorLower.includes('account is inactive') || 
+                   errorLower.includes('inactive')) {
+          // CommonErrors.accountInactive
+          errorMessage = 'Account is inactive. Please contact support.'
+        } else if (errorLower.includes('authentication required') || 
+                   errorLower.includes('unauthorized')) {
+          // CommonErrors.unauthorized
+          errorMessage = 'Authentication failed. Please try again.'
+        } else if (errorLower.includes('user') && errorLower.includes('not found')) {
+          // CommonErrors.userNotFound
+          errorMessage = 'No account found with this email. Please sign up first.'
+        } else if (errorLower.includes('network')) {
+          errorMessage = 'Network error. Please check your internet connection.'
+        } else if (errorLower.includes('rate limit') || errorLower.includes('too many')) {
+          // CommonErrors.rateLimitExceeded
+          errorMessage = 'Too many login attempts. Please try again later.'
+        } else if (res.error.length > 10) {
+          // Use the actual error message if it's descriptive
+          errorMessage = res.error
+        }
+        
+        setError(errorMessage)
         setLoading(false)
         return
       }
 
-      // Success
-      router.push('/home')
+      // Check if sign in was successful (no error and ok status)
+      if (res.ok) {
+        // Success - redirect to home
+        router.push('/home')
+      } else {
+        setError('Authentication failed. Please verify your credentials.')
+        setLoading(false)
+      }
     } catch (err) {
       console.error('Sign in error', err)
-      setError('An unexpected error occurred')
-    } finally {
+      
+      // Provide specific error messages based on error type
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('Network error. Please check your internet connection and try again.')
+      } else if (err instanceof Error) {
+        setError(`Error: ${err.message}`)
+      } else {
+        setError('An unexpected error occurred. Please try again later.')
+      }
       setLoading(false)
     }
   }

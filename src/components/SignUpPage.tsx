@@ -21,15 +21,46 @@ export default function SignUpPage() {
     setFieldErrors({})
 
     const errs: { name?: string; email?: string; password?: string; confirmPassword?: string } = {}
-    if (!name) errs.name = 'Name is required'
-    if (!email) errs.email = 'Email is required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = 'Enter a valid email'
-    if (!password) errs.password = 'Password is required'
-    else if (password.length < 8) errs.password = 'Password must be at least 8 characters'
-    if (!confirmPassword) errs.confirmPassword = 'Please confirm your password'
-    else if (password !== confirmPassword) errs.confirmPassword = 'Passwords do not match'
+    
+    // Validate name - matches backend: min 2, max 100 characters
+    if (!name) {
+      errs.name = 'Name is required'
+    } else if (name.trim().length < 2) {
+      errs.name = 'Name must be at least 2 characters'
+    } else if (name.trim().length > 100) {
+      errs.name = 'Name cannot exceed 100 characters'
+    }
+    
+    // Validate email - matches backend validation
+    if (!email) {
+      errs.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errs.email = 'Invalid email address'
+    }
+    
+    // Validate password - matches backend: min 8 chars, 1 lowercase, 1 uppercase, 1 number
+    if (!password) {
+      errs.password = 'Password is required'
+    } else if (password.length < 8) {
+      errs.password = 'Password must be at least 8 characters'
+    } else if (!/(?=.*[a-z])/.test(password)) {
+      errs.password = 'Password must contain at least one lowercase letter'
+    } else if (!/(?=.*[A-Z])/.test(password)) {
+      errs.password = 'Password must contain at least one uppercase letter'
+    } else if (!/(?=.*\d)/.test(password)) {
+      errs.password = 'Password must contain at least one number'
+    }
+    
+    // Validate confirm password - matches backend refine check
+    if (!confirmPassword) {
+      errs.confirmPassword = 'Please confirm your password'
+    } else if (password !== confirmPassword) {
+      errs.confirmPassword = "Passwords don't match"
+    }
+    
+    // Check terms agreement
     if (!agreeToTerms) {
-      setError('Please agree to the Terms of Service & Privacy Policy')
+      setError('You must agree to the Terms of Service & Privacy Policy to continue')
       return
     }
 
@@ -47,32 +78,72 @@ export default function SignUpPage() {
       })
 
       const data = await response.json()
+      
       if (!response.ok) {
-        setError(data?.message || 'Registration failed')
+        // Handle specific backend error responses
+        let errorMessage = 'Registration failed. Please try again.'
+        
+        if (response.status === 400) {
+          // Validation failed - show backend validation errors
+          if (data.errors && Array.isArray(data.errors)) {
+            // Map backend validation errors to field errors
+            const backendErrors: { name?: string; email?: string; password?: string; confirmPassword?: string } = {}
+            data.errors.forEach((err: any) => {
+              const field = err.path?.[0] || err.field
+              if (field === 'email') backendErrors.email = err.message
+              else if (field === 'password') backendErrors.password = err.message
+              else if (field === 'name') backendErrors.name = err.message
+              else if (field === 'confirmPassword') backendErrors.confirmPassword = err.message
+            })
+            if (Object.keys(backendErrors).length > 0) {
+              setFieldErrors(backendErrors)
+              setLoading(false)
+              return
+            }
+          }
+          errorMessage = data.message || 'Validation failed. Please check your information.'
+        } else if (response.status === 409) {
+          // User already exists (CommonErrors.userExists)
+          errorMessage = data.message || 'An account with this email already exists. Please sign in instead.'
+        } else if (response.status === 500) {
+          errorMessage = 'Server error. Please try again later.'
+        } else if (data.message) {
+          errorMessage = data.message
+        }
+        
+        setError(errorMessage)
         setLoading(false)
         return
       }
 
-      // Auto sign in after successful registration using NextAuth credentials
+      // Auto sign in after successful registration
       const signInRes = await signIn('credentials', {
         redirect: false,
         email,
         password
       })
 
-      if (signInRes && (signInRes as any).error) {
-        // signIn may return an object with an `error` property
-        setError((signInRes as any).error || 'Sign in failed after registration')
+      if (signInRes?.error) {
+        setError('Account created successfully! Please sign in to continue.')
         setLoading(false)
+        // Redirect to sign in page after a delay
+        setTimeout(() => router.push('/signin'), 2000)
         return
       }
 
-      // Redirect to personal-info to collect profile
+      // Success - redirect to personal-info
       router.push('/personal-info')
     } catch (err) {
       console.error('Registration error', err)
-      setError('Registration failed')
-    } finally {
+      
+      // Provide specific error messages based on error type
+      if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('Network error. Please check your internet connection and try again.')
+      } else if (err instanceof Error) {
+        setError(`Registration error: ${err.message}`)
+      } else {
+        setError('An unexpected error occurred during registration. Please try again.')
+      }
       setLoading(false)
     }
   }
