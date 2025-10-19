@@ -137,16 +137,16 @@ export default function SessionSetupPage() {
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       
-      <div className="p-8 pt-24">
+      <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-4xl font-bold text-white text-center mb-8">Training Session</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-4 sm:mb-6 md:mb-8">Training Session</h1>
           
-          <div className="bg-blue-900 rounded-2xl p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-blue-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
               {/* Posture Selection */}
-              <div className="bg-white rounded-xl p-4 sm:p-6">
-                <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Select Your Posture</h2>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
+              <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6">Select Your Posture</h2>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
                   {postures.map(posture => (
                     <button
                       key={posture.id}
@@ -166,12 +166,12 @@ export default function SessionSetupPage() {
 
               {/* Duration and Audio Settings */}
               <div>
-                <div className="bg-white rounded-xl p-6 mb-6">
-                  <h2 className="text-2xl font-bold mb-6 text-center">
+                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-center">
                     Select Duration
                   </h2>
-                  <div className="flex items-center justify-center gap-4">
-                    <div className="text-6xl font-bold text-center px-8 py-4 rounded-lg bg-gray-100">
+                  <div className="flex items-center justify-center gap-3 sm:gap-4">
+                    <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-center px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg bg-gray-100">
                       {String(sessionSettings.duration).padStart(2, '0')}
                     </div>
                     <div className="flex flex-col gap-2">
@@ -180,7 +180,7 @@ export default function SessionSetupPage() {
                           ...prev, 
                           duration: Math.min(prev.duration + 1, stage.maxTime) 
                         }))}
-                        className="bg-gray-200 hover:bg-gray-300 p-2 rounded"
+                        className="bg-gray-200 hover:bg-gray-300 p-1.5 sm:p-2 rounded text-sm sm:text-base"
                       >
                         ▲
                       </button>
@@ -189,7 +189,7 @@ export default function SessionSetupPage() {
                           ...prev, 
                           duration: Math.max(prev.duration - 1, stage.minTime) 
                         }))}
-                        className="bg-gray-200 hover:bg-gray-300 p-2 rounded"
+                        className="bg-gray-200 hover:bg-gray-300 p-1.5 sm:p-2 rounded text-sm sm:text-base"
                       >
                         ▼
                       </button>
@@ -197,32 +197,32 @@ export default function SessionSetupPage() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-xl p-6">
-                  <h2 className="text-2xl font-bold mb-6">Audio Settings</h2>
-                  <div className="space-y-4">
+                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6">Audio Settings</h2>
+                  <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold">Meditation Bells</span>
+                      <span className="font-semibold text-sm sm:text-base">Meditation Bells</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, bells: !prev.bells }))}
-                        className={`w-14 h-8 rounded-full transition-colors ${
+                        className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
                           sessionSettings.bells ? 'bg-blue-600' : 'bg-gray-300'
                         }`}
                       >
-                        <div className={`w-6 h-6 bg-white rounded-full transition-transform ${
-                          sessionSettings.bells ? 'translate-x-7' : 'translate-x-1'
+                        <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
+                          sessionSettings.bells ? 'translate-x-6 sm:translate-x-7' : 'translate-x-1'
                         }`} />
                       </button>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold">Voice Commands</span>
+                      <span className="font-semibold text-sm sm:text-base">Voice Commands</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, voiceCommands: !prev.voiceCommands }))}
-                        className={`w-14 h-8 rounded-full transition-colors ${
+                        className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
                           sessionSettings.voiceCommands ? 'bg-blue-600' : 'bg-gray-300'
                         }`}
                       >
-                        <div className={`w-6 h-6 bg-white rounded-full transition-transform ${
-                          sessionSettings.voiceCommands ? 'translate-x-7' : 'translate-x-1'
+                        <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
+                          sessionSettings.voiceCommands ? 'translate-x-6 sm:translate-x-7' : 'translate-x-1'
                         }`} />
                       </button>
                     </div>
@@ -231,34 +231,34 @@ export default function SessionSetupPage() {
 
                 {/* Error Display */}
                 {startError && (
-                  <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
+                  <div className="bg-red-50 border border-red-200 text-red-800 px-3 py-2 sm:px-4 sm:py-3 rounded-lg mb-3 sm:mb-4 text-sm sm:text-base">
                     <p className="font-semibold">⚠️ Error</p>
-                    <p className="text-sm">{startError}</p>
+                    <p className="text-xs sm:text-sm">{startError}</p>
                     <button 
                       onClick={() => setStartError(null)}
-                      className="mt-2 text-sm underline hover:no-underline"
+                      className="mt-2 text-xs sm:text-sm underline hover:no-underline"
                     >
                       Dismiss
                     </button>
                   </div>
                 )}
 
-                <div className="flex gap-4 mt-6">
+                <div className="flex gap-3 sm:gap-4 mt-4 sm:mt-5 md:mt-6">
                   <button
                     onClick={handleBack}
                     disabled={isStarting}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleStart}
                     disabled={isStarting}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
                   >
                     {isStarting ? (
                       <>
-                        <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                        <div className="animate-spin h-4 w-4 sm:h-5 sm:w-5 border-2 border-white border-t-transparent rounded-full" />
                         <span>Starting...</span>
                       </>
                     ) : (
@@ -270,15 +270,15 @@ export default function SessionSetupPage() {
             </div>
 
             {/* Stage Info */}
-            <div className="mt-6 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
+            <div className="mt-4 sm:mt-5 md:mt-6 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4">
               <div className="text-black text-center">
-                <h3 className="text-xl font-bold mb-2">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2">
                   {stage.name}: Physical Stillness
                 </h3>
-                <p className="text-sm">
+                <p className="text-xs sm:text-sm">
                   Duration: {stage.minTime}-{stage.maxTime} minutes (minimum {stage.minTime} required)
                 </p>
-                <p className="text-xs mt-1 opacity-90">
+                <p className="text-[10px] sm:text-xs mt-1 opacity-90">
                   Focus on maintaining complete physical stillness during your meditation
                 </p>
               </div>
