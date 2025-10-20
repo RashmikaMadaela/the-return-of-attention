@@ -126,64 +126,64 @@ export default function AssessmentStatsPage() {
       {/* Navigation */}
       <Navigation currentPage="assessment-stats" />
       
-      <div className="p-8 pt-24">
-        <div className="max-w-7xl mx-auto bg-gradient-to-b from-blue-700 to-blue-600 rounded-3xl shadow-2xl p-8">
+      <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-28">
+        <div className="max-w-7xl mx-auto bg-gradient-to-b from-blue-700 to-blue-600 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8">
           {/* Header with Back Button */}
-          <div className="flex justify-end mb-8">
+          <div className="flex justify-end mb-4 sm:mb-6 md:mb-8">
             <button 
               onClick={handleBack}
-              className="bg-white hover:bg-gray-100 text-blue-600 font-bold px-8 py-3 rounded-xl transition-colors shadow-lg"
+              className="bg-white hover:bg-gray-100 text-blue-600 font-bold px-4 py-2 sm:px-6 sm:py-2.5 md:px-8 md:py-3 rounded-lg sm:rounded-xl transition-colors shadow-lg text-sm sm:text-base"
             >
               ← Back
             </button>
           </div>
 
           {/* Main Content Card */}
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden">
             {/* Table Grid */}
             <div className="grid grid-cols-4 gap-0">
               {/* Header Row */}
               <div className="bg-gray-200"></div>
-              <div className="bg-red-600 p-6 text-center">
-                <h2 className="text-white font-bold text-xl">Beginner</h2>
-                <h2 className="text-white font-bold text-xl">Assessment</h2>
+              <div className="bg-red-600 p-2 sm:p-4 md:p-6 text-center">
+                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Beginner</h2>
+                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Assessment</h2>
               </div>
-              <div className="bg-blue-600 p-6 text-center">
-                <h2 className="text-white font-bold text-xl">Mid</h2>
-                <h2 className="text-white font-bold text-xl">Assessment</h2>
+              <div className="bg-blue-600 p-2 sm:p-4 md:p-6 text-center">
+                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Mid</h2>
+                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Assessment</h2>
               </div>
-              <div className="bg-green-500 p-6 text-center">
-                <h2 className="text-white font-bold text-xl">Final</h2>
-                <h2 className="text-white font-bold text-xl">Assessment</h2>
+              <div className="bg-green-500 p-2 sm:p-4 md:p-6 text-center">
+                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Final</h2>
+                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Assessment</h2>
               </div>
 
               {/* Data Rows */}
               {preferences.map((pref) => (
                 <React.Fragment key={pref.id}>
                   {/* Category Name */}
-                  <div className="bg-yellow-400 p-6 flex items-center justify-center border-b-2 border-white">
-                    <span className="text-white font-bold text-lg text-center">
+                  <div className="bg-yellow-400 p-2 sm:p-3 md:p-4 lg:p-6 flex items-center justify-center border-b-2 border-white">
+                    <span className="text-white font-bold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
                       {pref.category}
                     </span>
                   </div>
 
                   {/* Beginner Assessment */}
-                  <div className="bg-red-200 p-6 flex items-center justify-center border-b-2 border-white">
-                    <span className="text-gray-800 font-semibold text-lg">
+                  <div className="bg-red-200 p-2 sm:p-3 md:p-4 lg:p-6 flex items-center justify-center border-b-2 border-white">
+                    <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
                       {pref.beginner}
                     </span>
                   </div>
 
                   {/* Mid Assessment */}
-                  <div className="bg-blue-200 p-6 flex items-center justify-center border-b-2 border-white">
-                    <span className="text-gray-800 font-semibold text-lg">
+                  <div className="bg-blue-200 p-2 sm:p-3 md:p-4 lg:p-6 flex items-center justify-center border-b-2 border-white">
+                    <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
                       {pref.mid}
                     </span>
                   </div>
 
                   {/* Final Assessment */}
-                  <div className="bg-green-200 p-6 flex items-center justify-center border-b-2 border-white">
-                    <span className="text-gray-800 font-semibold text-lg">
+                  <div className="bg-green-200 p-2 sm:p-3 md:p-4 lg:p-6 flex items-center justify-center border-b-2 border-white">
+                    <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
                       {pref.final}
                     </span>
                   </div>

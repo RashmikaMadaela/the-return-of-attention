@@ -272,7 +272,7 @@ export default function UserProfilePageOptimized() {
       {/* Navigation */}
       <Navigation currentPage="profile" />
       
-      <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8">
+      <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-28">
         <div className="p-4 mx-auto shadow-2xl sm:p-6 md:p-8 max-w-7xl bg-gradient-to-b from-blue-700 to-blue-600 rounded-2xl sm:rounded-3xl">
           {/* Error Message */}
           {saveError && (
