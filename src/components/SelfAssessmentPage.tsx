@@ -12,6 +12,7 @@ interface SelfAssessmentPageProps {
 export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPageProps) {
   const router = useRouter()
   const { showWarning, showError, showSuccess, ToastContainer } = useToast()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   
   const [answers, setAnswers] = useState<Record<string, string | null>>({
     foodTaste: null,
@@ -91,6 +92,8 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
     }
 
     try {
+      setIsSubmitting(true)
+      
       // Determine assessment type (initial/mid/final)
       const forcedType = (sessionStorage.getItem('assessment_type') as string) || null
       const type = forcedType || localStorage.getItem('expected_assessment_type') || 'initial'
@@ -119,11 +122,13 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
       } else {
         const err = await res.json().catch(() => ({}))
         showError(err?.message || 'Failed to submit self assessment')
+        setIsSubmitting(false)
       }
       
     } catch (error) {
       console.error('Error submitting self assessment:', error)
       showError('Failed to submit self assessment')
+      setIsSubmitting(false)
     }
   }
 
@@ -208,14 +213,26 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
             </button>
             <button
               onClick={handleSubmit}
-              disabled={!isAllAnswered()}
-              className={`font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base ${
-                isAllAnswered()
+              disabled={!isAllAnswered() || isSubmitting}
+              className={`font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg sm:rounded-xl transition-all text-sm sm:text-base flex items-center justify-center gap-2 ${
+                isSubmitting
+                  ? 'bg-green-400 text-white cursor-not-allowed'
+                  : isAllAnswered()
                   ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
                   : 'bg-gray-400 text-gray-200 cursor-not-allowed'
               }`}
             >
-              Finish
+              {isSubmitting ? (
+                <>
+                  <svg className="w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Saving...</span>
+                </>
+              ) : (
+                'Finish'
+              )}
             </button>
           </div>
         </div>
