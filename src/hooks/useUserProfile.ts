@@ -49,20 +49,22 @@ export function useUserProfile(): UseUserProfileReturn {
     '/api/user/profile-data',
     fetcher,
     {
-      // Cache for 10 minutes (profile changes less frequently)
-      dedupingInterval: 10 * 60 * 1000,
-      // Revalidate on focus
-      revalidateOnFocus: true,
+      // Cache for 15 minutes (profile changes less frequently)
+      dedupingInterval: 15 * 60 * 1000,
+      // Don't revalidate on focus - only when we know data changed
+      revalidateOnFocus: false,
       // Don't revalidate on reconnect
       revalidateOnReconnect: false,
-      // Don't auto-refresh
+      // Don't auto-refresh - use manual mutate()
       refreshInterval: 0,
+      // Don't revalidate stale data automatically
+      revalidateIfStale: false,
       // Don't retry on auth errors
       shouldRetryOnError: (error: any) => {
         return error.message !== 'UNAUTHORIZED'
       },
       // Keep previous data while revalidating
-      revalidateIfStale: true,
+      keepPreviousData: true,
       // Error retry
       errorRetryCount: 3,
       errorRetryInterval: 5000,

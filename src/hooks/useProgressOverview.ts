@@ -111,25 +111,27 @@ export function useProgressOverview(): UseProgressOverviewReturn {
     '/api/progress/overview',
     fetcher,
     {
-      // Cache for 5 minutes
-      dedupingInterval: 5 * 60 * 1000,
-      // Revalidate on focus (when user returns to tab)
-      revalidateOnFocus: true,
+      // Cache for 10 minutes - only fetch if data is truly stale
+      dedupingInterval: 10 * 60 * 1000,
+      // Don't revalidate on focus - only fetch when explicitly needed
+      revalidateOnFocus: false,
       // Don't revalidate on reconnect to reduce server load
       revalidateOnReconnect: false,
-      // Keep data fresh but don't spam the server
-      refreshInterval: 0, // Only refresh on focus or manual trigger
+      // Don't auto-refresh - rely on manual mutate() calls
+      refreshInterval: 0,
+      // Don't revalidate stale data automatically
+      revalidateIfStale: false,
       // Don't retry on 401 errors
       shouldRetryOnError: (error) => {
         return error.message !== 'UNAUTHORIZED'
       },
-      // Show stale data while revalidating
-      revalidateIfStale: true,
-      // Use cache first
+      // Use cache first, only fetch if missing
       fallbackData: undefined,
       // Error retry config
       errorRetryCount: 3,
       errorRetryInterval: 5000,
+      // Keep previous data while revalidating
+      keepPreviousData: true,
     }
   )
 
