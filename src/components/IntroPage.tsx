@@ -50,8 +50,7 @@ export default function IntroPage() {
   }
 
   const handleLearnMore = () => {
-    sessionStorage.setItem('previousPage', '/')
-    router.push('/learn/pahm-guide')
+    router.push('/about')
   }
 
   return (
@@ -261,7 +260,7 @@ export default function IntroPage() {
           <div className="order-1 text-center md:text-left md:order-2">
             <h2 className="mb-3 text-2xl font-bold sm:text-3xl md:text-4xl sm:mb-4">Ready to Begin?</h2>
             <p className="mb-4 text-sm text-gray-600 sm:text-base sm:mb-6">
-              Join thousands who have discovered that lasting happiness isn't something to achieve—it's something to recognize.
+              Join thousands who have discovered that lasting happiness isn't something to achieve. It's something to recognize.
             </p>
             <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4 md:justify-start">
               <button 
