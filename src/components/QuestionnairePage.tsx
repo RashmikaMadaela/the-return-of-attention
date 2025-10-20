@@ -112,12 +112,16 @@ export default function QuestionnairePage() {
     }
     if (currentPage < 3) {
       setCurrentPage(currentPage + 1)
+      // Scroll to top smoothly when moving to next page
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   const handleBack = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
+      // Scroll to top smoothly when moving to previous page
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       // Navigate to previous page when on first page
       const previousPage = sessionStorage.getItem('previousPage')
