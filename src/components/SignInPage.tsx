@@ -123,11 +123,6 @@ export default function SignInPage() {
     router.push('/signup')
   }
 
-  const handleForgotPassword = () => {
-    sessionStorage.setItem('previousPage', '/signin')
-    router.push('/password-change')
-  }
-
   const handleBackToHome = () => {
     router.push('/')
   }
@@ -209,11 +204,6 @@ export default function SignInPage() {
             />
             <label htmlFor="rememberMe" className="text-gray-700 cursor-pointer">Remember me</label>
           </div>
-          <button 
-            onClick={handleForgotPassword}
-            className="text-xs font-medium text-left text-blue-600 sm:text-sm hover:text-blue-700 hover:underline sm:text-right">
-            Forgot Password?
-          </button>
         </div>
 
         {/* Error Message */}

@@ -161,10 +161,10 @@ export default function SignUpPage() {
       {/* Back Button - Top Left */}
       <button
         onClick={handleBackToHome}
-        className="fixed top-4 left-4 sm:top-6 sm:left-6 p-2 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full transition-all duration-200 text-white hover:scale-110 z-10 flex items-center gap-2 group"
+        className="fixed z-10 flex items-center gap-2 p-2 text-white transition-all duration-200 rounded-full top-4 left-4 sm:top-6 sm:left-6 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm hover:scale-110 group"
       >
         <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-        <span className="hidden sm:inline-block text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <span className="hidden text-sm font-medium transition-opacity duration-200 opacity-0 sm:inline-block group-hover:opacity-100">
           Back
         </span>
       </button>
@@ -271,7 +271,34 @@ export default function SignUpPage() {
             className="mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 mt-0.5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
           />
           <label htmlFor="agreeTerms" className="leading-relaxed text-gray-700 cursor-pointer">
-            I agree to the <span className="font-medium text-purple-600">Terms of Service</span> & <span className="font-medium text-purple-600">Privacy Policy</span>
+            I agree to the{' '}
+            <a
+              href="/terms-of-service"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                e.preventDefault()
+                sessionStorage.setItem('previousPage', '/signup')
+                router.push('/terms-of-service')
+              }}
+              className="font-medium text-purple-600 underline hover:text-purple-700"
+            >
+              Terms of Service
+            </a>
+            {' '}&{' '}
+            <a
+              href="/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => {
+                e.preventDefault()
+                sessionStorage.setItem('previousPage', '/signup')
+                router.push('/privacy-policy')
+              }}
+              className="font-medium text-purple-600 underline hover:text-purple-700"
+            >
+              Privacy Policy
+            </a>
           </label>
         </div>
 
