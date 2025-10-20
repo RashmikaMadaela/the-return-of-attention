@@ -561,26 +561,45 @@ export default function UserProfilePageOptimized() {
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-gray-50 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
-                    <span className="text-sm font-semibold text-gray-700 sm:text-base md:text-lg">Self Assessment</span>
-                    <button 
-                      onClick={() => {
-                        if (assessmentStatus.selfAssessment) {
-                          sessionStorage.setItem('previousPage', '/user-profile')
-                          router.push('/self-assessment/stats')
-                        } else {
-                          sessionStorage.setItem('previousPage', '/user-profile')
-                          router.push('/self-assessment')
-                        }
-                      }}
-                      className={`font-bold px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity text-xs sm:text-sm md:text-base ${
-                        assessmentStatus.selfAssessment 
-                          ? 'bg-red-500 text-white' 
-                          : 'bg-blue-600 text-white'
-                      }`}
-                    >
-                      {assessmentStatus.selfAssessment ? 'Completed' : 'Complete'}
-                    </button>
+                  <div className="p-3 bg-gray-50 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="text-sm font-semibold text-gray-700 sm:text-base md:text-lg">Self Assessment</span>
+
+                      <div className="flex flex-col w-full gap-2 sm:flex-row sm:w-auto sm:gap-3">
+                        {/* Primary action: Complete (if not completed) or Completed badge */}
+                        <button
+                          onClick={() => {
+                            sessionStorage.setItem('previousPage', '/user-profile')
+                            if (assessmentStatus.selfAssessment) {
+                              // Already completed - do nothing or show a small toast
+                              showInfo('You have already completed the self-assessment')
+                            } else {
+                              router.push('/self-assessment')
+                            }
+                          }}
+                          className={`w-full sm:w-auto font-bold px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity text-xs sm:text-sm md:text-base ${
+                            assessmentStatus.selfAssessment ? 'bg-gray-200 text-gray-800 cursor-default' : 'bg-blue-600 text-white'
+                          }`}
+                          disabled={assessmentStatus.selfAssessment}
+                        >
+                          {assessmentStatus.selfAssessment ? 'Completed' : 'Complete'}
+                        </button>
+
+                        {/* Secondary action: View Stats (only enabled when completed) */}
+                        <button
+                          onClick={() => {
+                            sessionStorage.setItem('previousPage', '/user-profile')
+                            router.push('/self-assessment/stats')
+                          }}
+                          disabled={!assessmentStatus.selfAssessment}
+                          className={`w-full sm:w-auto font-semibold px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 rounded-lg sm:rounded-xl transition-colors text-xs sm:text-sm md:text-base ${
+                            assessmentStatus.selfAssessment ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-gray-200 text-gray-700 cursor-not-allowed'
+                          }`}
+                        >
+                          View Stats
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
