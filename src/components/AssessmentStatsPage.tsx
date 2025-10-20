@@ -16,90 +16,61 @@ export default function AssessmentStatsPage() {
   const router = useRouter()
   const [preferences, setPreferences] = useState<PreferenceData[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchPreferencesFromDatabase()
   }, [])
 
+  const mapAssessmentToPreferences = (assessment: any): PreferenceData[] => {
+    // Map the DB selfAssessment fields to the PreferenceData structure
+    const mapValue = (val: string | null | undefined) => {
+      if (!val) return 'No preference'
+      if (val === 'no_preference') return 'No preference'
+      if (val === 'flexible') return 'Some preference'
+      if (val === 'strong_preference') return 'Strong preference'
+      return String(val)
+    }
+
+    return [
+      { id: 1, category: 'Food & Taste', beginner: mapValue(assessment.foodTaste), mid: 'No preference', final: 'No preference' },
+      { id: 2, category: 'Scents & Aromas', beginner: mapValue(assessment.scentsAromas), mid: 'No preference', final: 'No preference' },
+      { id: 3, category: 'Sound & Music', beginner: mapValue(assessment.soundsMusic), mid: 'No preference', final: 'No preference' },
+      { id: 4, category: 'Visual & Beauty', beginner: mapValue(assessment.visualBeauty), mid: 'No preference', final: 'No preference' },
+      { id: 5, category: 'Touch & Texture', beginner: mapValue(assessment.touchTextures), mid: 'No preference', final: 'No preference' },
+      { id: 6, category: 'Thoughts', beginner: mapValue(assessment.thoughtsImages), mid: 'No preference', final: 'No preference' }
+    ]
+  }
+
   const fetchPreferencesFromDatabase = async () => {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      // Get saved assessment answers from localStorage
-      const savedAnswers = localStorage.getItem('selfAssessmentAnswers')
-      let beginnerData: Record<string, string> = {}
-      
-      if (savedAnswers) {
-        const answers = JSON.parse(savedAnswers)
-        
-        // Convert answers to preference strings
-        Object.keys(answers).forEach(key => {
-          const value = answers[key]
-          let preference = 'No preference'
-          
-          if (value === 'no_preference') {
-            preference = 'No preference'
-          } else if (value === 'flexible') {
-            preference = 'Some preference'
-          } else if (value === 'strong_preference') {
-            preference = 'Strong preference'
-          }
-          
-          beginnerData[key] = preference
-        })
+      setLoading(true)
+      setError(null)
+
+      const res = await fetch('/api/assessment/self-assessment')
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}))
+        throw new Error(body.message || `Failed to fetch self assessments (${res.status})`)
       }
-      
-      // Create the preferences data structure
-      const data: PreferenceData[] = [
-        {
-          id: 1,
-          category: 'Food & Taste',
-          beginner: beginnerData.foodTaste || 'No preference',
-          mid: 'No preference',
-          final: 'No preference'
-        },
-        {
-          id: 2,
-          category: 'Scents & Aromas',
-          beginner: beginnerData.scentsAromas || 'No preference',
-          mid: 'No preference',
-          final: 'No preference'
-        },
-        {
-          id: 3,
-          category: 'Sound & Music',
-          beginner: beginnerData.soundMusic || 'No preference',
-          mid: 'No preference',
-          final: 'No preference'
-        },
-        {
-          id: 4,
-          category: 'Visual & Beauty',
-          beginner: beginnerData.visualBeauty || 'No preference',
-          mid: 'No preference',
-          final: 'No preference'
-        },
-        {
-          id: 5,
-          category: 'Touch & Texture',
-          beginner: beginnerData.touchTextures || 'No preference',
-          mid: 'No preference',
-          final: 'No preference'
-        },
-        {
-          id: 6,
-          category: 'Thoughts',
-          beginner: beginnerData.thoughtsMentalImages || 'No preference',
-          mid: 'No preference',
-          final: 'No preference'
-        }
-      ]
-      
-      setPreferences(data)
+
+      const json = await res.json()
+      const assessments = json.data?.assessments || json.assessments || []
+
+      if (!Array.isArray(assessments) || assessments.length === 0) {
+        setPreferences([])
+        setLoading(false)
+        return
+      }
+
+      // Use the latest assessment (first item - API returns desc order)
+      const latest = assessments[0]
+      const mapped = mapAssessmentToPreferences(latest)
+
+      setPreferences(mapped)
       setLoading(false)
-    } catch (error) {
-      console.error('Error fetching preferences:', error)
+    } catch (err: any) {
+      console.error('Error fetching preferences:', err)
+      setError(err.message || 'Failed to fetch preferences')
       setLoading(false)
     }
   }
@@ -115,8 +86,8 @@ export default function AssessmentStatsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-300 flex items-center justify-center">
-        <div className="text-white text-2xl font-bold">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 to-blue-300">
+        <div className="text-2xl font-bold text-white">Loading...</div>
       </div>
     )
   }
@@ -127,7 +98,7 @@ export default function AssessmentStatsPage() {
       <Navigation currentPage="assessment-stats" />
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-28">
-        <div className="max-w-7xl mx-auto bg-gradient-to-b from-blue-700 to-blue-600 rounded-2xl sm:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8">
+        <div className="p-4 mx-auto shadow-2xl max-w-7xl bg-gradient-to-b from-blue-700 to-blue-600 rounded-2xl sm:rounded-3xl sm:p-6 md:p-8">
           {/* Header with Back Button */}
           <div className="flex justify-end mb-4 sm:mb-6 md:mb-8">
             <button 
@@ -139,50 +110,50 @@ export default function AssessmentStatsPage() {
           </div>
 
           {/* Main Content Card */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden">
+          <div className="overflow-hidden bg-white shadow-2xl rounded-2xl sm:rounded-3xl">
             {/* Table Grid */}
             <div className="grid grid-cols-4 gap-0">
               {/* Header Row */}
               <div className="bg-gray-200"></div>
-              <div className="bg-red-600 p-2 sm:p-4 md:p-6 text-center">
-                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Beginner</h2>
-                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Assessment</h2>
+              <div className="p-2 text-center bg-red-600 sm:p-4 md:p-6">
+                <h2 className="text-xs font-bold text-white sm:text-sm md:text-base lg:text-xl">Beginner</h2>
+                <h2 className="text-xs font-bold text-white sm:text-sm md:text-base lg:text-xl">Assessment</h2>
               </div>
-              <div className="bg-blue-600 p-2 sm:p-4 md:p-6 text-center">
-                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Mid</h2>
-                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Assessment</h2>
+              <div className="p-2 text-center bg-blue-600 sm:p-4 md:p-6">
+                <h2 className="text-xs font-bold text-white sm:text-sm md:text-base lg:text-xl">Mid</h2>
+                <h2 className="text-xs font-bold text-white sm:text-sm md:text-base lg:text-xl">Assessment</h2>
               </div>
-              <div className="bg-green-500 p-2 sm:p-4 md:p-6 text-center">
-                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Final</h2>
-                <h2 className="text-white font-bold text-xs sm:text-sm md:text-base lg:text-xl">Assessment</h2>
+              <div className="p-2 text-center bg-green-500 sm:p-4 md:p-6">
+                <h2 className="text-xs font-bold text-white sm:text-sm md:text-base lg:text-xl">Final</h2>
+                <h2 className="text-xs font-bold text-white sm:text-sm md:text-base lg:text-xl">Assessment</h2>
               </div>
 
               {/* Data Rows */}
               {preferences.map((pref) => (
                 <React.Fragment key={pref.id}>
                   {/* Category Name */}
-                  <div className="bg-yellow-400 p-2 sm:p-3 md:p-4 lg:p-6 flex items-center justify-center border-b-2 border-white">
+                  <div className="flex items-center justify-center p-2 bg-yellow-400 border-b-2 border-white sm:p-3 md:p-4 lg:p-6">
                     <span className="text-white font-bold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
                       {pref.category}
                     </span>
                   </div>
 
                   {/* Beginner Assessment */}
-                  <div className="bg-red-200 p-2 sm:p-3 md:p-4 lg:p-6 flex items-center justify-center border-b-2 border-white">
+                  <div className="flex items-center justify-center p-2 bg-red-200 border-b-2 border-white sm:p-3 md:p-4 lg:p-6">
                     <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
                       {pref.beginner}
                     </span>
                   </div>
 
                   {/* Mid Assessment */}
-                  <div className="bg-blue-200 p-2 sm:p-3 md:p-4 lg:p-6 flex items-center justify-center border-b-2 border-white">
+                  <div className="flex items-center justify-center p-2 bg-blue-200 border-b-2 border-white sm:p-3 md:p-4 lg:p-6">
                     <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
                       {pref.mid}
                     </span>
                   </div>
 
                   {/* Final Assessment */}
-                  <div className="bg-green-200 p-2 sm:p-3 md:p-4 lg:p-6 flex items-center justify-center border-b-2 border-white">
+                  <div className="flex items-center justify-center p-2 bg-green-200 border-b-2 border-white sm:p-3 md:p-4 lg:p-6">
                     <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
                       {pref.final}
                     </span>
