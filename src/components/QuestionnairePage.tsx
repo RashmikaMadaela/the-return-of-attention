@@ -15,14 +15,14 @@ export default function QuestionnairePage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [answers, setAnswers] = useState<QuestionnaireAnswers>({
     // Page 1 (Questions 1-9)
-    experienceLevel: null,
+    experienceLevel: 1,  // Changed to 1 for 1-10 scale
     goals: [],
     ageRange: null,
     location: null,
     occupation: null,
     educationLevel: null,
     meditationBackground: null,
-    sleepPattern: null,
+    sleepPattern: 1,  // Changed to 1 for 1-10 scale
     physicalActivity: null,
     
     // Page 2 (Questions 10-18)
@@ -32,7 +32,7 @@ export default function QuestionnairePage() {
     screenTime: null,
     socialConnections: null,
     workLifeBalance: null,
-    emotionalAwareness: null,
+    emotionalAwareness: 1,  // Changed to 1 for 1-10 scale
     stressResponse: null,
     decisionMaking: null,
     
@@ -40,7 +40,7 @@ export default function QuestionnairePage() {
     selfReflection: null,
     thoughtPatterns: null,
     mindfulnessDaily: null,
-    mindfulnessExperience: null,
+    mindfulnessExperience: 1,  // Changed to 1 for 1-10 scale
     meditationBackgroundDetail: null,
     practiceGoals: null,
     preferredDuration: null,
@@ -66,14 +66,14 @@ export default function QuestionnairePage() {
   }
 
   const isPage1Complete = () => {
-    return answers.experienceLevel !== null &&
+    return answers.experienceLevel !== null && answers.experienceLevel >= 1 &&
            answers.goals.length > 0 &&
            answers.ageRange !== null &&
            answers.location !== null &&
            answers.occupation !== null &&
            answers.educationLevel !== null &&
            answers.meditationBackground !== null &&
-           answers.sleepPattern !== null &&
+           answers.sleepPattern !== null && answers.sleepPattern >= 1 &&
            answers.physicalActivity !== null
   }
 
@@ -84,7 +84,7 @@ export default function QuestionnairePage() {
            answers.screenTime !== null &&
            answers.socialConnections !== null &&
            answers.workLifeBalance !== null &&
-           answers.emotionalAwareness !== null &&
+           answers.emotionalAwareness !== null && answers.emotionalAwareness >= 1 &&
            answers.stressResponse !== null &&
            answers.decisionMaking !== null
   }
@@ -93,7 +93,7 @@ export default function QuestionnairePage() {
     return answers.selfReflection !== null &&
            answers.thoughtPatterns !== null &&
            answers.mindfulnessDaily !== null &&
-           answers.mindfulnessExperience !== null &&
+           answers.mindfulnessExperience !== null && answers.mindfulnessExperience >= 1 &&
            answers.meditationBackgroundDetail !== null &&
            answers.practiceGoals !== null &&
            answers.preferredDuration !== null &&
@@ -308,6 +308,13 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
       {/* Experience Level */}
       <QuestionCard title="Experience Level" subtitle="How would you rate your meditation/mindfulness experience level?">
         <div className="space-y-3 sm:space-y-4">
+          {/* Current Value Display */}
+          <div className="flex justify-end mb-2">
+            <span className="px-3 py-1 text-sm font-bold text-white bg-blue-600 rounded-lg sm:text-base">
+              {answers.experienceLevel || 1}/10
+            </span>
+          </div>
+          
           <input
             type="range"
             min="1"
@@ -316,11 +323,12 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
             onChange={(e) => onSliderChange('experienceLevel', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-[10px] sm:text-xs md:text-sm text-gray-600">
-            <span>Complete Beginner (1)</span>
-            <span className="text-blue-600 font-bold">Current: {answers.experienceLevel || 1}/10</span>
-            <span>Advanced (8)</span>
-            <span>Expert (10)</span>
+          
+          {/* Slider Labels */}
+          <div className="grid grid-cols-3 gap-1 text-[10px] sm:text-xs text-gray-600">
+            <span className="text-left">No Experience (1)</span>
+            <span className="text-center">Some Experience (5)</span>
+            <span className="text-right">Expert (10)</span>
           </div>
         </div>
       </QuestionCard>
@@ -412,20 +420,27 @@ function Page1({ answers, onAnswerChange, onSliderChange }: Page1Props) {
       {/* Sleep Pattern */}
       <QuestionCard title="Sleep Pattern" subtitle="How would you rate your sleep quality?">
         <div className="space-y-3 sm:space-y-4">
+          {/* Current Value Display */}
+          <div className="flex justify-end mb-2">
+            <span className="px-3 py-1 text-sm font-bold text-white bg-blue-600 rounded-lg sm:text-base">
+              {answers.sleepPattern || 1}/10
+            </span>
+          </div>
+          
           <input
             type="range"
             min="1"
             max="10"
-            value={answers.sleepPattern || 5}
+            value={answers.sleepPattern || 1}
             onChange={(e) => onSliderChange('sleepPattern', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-[10px] sm:text-xs md:text-sm text-gray-600">
-            <span>Very Poor (1)</span>
-            <span>Poor (4)</span>
-            <span className="text-blue-600 font-bold">Current: {answers.sleepPattern || 5}/10</span>
-            <span>Good (7)</span>
-            <span>Excellent (10)</span>
+          
+          {/* Slider Labels */}
+          <div className="grid grid-cols-3 gap-1 text-[10px] sm:text-xs text-gray-600">
+            <span className="text-left">Very Poor (1)</span>
+            <span className="text-center">Average (5)</span>
+            <span className="text-right">Excellent (10)</span>
           </div>
         </div>
       </QuestionCard>
@@ -538,19 +553,27 @@ function Page2({ answers, onAnswerChange, onSliderChange }: Page1Props) {
       {/* Emotional Awareness */}
       <QuestionCard title="Emotional Awareness" subtitle="How aware are you of your emotions throughout the day?">
         <div className="space-y-3 sm:space-y-4">
+          {/* Current Value Display */}
+          <div className="flex justify-end mb-2">
+            <span className="px-3 py-1 text-sm font-bold text-white bg-blue-600 rounded-lg sm:text-base">
+              {answers.emotionalAwareness ?? 1}/10
+            </span>
+          </div>
+          
           <input
             type="range"
-            min="3"
-            max="9"
-            value={answers.emotionalAwareness ?? 5}
+            min="1"
+            max="10"
+            value={answers.emotionalAwareness ?? 1}
             onChange={(e) => onSliderChange('emotionalAwareness', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-[10px] sm:text-xs md:text-sm text-gray-600">
-            <span>Low Awareness (1)</span>
-            <span>Good Awareness (5)</span>
-            <span className="text-blue-600 font-bold">Current: {answers.emotionalAwareness || 5}/10</span>
-            <span>Very High Awareness (9)</span>
+          
+          {/* Slider Labels */}
+          <div className="grid grid-cols-3 gap-1 text-[10px] sm:text-xs text-gray-600">
+            <span className="text-left">Low Awareness (1)</span>
+            <span className="text-center">Moderate (5)</span>
+            <span className="text-right">Very High (10)</span>
           </div>
         </div>
       </QuestionCard>
@@ -635,19 +658,27 @@ function Page3({ answers, onAnswerChange, onSliderChange }: Page1Props) {
       {/* Mindfulness Experience */}
       <QuestionCard title="Mindfulness Experience" subtitle="How would you rate your mindfulness experience level?">
         <div className="space-y-3 sm:space-y-4">
+          {/* Current Value Display */}
+          <div className="flex justify-end mb-2">
+            <span className="px-3 py-1 text-sm font-bold text-white bg-blue-600 rounded-lg sm:text-base">
+              {answers.mindfulnessExperience ?? 1}/10
+            </span>
+          </div>
+          
           <input
             type="range"
             min="1"
-            max="8"
+            max="10"
             value={answers.mindfulnessExperience ?? 1}
             onChange={(e) => onSliderChange('mindfulnessExperience', parseInt(e.target.value))}
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-[10px] sm:text-xs md:text-sm text-gray-600">
-            <span>No Experience (1)</span>
-            <span>Some Training (5)</span>
-            <span className="text-blue-600 font-bold">Current: {answers.mindfulnessExperience || 1}/10</span>
-            <span>Advanced (8)</span>
+          
+          {/* Slider Labels */}
+          <div className="grid grid-cols-3 gap-1 text-[10px] sm:text-xs text-gray-600">
+            <span className="text-left">No Experience (1)</span>
+            <span className="text-center">Some Training (5)</span>
+            <span className="text-right">Advanced (10)</span>
           </div>
         </div>
       </QuestionCard>

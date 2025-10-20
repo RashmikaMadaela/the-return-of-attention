@@ -127,18 +127,26 @@ function calculateCurrentStateScore(
 ): number {
   let score = 0
 
-  // Emotional Awareness × 8
+  // Emotional Awareness (1-10 scale) × 8
   score += (questionnaire.emotionalAwareness || 0) * 8
 
-  // Sleep Pattern × 6
-  const sleepScoreMap: Record<string, number> = {
-    'excellent': 10,
-    'good': 7,
-    'fair': 4,
-    'poor': 1
+  // Sleep Pattern (1-10 scale) × 6
+  // If sleepPattern is a number (1-10), use it directly
+  // If it's a string (old format), map it
+  let sleepValue = 0
+  if (typeof questionnaire.sleepPattern === 'number') {
+    sleepValue = questionnaire.sleepPattern
+  } else {
+    const sleepScoreMap: Record<string, number> = {
+      'excellent': 10,
+      'good': 7,
+      'fair': 4,
+      'poor': 1
+    }
+    const sleepPattern = String(questionnaire.sleepPattern || 'fair')
+    sleepValue = sleepScoreMap[sleepPattern] || 5
   }
-  const sleepPattern = String(questionnaire.sleepPattern || 'fair')
-  score += (sleepScoreMap[sleepPattern] || 0) * 6
+  score += sleepValue * 6
 
   // Physical Activity Bonus
   const activityBonusMap: Record<string, number> = {
@@ -233,6 +241,7 @@ function calculatePAHMScore(
   pahmSessions: (PAHMSession & { session?: Session | null })[]
 ): number {
   // Assessment Foundation = (Experience Level × 2.5) + (Mindfulness Experience × 2)
+  // Both are on 1-10 scale, so the multipliers remain the same
   const experienceLevel = questionnaire.experienceLevel || 0
   const mindfulnessExperience = questionnaire.mindfulnessExperience || 0
   const assessmentFoundation = (experienceLevel * 2.5) + (mindfulnessExperience * 2)

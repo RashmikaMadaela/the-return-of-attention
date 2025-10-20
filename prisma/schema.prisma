@@ -117,7 +117,7 @@ model Questionnaire {
   workLifeBalance           String?   // Q15: MCQ (Perfect integration, Excellent, etc.)
   
   // Phase 3: Thinking Patterns (6 questions)
-  emotionalAwareness        Int?      // Q16: Slider 3-9 (Low to Very High Awareness)
+  emotionalAwareness        Int?      // Q16: Slider 1-10 (Low to Very High Awareness)
   stressResponse            String?   // Q17: MCQ (Observe and let go, Take deep breaths, etc.)
   decisionMaking            String?   // Q18: MCQ (Intuitive, Careful analysis, etc.)
   selfReflection            String?   // Q19: MCQ (Daily meditation, Regular journaling, etc.)
@@ -125,7 +125,7 @@ model Questionnaire {
   mindfulnessInDailyLife    String?   // Q21: MCQ (Constant awareness, Regular moments, etc.)
   
   // Phase 4: Mindfulness Specific (6 questions)
-  mindfulnessExperience     Int?      // Q22: Slider 1-8 (No Experience to Advanced)
+  mindfulnessExperience     Int?      // Q22: Slider 1-10 (No Experience to Advanced)
   meditationBackgroundDetail String?  // Q23: MCQ (None, Guided meditations, etc.)
   practiceGoals             String?   // Q24: MCQ (Liberation, Spiritual awakening, etc.)
   preferredDuration         String?   // Q25: MCQ (5 minutes, 10 minutes, etc.)

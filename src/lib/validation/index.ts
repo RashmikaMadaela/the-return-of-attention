@@ -75,7 +75,7 @@ export const changePasswordSchema = z.object({
 
 export const questionnaireSchema = z.object({
   // Phase 1: Demographics & Background (7 fields)
-  experienceLevel: z.number().min(1).max(10),
+  experienceLevel: z.number().int().min(1).max(10), // Updated: 1-10 scale
   mainGoals: z.array(z.string()).min(1, 'Select at least one goal'),
   ageRange: z.string().min(1, 'Age range is required'),
   location: z.string().min(1, 'Location is required'),
@@ -84,7 +84,7 @@ export const questionnaireSchema = z.object({
   meditationBackground: z.string().min(1, 'Meditation background is required'),
   
   // Phase 2: Lifestyle Patterns (8 fields)
-  sleepPattern: z.number().min(1).max(10),
+  sleepPattern: z.number().int().min(1).max(10), // Updated: 1-10 scale
   physicalActivity: z.string().min(1, 'Physical activity level is required'),
   stressTrigers: z.array(z.string()).min(1, 'Select at least one stress trigger'),
   dailyRoutine: z.string().min(1, 'Daily routine description is required'),
@@ -94,7 +94,7 @@ export const questionnaireSchema = z.object({
   workLifeBalance: z.string().min(1, 'Work-life balance description is required'),
   
   // Phase 3: Thinking Patterns (6 fields)
-  emotionalAwareness: z.number().min(3).max(9),
+  emotionalAwareness: z.number().int().min(1).max(10), // Updated: 1-10 scale (was 3-9)
   stressResponse: z.string().min(1, 'Stress response is required'),
   decisionMaking: z.string().min(1, 'Decision making style is required'),
   selfReflection: z.string().min(1, 'Self reflection frequency is required'),
@@ -102,7 +102,7 @@ export const questionnaireSchema = z.object({
   mindfulnessInDailyLife: z.string().min(1, 'Mindfulness practice description is required'),
   
   // Phase 4: Mindfulness Specific (6 fields)
-  mindfulnessExperience: z.number().min(1).max(8),
+  mindfulnessExperience: z.number().int().min(1).max(10), // Updated: 1-10 scale (was 1-8)
   meditationBackgroundDetail: z.string().min(1, 'Detailed meditation background is required'),
   practiceGoals: z.string().min(1, 'Practice goals are required'),
   preferredDuration: z.string().min(1, 'Preferred duration is required'),
