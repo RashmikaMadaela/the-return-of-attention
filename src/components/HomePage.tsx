@@ -71,8 +71,8 @@ export default function HomePageOptimized() {
 
   // Helper to get progress text
   const getProgressText = (stageNum: number) => {
-    // Find stage config from overview.stages (should include minSessions/minHours from DB)
-    const stageConfig = overview?.stages?.find(s => s.stageNumber === stageNum) as (typeof s & { minSessions?: number; minHours?: number }) | undefined
+  // Find stage config from overview.stages (should include minSessions/minHours from DB)
+  const stageConfig = overview?.stages?.find((s: any) => s.stageNumber === stageNum) as { minSessions?: number; minHours?: number } | undefined
     const serverStage = serverStageProgress.find(s => s.stageNumber === stageNum)
     if (serverStage && stageConfig) {
       if (stageNum === 1) {
