@@ -49,18 +49,39 @@ export async function GET(request: NextRequest) {
       if (stage.stageNumber > 1) {
         const previousStage = stagesWithProgress.find(s => s.stageNumber === stage.stageNumber - 1);
         if (previousStage) {
-          const previousStageProgress = previousStage.userProgress.find(p => 
-            !p.subStage || p.subStage === '' // Main stage completion (or last sub-stage for Stage 1)
-          );
-          isUnlocked = previousStageProgress?.isCompleted || false;
-          
-          // For Stage 1 with sub-stages, check if all sub-stages are completed
+          // For Stage 1 with sub-stages, check comprehensive requirements
           if (previousStage.hasSubStages && previousStage.subStages) {
             const subStagesArray = Array.isArray(previousStage.subStages) ? previousStage.subStages : [];
+            
+            // Check 1: All T1-T5 sub-stages completed
             const allSubStagesCompleted = subStagesArray.every((subStage: any) => 
               previousStage.userProgress.some(p => p.subStage === subStage.id && p.isCompleted)
             );
-            isUnlocked = allSubStagesCompleted;
+            
+            // Check 2: PAHM intro completed
+            const pahmIntroProgress = previousStage.userProgress.find(p => p.subStage === 'PAHM');
+            const pahmIntroCompleted = pahmIntroProgress?.isCompleted || false;
+            
+            // Check 3: Total hours requirement met
+            const totalHours = previousStage.userProgress.reduce((sum, p) => 
+              sum + (p.hoursCompleted ? Number(p.hoursCompleted) : 0), 0
+            );
+            const hoursRequirementMet = totalHours >= Number(previousStage.minHours);
+            
+            // Check 4: Total sessions requirement met
+            const totalSessions = previousStage.userProgress.reduce((sum, p) => 
+              sum + (p.sessionsCompleted || 0), 0
+            );
+            const sessionsRequirementMet = totalSessions >= previousStage.minSessions;
+            
+            // Stage 2 unlocks only when ALL requirements are met
+            isUnlocked = allSubStagesCompleted && pahmIntroCompleted && hoursRequirementMet && sessionsRequirementMet;
+          } else {
+            // For stages without sub-stages, check main stage completion
+            const previousStageProgress = previousStage.userProgress.find(p => 
+              !p.subStage || p.subStage === ''
+            );
+            isUnlocked = previousStageProgress?.isCompleted || false;
           }
         }
       }

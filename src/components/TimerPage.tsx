@@ -70,7 +70,8 @@ export default function TimerPage() {
       }))
 
       // Set stage info
-      const stageNum = parseInt(stageId || '1')
+      // Parse stage ID: 'T1' -> 1, 'T2' -> 2, etc.
+      const stageNum = stageId?.startsWith('T') ? parseInt(stageId.substring(1)) : parseInt(stageId || '1')
       const stageDurations = {
         1: { name: 'T1', minTime: 10 },
         2: { name: 'T2', minTime: 15 },

@@ -121,23 +121,23 @@ export default function PrivacyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-300 flex items-center justify-center p-5">
+    <div className="flex items-center justify-center min-h-screen p-5 bg-gradient-to-br from-blue-400 to-blue-300">
       <ToastContainer />
       
-      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-2xl">
+      <div className="w-full max-w-2xl p-8 bg-white shadow-2xl rounded-3xl">
         {/* Header */}
         <div className="flex items-center justify-center mb-8">
-          <Shield className="w-10 h-10 text-blue-600 mr-3" />
+          <Shield className="w-10 h-10 mr-3 text-blue-600" />
           <h1 className="text-3xl font-bold text-gray-800">Privacy & Security</h1>
         </div>
 
         {/* Change Password Section */}
-        <div className="mb-6 p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
+        <div className="p-6 mb-6 border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl">
           <div className="flex items-start mb-4">
-            <Lock className="w-6 h-6 text-blue-600 mr-3 mt-1" />
+            <Lock className="w-6 h-6 mt-1 mr-3 text-blue-600" />
             <div>
-              <h2 className="text-xl font-bold text-gray-800 mb-2">Change Password</h2>
-              <p className="text-sm text-gray-700 leading-relaxed">
+              <h2 className="mb-2 text-xl font-bold text-gray-800">Change Password</h2>
+              <p className="text-sm leading-relaxed text-gray-700">
                 Keep your account secure by regularly updating your password. Use a strong, unique
                 password with at least 8 characters, including uppercase, lowercase, and numbers.
               </p>
@@ -152,18 +152,18 @@ export default function PrivacyPage() {
         </div>
 
         {/* Delete Account Section */}
-        <div className="mb-8 p-6 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl border border-red-200">
+        <div className="p-6 mb-8 border border-red-200 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl">
           <div className="flex items-start mb-4">
-            <Trash2 className="w-6 h-6 text-red-600 mr-3 mt-1" />
+            <Trash2 className="w-6 h-6 mt-1 mr-3 text-red-600" />
             <div>
-              <h2 className="text-xl font-bold text-gray-800 mb-2">Delete Your Account</h2>
-              <p className="text-sm text-gray-700 leading-relaxed mb-3">
+              <h2 className="mb-2 text-xl font-bold text-gray-800">Delete Your Account</h2>
+              <p className="mb-3 text-sm leading-relaxed text-gray-700">
                 Permanently delete your account and all associated data. This action cannot be undone.
               </p>
-              <div className="bg-red-200 border border-red-300 rounded-lg p-3 mb-3">
+              <div className="p-3 mb-3 bg-red-200 border border-red-300 rounded-lg">
                 <div className="flex items-start">
                   <AlertTriangle className="w-5 h-5 text-red-700 mr-2 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-red-900 font-medium">
+                  <p className="text-xs font-medium text-red-900">
                     Warning: All your sessions, notes, assessments, and progress will be permanently deleted.
                   </p>
                 </div>
@@ -182,7 +182,7 @@ export default function PrivacyPage() {
         <div className="flex justify-center">
           <button
             onClick={handleBack}
-            className="px-12 py-3 bg-blue-600 text-white rounded-full font-bold uppercase tracking-wide hover:bg-blue-700 transition-colors shadow-lg"
+            className="px-12 py-3 font-bold tracking-wide text-white uppercase transition-colors bg-blue-600 rounded-full shadow-lg hover:bg-blue-700"
           >
             BACK
           </button>
@@ -191,24 +191,24 @@ export default function PrivacyPage() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-br from-blue-600 to-blue-300">
           <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-center mb-6">
               <AlertTriangle className="w-12 h-12 text-red-600" />
             </div>
             
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">
+            <h2 className="mb-4 text-2xl font-bold text-center text-gray-800">
               Delete Account
             </h2>
             
-            <p className="text-sm text-gray-700 text-center mb-6">
+            <p className="mb-6 text-sm text-center text-gray-700">
               This action is permanent and cannot be undone. All your data will be deleted.
             </p>
 
             <div className="space-y-4">
               {/* Password Input */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-semibold text-gray-700">
                   Enter Your Password
                 </label>
                 <input
@@ -216,14 +216,14 @@ export default function PrivacyPage() {
                   value={deletePassword}
                   onChange={(e) => setDeletePassword(e.target.value)}
                   placeholder="Your password"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                  className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                   disabled={isDeleting}
                 />
               </div>
 
               {/* Confirmation Text */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-semibold text-gray-700">
                   Type "DELETE" to confirm
                 </label>
                 <input
@@ -231,25 +231,25 @@ export default function PrivacyPage() {
                   value={deleteConfirmation}
                   onChange={(e) => setDeleteConfirmation(e.target.value)}
                   placeholder="DELETE"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                  className="w-full p-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                   disabled={isDeleting}
                 />
               </div>
 
               {/* Reason (Optional) */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block mb-2 text-sm font-semibold text-gray-700">
                   Reason (Optional)
                 </label>
                 <textarea
                   value={deleteReason}
                   onChange={(e) => setDeleteReason(e.target.value)}
                   placeholder="Tell us why you're leaving..."
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm h-20 resize-none"
+                  className="w-full h-20 p-3 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-red-500"
                   maxLength={500}
                   disabled={isDeleting}
                 />
-                <p className="text-xs text-gray-500 mt-1">{deleteReason.length}/500</p>
+                <p className="mt-1 text-xs text-gray-500">{deleteReason.length}/500</p>
               </div>
             </div>
 
@@ -257,7 +257,7 @@ export default function PrivacyPage() {
             <div className="flex gap-3 mt-6">
               <button
                 onClick={handleCancelDelete}
-                className="flex-1 px-4 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                className="flex-1 px-4 py-3 font-semibold text-gray-800 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
                 disabled={isDeleting}
               >
                 Cancel
@@ -265,11 +265,11 @@ export default function PrivacyPage() {
               <button
                 onClick={handleConfirmDelete}
                 disabled={isDeleting || !deletePassword || deleteConfirmation !== 'DELETE'}
-                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                className="flex items-center justify-center flex-1 px-4 py-3 font-semibold text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
                 {isDeleting ? (
                   <>
-                    <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-2 animate-spin" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>

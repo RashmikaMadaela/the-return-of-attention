@@ -6,10 +6,12 @@ import Navigation from './Navigation'
 
 interface PreferenceData {
   id: number
+  // key matches the DB field name for mapping
+  key: string
   category: string
-  beginner: string
-  mid: string
-  final: string
+  beginner: string | null
+  mid: string | null
+  final: string | null
 }
 
 export default function AssessmentStatsPage() {
@@ -22,7 +24,7 @@ export default function AssessmentStatsPage() {
     fetchPreferencesFromDatabase()
   }, [])
 
-  const mapAssessmentToPreferences = (assessment: any): PreferenceData[] => {
+  const mapAssessmentToPreferences = (assessment: any): Record<string, string> => {
     // Map the DB selfAssessment fields to the PreferenceData structure
     const mapValue = (val: string | null | undefined) => {
       if (!val) return 'No preference'
@@ -31,15 +33,14 @@ export default function AssessmentStatsPage() {
       if (val === 'strong_preference') return 'Strong preference'
       return String(val)
     }
-
-    return [
-      { id: 1, category: 'Food & Taste', beginner: mapValue(assessment.foodTaste), mid: 'No preference', final: 'No preference' },
-      { id: 2, category: 'Scents & Aromas', beginner: mapValue(assessment.scentsAromas), mid: 'No preference', final: 'No preference' },
-      { id: 3, category: 'Sound & Music', beginner: mapValue(assessment.soundsMusic), mid: 'No preference', final: 'No preference' },
-      { id: 4, category: 'Visual & Beauty', beginner: mapValue(assessment.visualBeauty), mid: 'No preference', final: 'No preference' },
-      { id: 5, category: 'Touch & Texture', beginner: mapValue(assessment.touchTextures), mid: 'No preference', final: 'No preference' },
-      { id: 6, category: 'Thoughts', beginner: mapValue(assessment.thoughtsImages), mid: 'No preference', final: 'No preference' }
-    ]
+    return {
+      foodTaste: mapValue(assessment.foodTaste),
+      scentsAromas: mapValue(assessment.scentsAromas),
+      soundsMusic: mapValue(assessment.soundsMusic),
+      visualBeauty: mapValue(assessment.visualBeauty),
+      touchTextures: mapValue(assessment.touchTextures),
+      thoughtsImages: mapValue(assessment.thoughtsImages)
+    }
   }
 
   const fetchPreferencesFromDatabase = async () => {
@@ -62,11 +63,25 @@ export default function AssessmentStatsPage() {
         return
       }
 
-      // Use the latest assessment (first item - API returns desc order)
-      const latest = assessments[0]
-      const mapped = mapAssessmentToPreferences(latest)
+      // Find latest of each type (API returns desc by createdAt)
+      const initial = assessments.find((a: any) => a.type === 'initial') || null
+      const mid = assessments.find((a: any) => a.type === 'mid') || null
+      const final = assessments.find((a: any) => a.type === 'final') || null
 
-      setPreferences(mapped)
+      const initialMap = initial ? mapAssessmentToPreferences(initial) : null
+      const midMap = mid ? mapAssessmentToPreferences(mid) : null
+      const finalMap = final ? mapAssessmentToPreferences(final) : null
+
+      const data: PreferenceData[] = [
+        { id: 1, key: 'foodTaste', category: 'Food & Taste', beginner: initialMap?.foodTaste ?? null, mid: midMap?.foodTaste ?? null, final: finalMap?.foodTaste ?? null },
+        { id: 2, key: 'scentsAromas', category: 'Scents & Aromas', beginner: initialMap?.scentsAromas ?? null, mid: midMap?.scentsAromas ?? null, final: finalMap?.scentsAromas ?? null },
+        { id: 3, key: 'soundsMusic', category: 'Sound & Music', beginner: initialMap?.soundsMusic ?? null, mid: midMap?.soundsMusic ?? null, final: finalMap?.soundsMusic ?? null },
+        { id: 4, key: 'visualBeauty', category: 'Visual & Beauty', beginner: initialMap?.visualBeauty ?? null, mid: midMap?.visualBeauty ?? null, final: finalMap?.visualBeauty ?? null },
+        { id: 5, key: 'touchTextures', category: 'Touch & Texture', beginner: initialMap?.touchTextures ?? null, mid: midMap?.touchTextures ?? null, final: finalMap?.touchTextures ?? null },
+        { id: 6, key: 'thoughtsImages', category: 'Thoughts', beginner: initialMap?.thoughtsImages ?? null, mid: midMap?.thoughtsImages ?? null, final: finalMap?.thoughtsImages ?? null }
+      ]
+
+      setPreferences(data)
       setLoading(false)
     } catch (err: any) {
       console.error('Error fetching preferences:', err)
@@ -147,16 +162,28 @@ export default function AssessmentStatsPage() {
 
                   {/* Mid Assessment */}
                   <div className="flex items-center justify-center p-2 bg-blue-200 border-b-2 border-white sm:p-3 md:p-4 lg:p-6">
-                    <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
-                      {pref.mid}
-                    </span>
+                      {pref.mid ? (
+                        <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
+                          {pref.mid}
+                        </span>
+                      ) : (
+                        <span className="text-blue-700 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
+                          Unlocks after Stage 3
+                        </span>
+                      )}
                   </div>
 
                   {/* Final Assessment */}
                   <div className="flex items-center justify-center p-2 bg-green-200 border-b-2 border-white sm:p-3 md:p-4 lg:p-6">
-                    <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
-                      {pref.final}
-                    </span>
+                      {pref.final ? (
+                        <span className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
+                          {pref.final}
+                        </span>
+                      ) : (
+                        <span className="text-green-700 font-semibold text-[10px] sm:text-xs md:text-sm lg:text-base xl:text-lg text-center leading-tight">
+                          Unlocks after Stage 6
+                        </span>
+                      )}
                   </div>
                 </React.Fragment>
               ))}

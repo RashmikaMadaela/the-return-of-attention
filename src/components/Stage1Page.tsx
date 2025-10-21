@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Lock } from 'lucide-react'
 import Navigation from './Navigation'
 import { useStage1Progress } from '@/hooks/useStage1Progress'
@@ -9,7 +9,8 @@ import { Stage1PageSkeleton } from './LoadingSkeletons'
 
 export default function Stage1Page() {
   const router = useRouter()
-  const { data, error, isLoading, isValidating } = useStage1Progress()
+  const searchParams = useSearchParams()
+  const { data, error, isLoading, isValidating, mutate } = useStage1Progress()
 
   // Redirect on auth error
   React.useEffect(() => {
@@ -17,6 +18,19 @@ export default function Stage1Page() {
       router.push('/signin')
     }
   }, [error, router])
+
+  // Auto-refresh data when redirected from reflection page
+  React.useEffect(() => {
+    const shouldRefresh = searchParams.get('refresh')
+    if (shouldRefresh === 'true') {
+      // Trigger data revalidation
+      mutate()
+      
+      // Remove the refresh parameter from URL without refreshing the page
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, '', newUrl)
+    }
+  }, [searchParams, mutate])
 
   if (isLoading) {
     return <Stage1PageSkeleton />
@@ -50,8 +64,11 @@ export default function Stage1Page() {
     duration: s.duration || 10,
     sessions: s.sessionsCompleted || 0,
     completed: s.isCompleted || false,
+    // new flag from server indicating session requirement met
+    meetsSessionRequirement: s.meetsSessionRequirement || false,
     unlocked: s.isUnlocked || false,
     minSessions: s.minSessions || 3,
+    progressPercent: s.progressPercent || 0,
     isPAHM: false
   }))
 
@@ -69,8 +86,12 @@ export default function Stage1Page() {
 
   const getStageButton = (stage: any) => {
     if (!stage.unlocked) return { text: 'Locked', color: 'bg-orange-400', disabled: true }
-    if (stage.isPAHM) return { text: 'Start', color: 'bg-blue-600', disabled: false }
-    if (stage.completed) return { text: 'Completed', color: 'bg-pink-600', disabled: true }
+    if (stage.isPAHM) {
+      if (stage.completed) return { text: 'Completed', color: 'bg-green-600', disabled: false }
+      return { text: 'Complete', color: 'bg-blue-600', disabled: false }
+    }
+    // Allow practice even after meeting the session requirement - show "Practice" or "Continue"
+    if (stage.meetsSessionRequirement) return { text: 'Practice', color: 'bg-blue-600', disabled: false }
     if (stage.sessions > 0) return { text: 'Continue', color: 'bg-blue-600', disabled: false }
     return { text: 'Start', color: 'bg-blue-600', disabled: false }
   }
@@ -83,7 +104,7 @@ export default function Stage1Page() {
     sessionStorage.setItem('previousPage', '/stage-1')
 
     if (stage.isPAHM) {
-      router.push('/pahm-matrix-intro')
+      router.push('/pahm-intro')
     } else {
       router.push(`/stage-1/session-setup?stage=${stage.id}`)
     }
@@ -149,7 +170,7 @@ export default function Stage1Page() {
                         <div className="w-full h-2 bg-gray-200 rounded-full">
                           <div
                             className="h-2 transition-all duration-300 bg-blue-600 rounded-full"
-                            style={{ width: `${(stage.sessions / Math.max(1, stage.minSessions)) * 100}%` }}
+                            style={{ width: `${Math.min(100, stage.progressPercent || 0)}%` }}
                           ></div>
                         </div>
                       </div>

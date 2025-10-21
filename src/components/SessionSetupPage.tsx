@@ -29,20 +29,18 @@ export default function SessionSetupPage() {
 
   // Get stage info - Only handles Stage 1 T1-T5
   const getStageInfo = () => {
-    const stageNum = parseInt(stageId || '1')
-    
     // Stage 1 T1-T5 with fixed durations
-    const stageDurations = {
-      1: { name: 'T1', minTime: 10, maxTime: 30 },
-      2: { name: 'T2', minTime: 15, maxTime: 30 },
-      3: { name: 'T3', minTime: 20, maxTime: 30 },
-      4: { name: 'T4', minTime: 25, maxTime: 30 },
-      5: { name: 'T5', minTime: 30, maxTime: 30 }
+    const stageDurations: Record<string, { name: string; minTime: number; maxTime: number }> = {
+      'T1': { name: 'T1', minTime: 10, maxTime: 30 },
+      'T2': { name: 'T2', minTime: 15, maxTime: 30 },
+      'T3': { name: 'T3', minTime: 20, maxTime: 30 },
+      'T4': { name: 'T4', minTime: 25, maxTime: 30 },
+      'T5': { name: 'T5', minTime: 30, maxTime: 30 }
     }
     
-    const stageInfo = stageDurations[stageNum as keyof typeof stageDurations] || stageDurations[1]
+    const stageInfo = stageDurations[stageId || 'T1'] || stageDurations['T1']
     return {
-      id: stageNum,
+      id: stageId || 'T1',
       name: stageInfo.name,
       minTime: stageInfo.minTime,
       maxTime: stageInfo.maxTime,

@@ -19,6 +19,7 @@ async function main() {
       hasSubStages: true,
       subStages: [
         {
+          id: 'T1',
           name: 'T1',
           title: 'Initial Introduction',
           duration: 10,
@@ -27,6 +28,7 @@ async function main() {
           description: 'Basic posture and breathing awareness'
         },
         {
+          id: 'T2',
           name: 'T2',
           title: 'Building Consistency',
           duration: 15,
@@ -35,6 +37,7 @@ async function main() {
           description: 'Extending stillness duration'
         },
         {
+          id: 'T3',
           name: 'T3',
           title: 'Deepening Practice',
           duration: 20,
@@ -43,6 +46,7 @@ async function main() {
           description: 'Deeper stillness and awareness'
         },
         {
+          id: 'T4',
           name: 'T4',
           title: 'Advanced Preparation',
           duration: 25,
@@ -51,6 +55,7 @@ async function main() {
           description: 'Preparation for PAHM methodology'
         },
         {
+          id: 'T5',
           name: 'T5',
           title: 'PAHM Readiness',
           duration: 30,

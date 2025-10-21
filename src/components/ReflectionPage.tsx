@@ -67,7 +67,8 @@ export default function ReflectionPage() {
     }
 
     // Load stage info
-    const stageNum = parseInt(stageId || '1')
+    // Parse stage ID: 'T1' -> 1, 'T2' -> 2, etc.
+    const stageNum = stageId?.startsWith('T') ? parseInt(stageId.substring(1)) : parseInt(stageId || '1')
     const stageDurations = {
       1: { name: 'T1', minTime: 10 },
       2: { name: 'T2', minTime: 15 },
@@ -131,9 +132,9 @@ export default function ReflectionPage() {
       sessionStorage.removeItem('activeSession')
       sessionStorage.removeItem('actualSessionDuration')
 
-      // Navigate back to stage selection after showing success
+      // Navigate back to stage selection after showing success with refresh parameter
       setTimeout(() => {
-        router.push('/stage-1')
+        router.push('/stage-1?refresh=true')
       }, 2000)
     } catch (error) {
       console.error('Error completing session:', error)
