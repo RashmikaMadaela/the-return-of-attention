@@ -66,21 +66,27 @@ export async function GET(request: NextRequest) {
     const subStages = subStagesConfig.map((subStage: any, index: number) => {
       const subStageId = subStage.id || subStage.name
       const progress = userProgressData.find(p => p.subStage === subStageId)
-      
-      // Check if sub-stage is unlocked
-      // T1 is always unlocked, others unlock when previous is completed
-      const isUnlocked = index === 0 || 
-        subStagesConfig.slice(0, index).every((prevSubStage: any) =>
-          userProgressData.some(p => 
-            p.subStage === (prevSubStage.id || prevSubStage.name) && 
-            p.isCompleted
-          )
-        )
 
       const sessionsCompleted = progress?.sessionsCompleted || 0
-      const hoursCompleted = progress?.hoursCompleted.toNumber() || 0
+      const hoursCompleted = progress?.hoursCompleted ? Number(progress.hoursCompleted) : 0
       const minSessions = subStage.minSessions || 3
-      const progressPercent = Math.min(100, Math.round((sessionsCompleted / minSessions) * 100))
+
+      // Determine whether the user meets the session requirement (sessions only)
+      const meetsSessionRequirement = sessionsCompleted >= minSessions
+
+      // Cap progress percent at 100% so extra sessions don't extend the bar
+      const progressPercent = Math.min(100, Math.round((sessionsCompleted / Math.max(1, minSessions)) * 100))
+
+      // Check if sub-stage is unlocked
+      // T1 is always unlocked, others unlock when previous sub-stage meets its session requirement
+      const isUnlocked = index === 0 ||
+        subStagesConfig.slice(0, index).every((prevSubStage: any) => {
+          const prevId = prevSubStage.id || prevSubStage.name
+          const prevProgress = userProgressData.find(p => p.subStage === prevId)
+          const prevMin = prevSubStage.minSessions || 3
+          const prevSessions = prevProgress?.sessionsCompleted || 0
+          return prevSessions >= prevMin
+        })
 
       return {
         id: subStageId,
@@ -89,7 +95,10 @@ export async function GET(request: NextRequest) {
         minSessions,
         sessionsCompleted,
         hoursCompleted: Math.round(hoursCompleted * 100) / 100,
-        isCompleted: progress?.isCompleted || false,
+        // Only consider sessions for completion state (ignore hours/duration)
+        isCompleted: meetsSessionRequirement,
+        // Expose explicit meetsSessionRequirement so client can decide UX behavior
+        meetsSessionRequirement,
         isUnlocked,
         progressPercent
       }

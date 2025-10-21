@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
 import SessionTimeControls from './SessionTimeControls'
+import ConfirmDialog from './ui/ConfirmDialog'
 
 interface TimerState {
   minutes: number
@@ -48,6 +49,9 @@ export default function TimerPage() {
   const [sessionSettings, setSessionSettings] = useState<any>(null)
   const [stage, setStage] = useState<any>(null)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // Confirmation dialog state
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false)
 
   useEffect(() => {
     // Load session data from sessionStorage (set by SessionSetupPage)
@@ -66,7 +70,8 @@ export default function TimerPage() {
       }))
 
       // Set stage info
-      const stageNum = parseInt(stageId || '1')
+      // Parse stage ID: 'T1' -> 1, 'T2' -> 2, etc.
+      const stageNum = stageId?.startsWith('T') ? parseInt(stageId.substring(1)) : parseInt(stageId || '1')
       const stageDurations = {
         1: { name: 'T1', minTime: 10 },
         2: { name: 'T2', minTime: 15 },
@@ -247,53 +252,63 @@ export default function TimerPage() {
     router.push(`/stage-1/reflection?stage=${stageId}`)
   }
 
-  const handleTimeSkip = async () => {
-    if (confirm('Skip to the end of this session? This will mark the session as completed.')) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-      
-      // Set timer to 0
-      setTimer(prev => ({
-        ...prev,
-        totalSeconds: 0,
-        minutes: 0,
-        seconds: 0,
-        isRunning: false
-      }))
+  const handleTimeSkip = () => {
+    setShowSkipConfirm(true)
+  }
 
-      // If we have a sessionId, complete the session immediately via API
-      if (sessionId) {
-        try {
-          // Dynamically import the completeSession function
-          const { completeSession } = await import('@/lib/api/sessions')
-          
-          const actualDurationMinutes = sessionSettings?.duration || 10
-          
-          // Complete the session with minimal data
-          await completeSession({
-            sessionId,
-            qualityRating: 5, // Default rating for time-skipped sessions
-            insights: 'Session completed via Time Skip'
-          })
+  const executeTimeSkip = async () => {
+    setShowSkipConfirm(false)
+    
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
+    
+    // Set timer to 0
+    setTimer(prev => ({
+      ...prev,
+      totalSeconds: 0,
+      minutes: 0,
+      seconds: 0,
+      isRunning: false
+    }))
 
-          // Clear session storage
-          sessionStorage.removeItem('activeSession')
-          sessionStorage.removeItem('actualSessionDuration')
-          
-          // Redirect to home or stage page
-          setTimeout(() => {
-            router.push('/stage-1')
-          }, 1000)
-        } catch (error) {
-          console.error('Error completing skipped session:', error)
-          // Fall back to regular completion flow
-          handleTimerComplete()
-        }
-      } else {
-        // No sessionId, use regular flow
+    // If we have a sessionId, complete the session immediately via API
+    if (sessionId) {
+      try {
+        // Dynamically import the session functions
+        const { updateSession, completeSession } = await import('@/lib/api/sessions')
+        
+        const actualDurationMinutes = sessionSettings?.duration || 10
+        
+        // First, update the session with the full planned duration
+        // This ensures time-skipped sessions count toward hour requirements
+        await updateSession(sessionId, {
+          duration: actualDurationMinutes
+        })
+        
+        // Then complete the session with minimal data
+        await completeSession({
+          sessionId,
+          qualityRating: 5, // Default rating for time-skipped sessions
+          insights: 'Session completed via Time Skip'
+        })
+
+        // Clear session storage
+        sessionStorage.removeItem('activeSession')
+        sessionStorage.removeItem('actualSessionDuration')
+        
+        // Redirect to home or stage page
+        setTimeout(() => {
+          router.push('/stage-1')
+        }, 1000)
+      } catch (error) {
+        console.error('Error completing skipped session:', error)
+        // Fall back to regular completion flow
         handleTimerComplete()
       }
+    } else {
+      // No sessionId, use regular flow
+      handleTimerComplete()
     }
   }
 
@@ -307,6 +322,18 @@ export default function TimerPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex flex-col">
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showSkipConfirm}
+        title="Skip Session?"
+        message="Skip to the end of this session? This will mark the session as completed."
+        variant="warning"
+        confirmText="Yes, Skip"
+        cancelText="Cancel"
+        onConfirm={executeTimeSkip}
+        onCancel={() => setShowSkipConfirm(false)}
+      />
+      
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       
@@ -340,29 +367,33 @@ export default function TimerPage() {
             </div>
 
             {/* Timer Controls */}
-            <div className="flex justify-center gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 px-4">
               {!timer.isRunning ? (
                 timer.startedAt ? (
                   <button
                     onClick={resumeTimer}
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                   >
-                    ▶️ Resume
+                    <span>▶️</span>
+                    <span>Resume</span>
                   </button>
                 ) : (
                   <button
                     onClick={startTimer}
-                    className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                   >
-                    ▶️ Start Meditation
+                    <span>▶️</span>
+                    <span className="hidden sm:inline">Start Meditation</span>
+                    <span className="sm:hidden">Start</span>
                   </button>
                 )
               ) : (
                 <button
                   onClick={pauseTimer}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                 >
-                  ⏸️ Pause
+                  <span>⏸️</span>
+                  <span>Pause</span>
                 </button>
               )}
               
@@ -379,9 +410,10 @@ export default function TimerPage() {
                     router.push(`/stage-1/reflection?stage=${stageId}`)
                   }
                 }}
-                className="bg-pink-600 hover:bg-pink-700 text-white px-8 py-4 rounded-xl text-xl font-semibold flex items-center gap-2"
+                className="bg-pink-600 hover:bg-pink-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
               >
-                ✓ Complete
+                <span>✓</span>
+                <span>Complete</span>
               </button>
             </div>
 
@@ -391,6 +423,7 @@ export default function TimerPage() {
               onFastForward={handleFastForward}
               fastForwardActive={fastForwardActive}
               isActive={timer.isRunning}
+              isAdminMode={isAdminMode}
             />
 
             {/* Admin Controls - Only show in admin mode */}

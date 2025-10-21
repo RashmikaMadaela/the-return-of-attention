@@ -1,10 +1,37 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 export default function IntroPage() {
   const router = useRouter()
+  const [isChecking, setIsChecking] = useState(true)
+
+  // Check if user is logged in and redirect to home
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/session')
+        const session = await response.json()
+        
+        if (session?.user) {
+          router.push('/home')
+        } else {
+          setIsChecking(false)
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error)
+        setIsChecking(false)
+      }
+    }
+
+    checkAuth()
+  }, [router])
+
+  // Show nothing while checking auth status
+  if (isChecking) {
+    return null
+  }
 
   const handleRegister = () => {
     router.push('/signup')
@@ -23,8 +50,7 @@ export default function IntroPage() {
   }
 
   const handleLearnMore = () => {
-    sessionStorage.setItem('previousPage', '/')
-    router.push('/learn/pahm-guide')
+    router.push('/about')
   }
 
   return (
@@ -35,22 +61,22 @@ export default function IntroPage() {
           <div className="flex items-center justify-between h-16" suppressHydrationWarning={true}>
             <div className="flex items-center space-x-3" suppressHydrationWarning={true}>
               {/* Animated PAHM Grid Logo */}
-              <div className="relative flex-shrink-0 w-10 h-10 bg-purple-600 rounded-lg sm:w-12 sm:h-12">
-                <div className="absolute inset-1 sm:inset-1.5 grid grid-cols-3 gap-0.5">
+              <div className="relative flex-shrink-0 w-10 h-10 bg-purple-600 rounded-lg sm:w-12 sm:h-12" suppressHydrationWarning={true}>
+                <div className="absolute inset-1 sm:inset-1.5 grid grid-cols-3 gap-0.5" suppressHydrationWarning={true}>
                   {/* Row 1 */}
-                  <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}}></div>
-                  <div className="w-full rounded-sm aspect-square bg-cyan-300 animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}}></div>
-                  <div className="w-full bg-purple-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
+                  <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}} suppressHydrationWarning={true}></div>
+                  <div className="w-full rounded-sm aspect-square bg-cyan-300 animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}} suppressHydrationWarning={true}></div>
+                  <div className="w-full bg-purple-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}} suppressHydrationWarning={true}></div>
                   
                   {/* Row 2 */}
-                  <div className="w-full bg-yellow-400 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}}></div>
-                  <div className="w-full bg-gray-200 rounded-sm aspect-square animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}}></div>
-                  <div className="w-full bg-blue-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}}></div>
+                  <div className="w-full bg-yellow-400 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}} suppressHydrationWarning={true}></div>
+                  <div className="w-full bg-gray-200 rounded-sm aspect-square animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}} suppressHydrationWarning={true}></div>
+                  <div className="w-full bg-blue-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}} suppressHydrationWarning={true}></div>
                   
                   {/* Row 3 */}
-                  <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}}></div>
-                  <div className="w-full bg-pink-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}}></div>
-                  <div className="w-full bg-purple-200 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}}></div>
+                  <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}} suppressHydrationWarning={true}></div>
+                  <div className="w-full bg-pink-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}} suppressHydrationWarning={true}></div>
+                  <div className="w-full bg-purple-200 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}} suppressHydrationWarning={true}></div>
                 </div>
               </div>
               
@@ -234,7 +260,7 @@ export default function IntroPage() {
           <div className="order-1 text-center md:text-left md:order-2">
             <h2 className="mb-3 text-2xl font-bold sm:text-3xl md:text-4xl sm:mb-4">Ready to Begin?</h2>
             <p className="mb-4 text-sm text-gray-600 sm:text-base sm:mb-6">
-              Join thousands who have discovered that lasting happiness isn't something to achieve—it's something to recognize.
+              Join thousands who have discovered that lasting happiness isn't something to achieve. It's something to recognize.
             </p>
             <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4 md:justify-start">
               <button 

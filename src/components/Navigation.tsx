@@ -52,22 +52,22 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
         {/* Logo with Animated PAHM Grid */}
         <div className="flex items-center space-x-3">
           {/* Animated PAHM Grid Logo */}
-          <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-purple-600 rounded-lg flex-shrink-0">
-            <div className="absolute inset-1 sm:inset-1.5 grid grid-cols-3 gap-0.5 sm:gap-1">
+          <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-purple-600 rounded-lg flex-shrink-0" suppressHydrationWarning={true}>
+            <div className="absolute inset-1 sm:inset-1.5 grid grid-cols-3 gap-0.5 sm:gap-1" suppressHydrationWarning={true}>
               {/* Row 1 */}
-              <div className="w-full aspect-square bg-orange-300 rounded-md animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}}></div>
-              <div className="w-full aspect-square bg-cyan-300 rounded-sm animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}}></div>
-              <div className="w-full aspect-square bg-purple-300 rounded-md animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
+              <div className="w-full aspect-square bg-orange-300 rounded-md animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full aspect-square bg-cyan-300 rounded-sm animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full aspect-square bg-purple-300 rounded-md animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}} suppressHydrationWarning={true}></div>
               
               {/* Row 2 */}
-              <div className="w-full aspect-square bg-yellow-400 rounded-sm animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}}></div>
-              <div className="w-full aspect-square bg-gray-200 rounded-sm animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}}></div>
-              <div className="w-full aspect-square bg-blue-300 rounded-sm animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}}></div>
+              <div className="w-full aspect-square bg-yellow-400 rounded-sm animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full aspect-square bg-gray-200 rounded-sm animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full aspect-square bg-blue-300 rounded-sm animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}} suppressHydrationWarning={true}></div>
               
               {/* Row 3 */}
-              <div className="w-full aspect-square bg-orange-300 rounded-md animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}}></div>
-              <div className="w-full aspect-square bg-pink-300 rounded-sm animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}}></div>
-              <div className="w-full aspect-square bg-purple-200 rounded-md animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}}></div>
+              <div className="w-full aspect-square bg-orange-300 rounded-md animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full aspect-square bg-pink-300 rounded-sm animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full aspect-square bg-purple-200 rounded-md animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}} suppressHydrationWarning={true}></div>
             </div>
           </div>
           

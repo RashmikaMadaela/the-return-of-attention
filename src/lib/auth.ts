@@ -26,6 +26,15 @@ declare module 'next-auth' {
     image?: string | null
     isActive: boolean
     emailVerified?: Date | null
+    rememberMe?: boolean
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id?: string
+    isActive?: boolean
+    rememberMe?: boolean
   }
 }
 
@@ -39,6 +48,7 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
   session: {
     strategy: 'jwt',
+    // Maximum session age (30 days) - actual expiry controlled by JWT exp claim
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   providers: [
@@ -60,10 +70,16 @@ export const authOptions: NextAuthOptions = {
       name: 'credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' }
+        password: { label: 'Password', type: 'password' },
+        rememberMe: { label: 'Remember Me', type: 'text' }
       },
       async authorize(credentials) {
         try {
+          // Check if credentials exist
+          if (!credentials) {
+            return null
+          }
+
           // Validate input
           const validatedFields = loginSchema.safeParse(credentials)
           if (!validatedFields.success) {
@@ -96,14 +112,15 @@ export const authOptions: NextAuthOptions = {
           //   throw new Error('Please verify your email before signing in')
           // }
 
-          // Return user object
+          // Return user object with rememberMe flag
           return {
             id: user.id,
             email: user.email,
             name: user.name,
             image: user.image,
             emailVerified: user.emailVerified,
-            isActive: user.isActive
+            isActive: user.isActive,
+            rememberMe: credentials.rememberMe === 'true'
           }
         } catch (error) {
           console.error('Authorization error:', error)
@@ -118,6 +135,17 @@ export const authOptions: NextAuthOptions = {
       if (account && user) {
         token.id = user.id
         token.isActive = (user as any).isActive
+        token.rememberMe = (user as any).rememberMe || false
+        
+        // Set token expiry based on rememberMe
+        const now = Math.floor(Date.now() / 1000)
+        if (token.rememberMe) {
+          // Remember me: 30 days
+          token.exp = now + 30 * 24 * 60 * 60
+        } else {
+          // Regular session: 1 hour
+          token.exp = now + 60 * 60
+        }
       }
       return token
     },

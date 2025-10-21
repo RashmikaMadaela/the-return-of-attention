@@ -46,12 +46,21 @@ export async function POST(request: NextRequest) {
       throw CommonErrors.sessionNotFound()
     }
 
-    // Calculate actual session duration (if different from planned)
+    // Calculate actual session duration
     const startedAt = existingSession.startedAt;
     const completedAt = new Date();
-    const actualDurationMinutes = startedAt 
+    const elapsedMinutes = startedAt 
       ? Math.round((completedAt.getTime() - startedAt.getTime()) / (1000 * 60))
-      : existingSession.duration;
+      : 0;
+    
+    // If session was just started (< 1 minute) but has a different duration set,
+    // it's likely a time skip - use the explicitly set duration
+    // Otherwise, use the calculated elapsed time
+    const actualDurationMinutes = (elapsedMinutes < 1 && existingSession.duration > 1)
+      ? existingSession.duration // Use explicitly set duration (time skip)
+      : elapsedMinutes > 0
+        ? elapsedMinutes // Use calculated elapsed time (normal completion)
+        : existingSession.duration; // Fallback to session duration
 
     // Use transaction to ensure data consistency
     const result = await prisma.$transaction(async (tx) => {
@@ -73,7 +82,9 @@ export async function POST(request: NextRequest) {
               description: true,
               sessionType: true,
               minSessions: true,
-              minHours: true
+              minHours: true,
+              hasSubStages: true,
+              subStages: true
             }
           }
         }
@@ -174,9 +185,30 @@ export async function POST(request: NextRequest) {
       });
 
       // Check if stage/sub-stage is now completed
-      const stageRequirements = existingSession.stage;
-      const isStageCompleted = progressUpdate.sessionsCompleted >= stageRequirements.minSessions &&
-                              progressUpdate.hoursCompleted.gte(stageRequirements.minHours);
+      // For substages, use substage-specific requirements
+      // For main stages, use stage requirements
+      const stageRequirements = completedSession.stage;
+      let minSessionsRequired = stageRequirements.minSessions;
+      let minHoursRequired = stageRequirements.minHours;
+
+      // If this is a substage, find its specific requirements
+      if (existingSession.subStage && stageRequirements.hasSubStages && stageRequirements.subStages) {
+        const subStagesArray = Array.isArray(stageRequirements.subStages) 
+          ? stageRequirements.subStages 
+          : [];
+        
+        const currentSubStage = subStagesArray.find((ss: any) => 
+          (ss.id || ss.name) === existingSession.subStage
+        ) as any;
+
+        if (currentSubStage) {
+          minSessionsRequired = currentSubStage.minSessions || minSessionsRequired;
+          minHoursRequired = currentSubStage.minHours || minHoursRequired;
+        }
+      }
+
+      const isStageCompleted = progressUpdate.sessionsCompleted >= minSessionsRequired &&
+                              progressUpdate.hoursCompleted.gte(minHoursRequired);
 
       if (isStageCompleted && !progressUpdate.isCompleted) {
         await tx.userStageProgress.update({

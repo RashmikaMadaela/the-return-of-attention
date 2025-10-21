@@ -78,21 +78,41 @@ export async function GET(request: NextRequest) {
     // Get assessment completion status
     const assessmentStatus = await getAssessmentStatus(session.user.id);
 
+    // Helper function to check if stage is completed (with comprehensive Stage 1 logic)
+    const isStageCompleted = (stage: any) => {
+      if (stage.hasSubStages && stage.subStages) {
+        const subStagesArray = Array.isArray(stage.subStages) ? stage.subStages : [];
+        const allSubStagesCompleted = subStagesArray.every((subStage: any) => 
+          stage.userProgress.some((p: any) => p.subStage === subStage.id && p.isCompleted)
+        );
+        const pahmIntroProgress = stage.userProgress.find((p: any) => p.subStage === 'PAHM');
+        const pahmIntroCompleted = pahmIntroProgress?.isCompleted || false;
+        const totalHours = stage.userProgress.reduce((sum: number, p: any) => 
+          sum + (p.hoursCompleted ? p.hoursCompleted.toNumber() : 0), 0
+        );
+        const hoursRequirementMet = totalHours >= stage.minHours.toNumber();
+        const totalSessions = stage.userProgress.reduce((sum: number, p: any) => 
+          sum + (p.sessionsCompleted || 0), 0
+        );
+        const sessionsRequirementMet = totalSessions >= stage.minSessions;
+        return allSubStagesCompleted && pahmIntroCompleted && hoursRequirementMet && sessionsRequirementMet;
+      }
+      return stage.userProgress.some((p: any) => p.isCompleted);
+    };
+
     // Calculate journey progress
     const totalStages = stagesWithProgress.length;
-    const completedStages = stagesWithProgress.filter(stage => 
-      stage.userProgress.some(p => p.isCompleted)
-    ).length;
+    const completedStages = stagesWithProgress.filter(stage => isStageCompleted(stage)).length;
 
     const currentStage = stagesWithProgress.find(stage => {
       // Check if stage is unlocked but not completed
       const isUnlocked = stage.stageNumber === 1 || 
         stagesWithProgress.some(prevStage => 
           prevStage.stageNumber === stage.stageNumber - 1 &&
-          prevStage.userProgress.some(p => p.isCompleted)
+          isStageCompleted(prevStage)
         );
-      const isCompleted = stage.userProgress.some(p => p.isCompleted);
-      return isUnlocked && !isCompleted;
+      const completed = isStageCompleted(stage);
+      return isUnlocked && !completed;
     });
 
     // Calculate streak
@@ -105,25 +125,51 @@ export async function GET(request: NextRequest) {
     const stageProgress = stagesWithProgress.map(stage => {
       const progress = stage.userProgress[0];
       let overallProgress = 0;
+      let isCompleted = false;
 
       if (stage.hasSubStages && stage.subStages) {
         const subStagesArray = Array.isArray(stage.subStages) ? stage.subStages : [];
+        // Check all T1-T5 sub-stages completed
+        const allSubStagesCompleted = subStagesArray.every((subStage: any) => 
+          stage.userProgress.some(p => p.subStage === subStage.id && p.isCompleted)
+        );
+        // Check PAHM intro completed
+        const pahmIntroProgress = stage.userProgress.find(p => p.subStage === 'PAHM');
+        const pahmIntroCompleted = pahmIntroProgress?.isCompleted || false;
+        // Check total hours requirement met
+        const totalHours = stage.userProgress.reduce((sum, p) => 
+          sum + (p.hoursCompleted ? p.hoursCompleted.toNumber() : 0), 0
+        );
+        const hoursRequirementMet = totalHours >= stage.minHours.toNumber();
+        // Check total sessions requirement met
+        const totalSessions = stage.userProgress.reduce((sum, p) => 
+          sum + (p.sessionsCompleted || 0), 0
+        );
+        const sessionsRequirementMet = totalSessions >= stage.minSessions;
+        // Stage 1 is only complete when ALL requirements are met
+        isCompleted = allSubStagesCompleted && pahmIntroCompleted && hoursRequirementMet && sessionsRequirementMet;
         const completedSubStages = subStagesArray.filter((subStage: any) =>
           stage.userProgress.some(p => p.subStage === subStage.id && p.isCompleted)
         ).length;
         overallProgress = subStagesArray.length > 0 ? 
           Math.round((completedSubStages / subStagesArray.length) * 100) : 0;
-      } else if (progress) {
-        const sessionsProgress = Math.round((progress.sessionsCompleted / stage.minSessions) * 100);
-        const hoursProgress = Math.round((progress.hoursCompleted.toNumber() / stage.minHours.toNumber()) * 100);
-        overallProgress = Math.min(100, Math.max(sessionsProgress, hoursProgress));
+      } else {
+        // For stages without sub-stages
+        isCompleted = stage.userProgress.some(p => p.isCompleted);
+        if (progress) {
+          const sessionsProgress = Math.round((progress.sessionsCompleted / stage.minSessions) * 100);
+          const hoursProgress = Math.round((progress.hoursCompleted.toNumber() / stage.minHours.toNumber()) * 100);
+          overallProgress = Math.min(100, Math.max(sessionsProgress, hoursProgress));
+        }
       }
 
       return {
         stageNumber: stage.stageNumber,
         name: stage.name,
+        minSessions: stage.minSessions,
+        minHours: stage.minHours?.toNumber ? stage.minHours.toNumber() : stage.minHours,
         progress: overallProgress,
-        isCompleted: stage.userProgress.some(p => p.isCompleted),
+        isCompleted,
         sessionsCompleted: stage.userProgress.reduce((sum, p) => sum + p.sessionsCompleted, 0),
         hoursCompleted: stage.userProgress.reduce((sum, p) => sum + p.hoursCompleted.toNumber(), 0)
       };

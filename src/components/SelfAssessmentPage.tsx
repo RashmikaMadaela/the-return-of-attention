@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useToast } from '@/hooks/useToast'
 
 interface SelfAssessmentPageProps {
   onComplete?: (answers: any) => void
@@ -10,6 +11,8 @@ interface SelfAssessmentPageProps {
 
 export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPageProps) {
   const router = useRouter()
+  const { showWarning, showError, showSuccess, ToastContainer } = useToast()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   
   const [answers, setAnswers] = useState<Record<string, string | null>>({
     foodTaste: null,
@@ -84,11 +87,13 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
 
   const handleSubmit = async () => {
     if (!isAllAnswered()) {
-      alert('Please answer all questions before submitting!')
+      showWarning('Please answer all questions before submitting!')
       return
     }
 
     try {
+      setIsSubmitting(true)
+      
       // Determine assessment type (initial/mid/final)
       const forcedType = (sessionStorage.getItem('assessment_type') as string) || null
       const type = forcedType || localStorage.getItem('expected_assessment_type') || 'initial'
@@ -112,14 +117,18 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
       if (res.ok) {
         localStorage.setItem('selfAssessmentCompleted', 'true')
         localStorage.setItem('selfAssessmentAnswers', JSON.stringify(answers))
-        router.push('/self-assessment/completed')
+        showSuccess('Self assessment completed successfully!')
+        setTimeout(() => router.push('/self-assessment/completed'), 1500)
       } else {
         const err = await res.json().catch(() => ({}))
-        alert(err?.message || 'Failed to submit self assessment')
+        showError(err?.message || 'Failed to submit self assessment')
+        setIsSubmitting(false)
       }
       
     } catch (error) {
       console.error('Error submitting self assessment:', error)
+      showError('Failed to submit self assessment')
+      setIsSubmitting(false)
     }
   }
 
@@ -134,52 +143,53 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600">
+      <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="self-assessment" />
       
-      <div className="p-4 pt-24">
+      <div className="p-3 pt-20 sm:p-4 sm:pt-24">
         <div className="max-w-7xl mx-auto">
           {/* Questions */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-5 md:space-y-6">
             {questions.map((question) => (
-              <div key={question.id} className="bg-blue-400 bg-opacity-40 backdrop-blur-sm rounded-3xl p-8">
-                <div className="text-center mb-6">
-                  <div className="text-5xl mb-3">{question.emoji}</div>
-                  <h2 className="text-white text-2xl font-bold mb-2">{question.title}</h2>
-                  <p className="text-white text-sm mb-1">{question.subtitle}</p>
-                  <p className="text-white text-xs opacity-80">{question.description}</p>
+              <div key={question.id} className="bg-blue-400 bg-opacity-40 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8">
+                <div className="text-center mb-4 sm:mb-5 md:mb-6">
+                  <div className="text-3xl sm:text-4xl md:text-5xl mb-2 sm:mb-3">{question.emoji}</div>
+                  <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{question.title}</h2>
+                  <p className="text-white text-xs sm:text-sm mb-1">{question.subtitle}</p>
+                  <p className="text-white text-[10px] sm:text-xs opacity-80">{question.description}</p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {options.map((option, optIndex) => (
                     <div
                       key={option.value}
                       onClick={() => handleAnswerChange(question.id, option.value)}
-                      className={`w-full rounded-xl p-4 cursor-pointer transition-all hover:shadow-lg ${
+                      className={`w-full rounded-lg sm:rounded-xl p-3 sm:p-3.5 md:p-4 cursor-pointer transition-all hover:shadow-lg ${
                         answers[question.id] === option.value 
-                          ? 'bg-green-500 ring-4 ring-green-600 shadow-lg' 
+                          ? 'bg-green-500 ring-2 sm:ring-4 ring-green-600 shadow-lg' 
                           : 'bg-white hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start">
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-3 mt-1 ${
+                        <div className={`flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-1 ${
                           answers[question.id] === option.value 
                             ? 'bg-white' 
                             : 'bg-blue-100'
                         }`}>
-                          <span className={`font-bold ${
+                          <span className={`font-bold text-xs sm:text-sm ${
                             answers[question.id] === option.value 
                               ? 'text-green-600' 
                               : 'text-blue-600'
                           }`}>{optIndex + 1}</span>
                         </div>
                         <div className="flex-1">
-                          <div className={`font-semibold mb-1 ${
+                          <div className={`font-semibold mb-0.5 sm:mb-1 text-xs sm:text-sm md:text-base ${
                             answers[question.id] === option.value 
                               ? 'text-white' 
                               : 'text-gray-800'
                           }`}>{option.label}</div>
-                          <div className={`text-xs ${
+                          <div className={`text-[10px] sm:text-xs ${
                             answers[question.id] === option.value 
                               ? 'text-green-100' 
                               : 'text-gray-600'
@@ -194,23 +204,35 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
           </div>
 
           {/* Footer Buttons */}
-          <div className="mt-8 flex justify-between items-center pb-8">
+          <div className="mt-6 sm:mt-7 md:mt-8 flex justify-between items-center pb-6 sm:pb-8">
             <button
               onClick={handleBack}
-              className="bg-blue-400 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-xl transition-colors"
+              className="bg-blue-400 hover:bg-blue-500 text-white font-bold px-5 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
             >
               Back
             </button>
             <button
               onClick={handleSubmit}
-              disabled={!isAllAnswered()}
-              className={`font-bold px-12 py-4 rounded-xl transition-colors ${
-                isAllAnswered()
+              disabled={!isAllAnswered() || isSubmitting}
+              className={`font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-12 md:py-4 rounded-lg sm:rounded-xl transition-all text-sm sm:text-base flex items-center justify-center gap-2 ${
+                isSubmitting
+                  ? 'bg-green-400 text-white cursor-not-allowed'
+                  : isAllAnswered()
                   ? 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
                   : 'bg-gray-400 text-gray-200 cursor-not-allowed'
               }`}
             >
-              Finish
+              {isSubmitting ? (
+                <>
+                  <svg className="w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Saving...</span>
+                </>
+              ) : (
+                'Finish'
+              )}
             </button>
           </div>
         </div>

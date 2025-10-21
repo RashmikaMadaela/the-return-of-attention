@@ -130,22 +130,26 @@ export async function DELETE(request: NextRequest) {
         where: { userId }
       })
 
-      // 9. Delete admin user record if exists
-      await tx.adminUser.deleteMany({
-        where: { userId }
-      })
-
-      // 10. Delete NextAuth accounts
+      // 9. Delete NextAuth accounts
       await tx.account.deleteMany({
         where: { userId }
       })
 
-      // 11. Delete verification tokens for this user's email
+      // 10. Delete verification tokens for this user's email
       await tx.verificationToken.deleteMany({
         where: { identifier: user.email }
       })
 
-      // 12. Finally, delete the user
+      // 11. Delete session challenges (cascade from sessions, but explicit for clarity)
+      await tx.sessionChallenge.deleteMany({
+        where: { 
+          session: {
+            userId: userId
+          }
+        }
+      })
+
+      // 12. Finally, delete the user (cascade will handle remaining relations)
       await tx.user.delete({
         where: { id: userId }
       })
