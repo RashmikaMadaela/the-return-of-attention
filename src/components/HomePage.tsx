@@ -71,15 +71,22 @@ export default function HomePageOptimized() {
 
   // Helper to get progress text
   const getProgressText = (stageNum: number) => {
+    // Find stage config from overview.stages (should include minSessions/minHours from DB)
+    const stageConfig = overview?.stages?.find(s => s.stageNumber === stageNum) as (typeof s & { minSessions?: number; minHours?: number }) | undefined
     const serverStage = serverStageProgress.find(s => s.stageNumber === stageNum)
-    if (serverStage) {
+    if (serverStage && stageConfig) {
       if (stageNum === 1) {
-        return `${serverStage.sessionsCompleted || 0}/15 sessions`
+        return `${serverStage.sessionsCompleted || 0}/${stageConfig.minSessions ?? 0} sessions`
       } else {
-        return `${(serverStage.hoursCompleted || 0).toFixed(1)}/15 hours`
+        return `${(serverStage.hoursCompleted || 0).toFixed(1)}/${stageConfig.minHours ?? 0} hours`
       }
     }
-    return stageNum === 1 ? '0/15 sessions' : '0.0/15 hours'
+    // Fallback to 0/min for locked stages
+    if (stageNum === 1) {
+      return `0/${stageConfig?.minSessions ?? 0} sessions`
+    } else {
+      return `0.0/${stageConfig?.minHours ?? 0} hours`
+    }
   }
 
   // Helper to check if stage is unlocked

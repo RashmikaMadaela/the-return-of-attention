@@ -129,31 +129,25 @@ export async function GET(request: NextRequest) {
 
       if (stage.hasSubStages && stage.subStages) {
         const subStagesArray = Array.isArray(stage.subStages) ? stage.subStages : [];
-        
         // Check all T1-T5 sub-stages completed
         const allSubStagesCompleted = subStagesArray.every((subStage: any) => 
           stage.userProgress.some(p => p.subStage === subStage.id && p.isCompleted)
         );
-        
         // Check PAHM intro completed
         const pahmIntroProgress = stage.userProgress.find(p => p.subStage === 'PAHM');
         const pahmIntroCompleted = pahmIntroProgress?.isCompleted || false;
-        
         // Check total hours requirement met
         const totalHours = stage.userProgress.reduce((sum, p) => 
           sum + (p.hoursCompleted ? p.hoursCompleted.toNumber() : 0), 0
         );
         const hoursRequirementMet = totalHours >= stage.minHours.toNumber();
-        
         // Check total sessions requirement met
         const totalSessions = stage.userProgress.reduce((sum, p) => 
           sum + (p.sessionsCompleted || 0), 0
         );
         const sessionsRequirementMet = totalSessions >= stage.minSessions;
-        
         // Stage 1 is only complete when ALL requirements are met
         isCompleted = allSubStagesCompleted && pahmIntroCompleted && hoursRequirementMet && sessionsRequirementMet;
-        
         const completedSubStages = subStagesArray.filter((subStage: any) =>
           stage.userProgress.some(p => p.subStage === subStage.id && p.isCompleted)
         ).length;
@@ -172,6 +166,8 @@ export async function GET(request: NextRequest) {
       return {
         stageNumber: stage.stageNumber,
         name: stage.name,
+        minSessions: stage.minSessions,
+        minHours: stage.minHours?.toNumber ? stage.minHours.toNumber() : stage.minHours,
         progress: overallProgress,
         isCompleted,
         sessionsCompleted: stage.userProgress.reduce((sum, p) => sum + p.sessionsCompleted, 0),
