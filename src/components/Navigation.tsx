@@ -1,7 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { getStageProgress } from '@/lib/api/sessions'
 
 interface NavigationProps {
   currentPage?: string
@@ -10,6 +11,7 @@ interface NavigationProps {
 export default function Navigation({ currentPage = 'home' }: NavigationProps) {
   const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [hasCompletedStage1, setHasCompletedStage1] = useState(false)
 
   const navItems = [
     { label: 'Home', path: '/home', key: 'home' },
@@ -41,6 +43,54 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
     setIsMobileMenuOpen(false)
     router.push('/user-profile');
   };
+
+  // Query server for stage progress and unlock status.
+  // Prefer server's `isUnlocked` flag for stage 2 (i.e. stage 1 completed).
+  // Fall back to localStorage if the API call fails or returns unexpected data.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    let mounted = true
+
+    async function fetchProgress() {
+      try {
+        const res = await getStageProgress()
+        if (!mounted) return
+
+        if (res.success && res.data && Array.isArray(res.data.stages)) {
+          // Find stage #2 and use its isUnlocked flag. If it doesn't exist,
+          // fall back to checking completedStages from overall progress.
+          const stage2 = res.data.stages.find((s: any) => s.stageNumber === 2)
+          if (stage2) {
+            setHasCompletedStage1(Boolean(stage2.isUnlocked))
+            return
+          }
+
+          const completed = res.data.overall?.completedStages ?? 0
+          setHasCompletedStage1(Number(completed) >= 1)
+          return
+        }
+
+        // Fallback to localStorage if API didn't return expected shape
+        const completedLocal = JSON.parse(localStorage.getItem('completedStages') || '[]')
+        setHasCompletedStage1(Array.isArray(completedLocal) && (completedLocal.includes(1) || completedLocal.includes('1')))
+      } catch (err) {
+        // On any error, fallback to localStorage
+        try {
+          const completedLocal = JSON.parse(localStorage.getItem('completedStages') || '[]')
+          setHasCompletedStage1(Array.isArray(completedLocal) && (completedLocal.includes(1) || completedLocal.includes('1')))
+        } catch (e) {
+          setHasCompletedStage1(false)
+        }
+      }
+    }
+
+    fetchProgress()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
 
 
@@ -81,19 +131,36 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
         
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex space-x-2">
-          {navItems.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => handleNavigation(item.path, item.key)}
-              className={`text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base ${
-                currentPage === item.key
-                  ? 'bg-blue-600 hover:bg-blue-700'
-                  : 'bg-pink-500 hover:bg-pink-600'
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            // Gate Mind Recovery until Stage 1 is completed
+            if (item.key === 'mind-recovery' && !hasCompletedStage1) {
+              return (
+                <button
+                  key={item.key}
+                  onClick={() => { /* locked - no-op */ }}
+                  title="Locked — complete Stage 1 to unlock"
+                  aria-disabled={true}
+                  className={`text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base opacity-60 cursor-not-allowed bg-gray-500`}
+                >
+                  {item.label} 🔒
+                </button>
+              )
+            }
+
+            return (
+              <button
+                key={item.key}
+                onClick={() => handleNavigation(item.path, item.key)}
+                className={`text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base ${
+                  currentPage === item.key
+                    ? 'bg-blue-600 hover:bg-blue-700'
+                    : 'bg-pink-500 hover:bg-pink-600'
+                }`}
+              >
+                {item.label}
+              </button>
+            )
+          })}
         </nav>
 
         {/* Mobile/Tablet Navigation Button & Profile */}
@@ -131,19 +198,35 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
         <div className="lg:hidden absolute top-full left-0 right-0 bg-gradient-to-r from-blue-500/95 to-blue-400/95 backdrop-blur-sm border-t border-white/10">
           <nav className="max-w-7xl mx-auto px-4 py-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {navItems.map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => handleNavigation(item.path, item.key)}
-                  className={`text-white px-4 py-3 rounded-lg font-semibold transition text-center ${
-                    currentPage === item.key
-                      ? 'bg-blue-600 hover:bg-blue-700'
-                      : 'bg-pink-500 hover:bg-pink-600'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                if (item.key === 'mind-recovery' && !hasCompletedStage1) {
+                  return (
+                    <button
+                      key={item.key}
+                      onClick={() => {}}
+                      title="Locked — complete Stage 1 to unlock"
+                      aria-disabled={true}
+                      className={`text-white px-4 py-3 rounded-lg font-semibold transition text-center opacity-60 cursor-not-allowed bg-gray-500`}
+                    >
+                      {item.label} 🔒
+                    </button>
+                  )
+                }
+
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => handleNavigation(item.path, item.key)}
+                    className={`text-white px-4 py-3 rounded-lg font-semibold transition text-center ${
+                      currentPage === item.key
+                        ? 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-pink-500 hover:bg-pink-600'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                )
+              })}
             </div>
           </nav>
         </div>

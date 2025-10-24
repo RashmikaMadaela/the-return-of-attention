@@ -46,21 +46,35 @@ export async function POST(request: NextRequest) {
       throw CommonErrors.sessionNotFound()
     }
 
-    // Calculate actual session duration
-    const startedAt = existingSession.startedAt;
-    const completedAt = new Date();
-    const elapsedMinutes = startedAt 
-      ? Math.round((completedAt.getTime() - startedAt.getTime()) / (1000 * 60))
-      : 0;
-    
-    // If session was just started (< 1 minute) but has a different duration set,
-    // it's likely a time skip - use the explicitly set duration
-    // Otherwise, use the calculated elapsed time
-    const actualDurationMinutes = (elapsedMinutes < 1 && existingSession.duration > 1)
-      ? existingSession.duration // Use explicitly set duration (time skip)
-      : elapsedMinutes > 0
-        ? elapsedMinutes // Use calculated elapsed time (normal completion)
-        : existingSession.duration; // Fallback to session duration
+    // Determine actual duration to persist. Precedence:
+    // 1. Client-provided validatedData.actualDuration (explicit practiced minutes)
+    // 2. Client-provided validatedData.duration (explicit planned minutes)
+    // 3. Calculated elapsed minutes based on existingSession.startedAt
+    // 4. existingSession.duration as a final fallback
+    const completedAt = new Date()
+
+    let actualDurationMinutes: number | null = null
+
+    if (typeof validatedData.actualDuration === 'number') {
+      actualDurationMinutes = Math.max(0, Math.floor(validatedData.actualDuration))
+    } else if (typeof validatedData.duration === 'number') {
+      actualDurationMinutes = Math.max(0, Math.floor(validatedData.duration))
+    } else {
+      const startedAt = existingSession.startedAt
+      const elapsedMinutes = startedAt
+        ? Math.round((completedAt.getTime() - startedAt.getTime()) / (1000 * 60))
+        : 0
+
+      // If session was just started (< 1 minute) but has a different duration set,
+      // it's likely a time skip - use the explicitly set session duration
+      if (elapsedMinutes < 1 && existingSession.duration > 1) {
+        actualDurationMinutes = existingSession.duration
+      } else if (elapsedMinutes > 0) {
+        actualDurationMinutes = elapsedMinutes
+      } else {
+        actualDurationMinutes = existingSession.duration
+      }
+    }
 
     // Use transaction to ensure data consistency
     const result = await prisma.$transaction(async (tx) => {
@@ -159,6 +173,34 @@ export async function POST(request: NextRequest) {
       }
 
       // Update user stage progress
+      // Only count the session towards progress if the user actually practiced
+      // the full planned duration. This prevents short/completed-but-skipped
+      // sessions from being counted towards required session counts.
+      const shouldCountAsCompleted = typeof actualDurationMinutes === 'number' &&
+        existingSession.duration !== undefined &&
+        actualDurationMinutes === existingSession.duration
+
+      const updateData: any = {
+        updatedAt: completedAt
+      }
+
+      const createData: any = {
+        userId: user.id,
+        stageId: existingSession.stageId,
+        stageNumber: existingSession.stageNumber,
+        subStage: existingSession.subStage,
+        sessionsCompleted: 0,
+        hoursCompleted: new Decimal(0),
+      }
+
+      if (shouldCountAsCompleted) {
+        updateData.sessionsCompleted = { increment: 1 }
+        updateData.hoursCompleted = { increment: new Decimal(actualDurationMinutes).div(60) }
+
+        createData.sessionsCompleted = 1
+        createData.hoursCompleted = new Decimal(actualDurationMinutes).div(60)
+      }
+
       const progressUpdate = await tx.userStageProgress.upsert({
         where: {
           userId_stageId_subStage: {
@@ -167,21 +209,8 @@ export async function POST(request: NextRequest) {
             subStage: existingSession.subStage || ''
           }
         },
-        update: {
-          sessionsCompleted: { increment: 1 },
-          hoursCompleted: { 
-            increment: new Decimal(actualDurationMinutes).div(60) 
-          },
-          updatedAt: completedAt,
-        },
-        create: {
-          userId: user.id,
-          stageId: existingSession.stageId,
-          stageNumber: existingSession.stageNumber,
-          subStage: existingSession.subStage,
-          sessionsCompleted: 1,
-          hoursCompleted: new Decimal(actualDurationMinutes).div(60),
-        }
+        update: updateData,
+        create: createData
       });
 
       // Check if stage/sub-stage is now completed

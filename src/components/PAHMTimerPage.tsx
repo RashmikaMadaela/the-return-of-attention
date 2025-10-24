@@ -423,7 +423,7 @@ export default function PAHMTimerPage() {
     ((sessionSettings.duration * 60 - timer.totalSeconds) / (sessionSettings.duration * 60)) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex flex-col">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-600 to-blue-800">
       {/* Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showSkipConfirm}
@@ -467,11 +467,11 @@ export default function PAHMTimerPage() {
       `}</style>
       
       {/* Static Navigation with Mobile Menu - Only for PAHM Timer */}
-      <header className="bg-gradient-to-r from-blue-500/20 to-blue-400/20 backdrop-blur-sm p-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <header className="p-4 bg-gradient-to-r from-blue-500/20 to-blue-400/20 backdrop-blur-sm">
+        <div className="flex items-center justify-between mx-auto max-w-7xl">
           {/* Logo */}
           <div className="flex items-center space-x-4">
-            <div className="text-white font-bold text-xs sm:text-sm">
+            <div className="text-xs font-bold text-white sm:text-sm">
               <div>RETURN</div>
               <div>OF</div>
               <div>ATTENTION</div>
@@ -479,13 +479,13 @@ export default function PAHMTimerPage() {
           </div>
           
           {/* Desktop Navigation - Hidden on mobile */}
-          <nav className="hidden md:flex space-x-2">
+          <nav className="hidden space-x-2 md:flex">
             <button
               onClick={() => {
                 sessionStorage.setItem('previousPage', window.location.pathname)
                 router.push('/home')
               }}
-              className="text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base bg-pink-500 hover:bg-pink-600"
+              className="px-3 py-2 text-sm font-semibold text-white transition bg-pink-500 rounded-lg xl:px-6 xl:text-base hover:bg-pink-600"
             >
               Home
             </button>
@@ -494,7 +494,7 @@ export default function PAHMTimerPage() {
                 sessionStorage.setItem('previousPage', window.location.pathname)
                 router.push('/mind-recovery')
               }}
-              className="text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base bg-pink-500 hover:bg-pink-600"
+              className="px-3 py-2 text-sm font-semibold text-white transition bg-pink-500 rounded-lg xl:px-6 xl:text-base hover:bg-pink-600"
             >
               Mind Recovery
             </button>
@@ -503,12 +503,12 @@ export default function PAHMTimerPage() {
                 sessionStorage.setItem('previousPage', window.location.pathname)
                 router.push('/daily-notes')
               }}
-              className="text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base bg-pink-500 hover:bg-pink-600"
+              className="px-3 py-2 text-sm font-semibold text-white transition bg-pink-500 rounded-lg xl:px-6 xl:text-base hover:bg-pink-600"
             >
               Daily Notes
             </button>
             <button
-              className="text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base bg-pink-500 hover:bg-pink-600 opacity-50 cursor-not-allowed"
+              className="px-3 py-2 text-sm font-semibold text-white transition bg-pink-500 rounded-lg opacity-50 cursor-not-allowed xl:px-6 xl:text-base hover:bg-pink-600"
             >
               My Analytics
             </button>
@@ -517,12 +517,12 @@ export default function PAHMTimerPage() {
                 sessionStorage.setItem('previousPage', window.location.pathname)
                 router.push('/learn')
               }}
-              className="text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base bg-pink-500 hover:bg-pink-600"
+              className="px-3 py-2 text-sm font-semibold text-white transition bg-pink-500 rounded-lg xl:px-6 xl:text-base hover:bg-pink-600"
             >
               Learn
             </button>
             <button
-              className="text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base bg-pink-500 hover:bg-pink-600 opacity-50 cursor-not-allowed"
+              className="px-3 py-2 text-sm font-semibold text-white transition bg-pink-500 rounded-lg opacity-50 cursor-not-allowed xl:px-6 xl:text-base hover:bg-pink-600"
             >
               Wisdom Guide
             </button>
@@ -536,10 +536,10 @@ export default function PAHMTimerPage() {
                 sessionStorage.setItem('previousPage', window.location.pathname)
                 router.push('/user-profile')
               }}
-              className="bg-blue-600 p-2 sm:p-3 rounded-lg hover:bg-blue-700 transition"
+              className="p-2 transition bg-blue-600 rounded-lg sm:p-3 hover:bg-blue-700"
               title="Profile"
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
               </svg>
             </button>
@@ -547,10 +547,10 @@ export default function PAHMTimerPage() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden bg-pink-500 p-2 sm:p-3 rounded-lg hover:bg-pink-600 transition"
+              className="p-2 transition bg-pink-500 rounded-lg md:hidden sm:p-3 hover:bg-pink-600"
               title="Menu"
             >
-              <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -563,8 +563,8 @@ export default function PAHMTimerPage() {
 
         {/* Mobile Menu Dropdown */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 bg-gradient-to-r from-blue-500/95 to-blue-400/95 backdrop-blur-sm border-t border-white/10 z-50">
-            <nav className="max-w-7xl mx-auto px-4 py-4">
+          <div className="absolute left-0 right-0 z-50 border-t md:hidden top-full bg-gradient-to-r from-blue-500/95 to-blue-400/95 backdrop-blur-sm border-white/10">
+            <nav className="px-4 py-4 mx-auto max-w-7xl">
               <div className="grid grid-cols-1 gap-3">
                 <button
                   onClick={() => {
@@ -572,7 +572,7 @@ export default function PAHMTimerPage() {
                     sessionStorage.setItem('previousPage', window.location.pathname)
                     router.push('/home')
                   }}
-                  className="text-white px-4 py-3 rounded-lg font-semibold transition text-center bg-pink-500 hover:bg-pink-600"
+                  className="px-4 py-3 font-semibold text-center text-white transition bg-pink-500 rounded-lg hover:bg-pink-600"
                 >
                   Home
                 </button>
@@ -582,7 +582,7 @@ export default function PAHMTimerPage() {
                     sessionStorage.setItem('previousPage', window.location.pathname)
                     router.push('/mind-recovery')
                   }}
-                  className="text-white px-4 py-3 rounded-lg font-semibold transition text-center bg-pink-500 hover:bg-pink-600"
+                  className="px-4 py-3 font-semibold text-center text-white transition bg-pink-500 rounded-lg hover:bg-pink-600"
                 >
                   Mind Recovery
                 </button>
@@ -592,12 +592,12 @@ export default function PAHMTimerPage() {
                     sessionStorage.setItem('previousPage', window.location.pathname)
                     router.push('/daily-notes')
                   }}
-                  className="text-white px-4 py-3 rounded-lg font-semibold transition text-center bg-pink-500 hover:bg-pink-600"
+                  className="px-4 py-3 font-semibold text-center text-white transition bg-pink-500 rounded-lg hover:bg-pink-600"
                 >
                   Daily Notes
                 </button>
                 <button
-                  className="text-white px-4 py-3 rounded-lg font-semibold transition text-center bg-pink-500 hover:bg-pink-600 opacity-50 cursor-not-allowed"
+                  className="px-4 py-3 font-semibold text-center text-white transition bg-pink-500 rounded-lg opacity-50 cursor-not-allowed hover:bg-pink-600"
                 >
                   My Analytics
                 </button>
@@ -607,12 +607,12 @@ export default function PAHMTimerPage() {
                     sessionStorage.setItem('previousPage', window.location.pathname)
                     router.push('/learn')
                   }}
-                  className="text-white px-4 py-3 rounded-lg font-semibold transition text-center bg-pink-500 hover:bg-pink-600"
+                  className="px-4 py-3 font-semibold text-center text-white transition bg-pink-500 rounded-lg hover:bg-pink-600"
                 >
                   Learn
                 </button>
                 <button
-                  className="text-white px-4 py-3 rounded-lg font-semibold transition text-center bg-pink-500 hover:bg-pink-600 opacity-50 cursor-not-allowed"
+                  className="px-4 py-3 font-semibold text-center text-white transition bg-pink-500 rounded-lg opacity-50 cursor-not-allowed hover:bg-pink-600"
                 >
                   Wisdom Guide
                 </button>
@@ -622,37 +622,37 @@ export default function PAHMTimerPage() {
         )}
       </header>
       
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div className="bg-blue-900 rounded-2xl p-4 sm:p-6 lg:p-12 max-w-3xl w-full">
+      <div className="flex items-center justify-center flex-1 p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-3xl p-4 bg-blue-900 rounded-2xl sm:p-6 lg:p-12">
           <div className="text-center">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 sm:mb-6 px-2">
+            <h1 className="px-2 mb-4 text-2xl font-bold text-white sm:text-3xl lg:text-4xl sm:mb-6">
               Stage {stageId}: {stage?.name}
             </h1>
             
-            <div className="bg-gray-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg inline-block mb-4 sm:mb-6 text-xs sm:text-sm mx-2 text-center">
+            <div className="inline-block px-4 py-2 mx-2 mb-4 text-xs text-center text-white bg-gray-600 rounded-lg sm:px-6 sm:py-3 sm:mb-6 sm:text-sm">
               Notice where your attention goes, tap when you recognize thoughts
             </div>
 
-            <div className="flex justify-center items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-              <div className="bg-white text-gray-900 text-4xl sm:text-5xl lg:text-6xl font-bold px-3 sm:px-4 lg:px-5 py-4 sm:py-5 lg:py-6 rounded-xl">
+            <div className="flex items-center justify-center gap-2 mb-6 sm:gap-3 sm:mb-8">
+              <div className="px-3 py-4 text-4xl font-bold text-gray-900 bg-white sm:text-5xl lg:text-6xl sm:px-4 lg:px-5 sm:py-5 lg:py-6 rounded-xl">
                 {formatTime(timer.totalSeconds).split(':')[0]}
               </div>
-              <div className="text-white text-4xl sm:text-5xl lg:text-6xl font-bold">:</div>
-              <div className="bg-white text-gray-900 text-4xl sm:text-5xl lg:text-6xl font-bold px-3 sm:px-4 lg:px-5 py-4 sm:py-5 lg:py-6 rounded-xl">
+              <div className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl">:</div>
+              <div className="px-3 py-4 text-4xl font-bold text-gray-900 bg-white sm:text-5xl lg:text-6xl sm:px-4 lg:px-5 sm:py-5 lg:py-6 rounded-xl">
                 {formatTime(timer.totalSeconds).split(':')[1]}
               </div>
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-blue-800 rounded-full h-4 mb-8">
+            <div className="w-full h-4 mb-8 bg-blue-800 rounded-full">
               <div 
-                className="bg-cyan-400 h-4 rounded-full transition-all duration-1000"
+                className="h-4 transition-all duration-1000 rounded-full bg-cyan-400"
                 style={{ width: `${progress}%` }}
               />
             </div>
 
             {/* PAHM Matrix */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8 max-w-xs sm:max-w-md lg:max-w-lg mx-auto px-2">
+            <div className="grid max-w-xs grid-cols-3 gap-2 px-2 mx-auto mb-6 sm:gap-3 lg:gap-4 sm:mb-8 sm:max-w-md lg:max-w-lg">
               <button
                 onClick={(e) => handlePahmClick('nostalgia', e)}
                 disabled={!timer.isRunning}
@@ -739,7 +739,7 @@ export default function PAHMTimerPage() {
             </div>
 
             {/* Control Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 px-4">
+            <div className="flex flex-col gap-3 px-4 mb-6 sm:flex-row sm:gap-4">
               {!timer.isRunning ? (
                 <button
                   onClick={startTimer}
@@ -756,37 +756,39 @@ export default function PAHMTimerPage() {
                 </button>
               )}
               
-              <button
-                onClick={() => {
-                  // Calculate actual session duration
-                  const actualDuration = Math.floor(((sessionSettings?.duration || 30) * 60 - timer.totalSeconds) / 60)
-                  // Save PAHM click data for reflection page (both full data and simple counts)
-                  sessionStorage.setItem('pahmClickData', JSON.stringify(pahmClicks))
-                  sessionStorage.setItem('pahmTracking', JSON.stringify(pahmTracking))
-                  sessionStorage.setItem('pahmData', JSON.stringify(pahmTracking))
-                  sessionStorage.setItem('sessionDuration', actualDuration.toString())
-                  sessionStorage.setItem('actualSessionDuration', actualDuration.toString())
-                  
-                  if (isMindRecovery) {
-                    // Mind recovery sessions go to reflection page with sessionId
-                    if (sessionId) {
-                      router.push(`/pahm-reflection?sessionId=${sessionId}&stage=mind-recovery&session=${mindRecoverySession}`)
+              {timer.startedAt && (
+                <button
+                  onClick={() => {
+                    // Calculate actual session duration
+                    const actualDuration = Math.floor(((sessionSettings?.duration || 30) * 60 - timer.totalSeconds) / 60)
+                    // Save PAHM click data for reflection page (both full data and simple counts)
+                    sessionStorage.setItem('pahmClickData', JSON.stringify(pahmClicks))
+                    sessionStorage.setItem('pahmTracking', JSON.stringify(pahmTracking))
+                    sessionStorage.setItem('pahmData', JSON.stringify(pahmTracking))
+                    sessionStorage.setItem('sessionDuration', actualDuration.toString())
+                    sessionStorage.setItem('actualSessionDuration', actualDuration.toString())
+                    
+                    if (isMindRecovery) {
+                      // Mind recovery sessions go to reflection page with sessionId
+                      if (sessionId) {
+                        router.push(`/pahm-reflection?sessionId=${sessionId}&stage=mind-recovery&session=${mindRecoverySession}`)
+                      } else {
+                        router.push(`/pahm-reflection?stage=mind-recovery&session=${mindRecoverySession}`)
+                      }
                     } else {
-                      router.push(`/pahm-reflection?stage=mind-recovery&session=${mindRecoverySession}`)
+                      // Regular PAHM sessions go to reflection page with sessionId
+                      if (sessionId) {
+                        router.push(`/pahm-reflection?sessionId=${sessionId}&stage=${stageId}`)
+                      } else {
+                        router.push(`/pahm-reflection?stage=${stageId}`)
+                      }
                     }
-                  } else {
-                    // Regular PAHM sessions go to reflection page with sessionId
-                    if (sessionId) {
-                      router.push(`/pahm-reflection?sessionId=${sessionId}&stage=${stageId}`)
-                    } else {
-                      router.push(`/pahm-reflection?stage=${stageId}`)
-                    }
-                  }
-                }}
-                className="w-full sm:w-auto bg-pink-600 hover:bg-pink-700 active:bg-pink-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors"
-              >
-                ✓ Complete
-              </button>
+                  }}
+                  className="w-full sm:w-auto bg-pink-600 hover:bg-pink-700 active:bg-pink-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors"
+                >
+                  ✓ Complete
+                </button>
+              )}
             </div>
 
             {/* Session Time Controls - Available for all users */}
@@ -801,15 +803,15 @@ export default function PAHMTimerPage() {
 
             {/* Admin Controls - Only show in admin mode */}
             {isAdminMode && (
-              <div className="bg-red-900/50 rounded-xl p-6 mb-6 border-2 border-red-500">
-                <h3 className="text-red-300 font-bold text-lg mb-4 text-center">🔧 Admin Testing Controls</h3>
+              <div className="p-6 mb-6 border-2 border-red-500 bg-red-900/50 rounded-xl">
+                <h3 className="mb-4 text-lg font-bold text-center text-red-300">🔧 Admin Testing Controls</h3>
                 <div className="flex justify-center gap-4">
                   <button
                     onClick={() => {
                       // Go back to admin page
                       router.push('/admin/stage-testing')
                     }}
-                    className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
+                    className="flex items-center gap-2 px-6 py-3 font-semibold text-white bg-gray-600 rounded-lg hover:bg-gray-700"
                   >
                     🔙 Back to Admin
                   </button>
@@ -818,11 +820,11 @@ export default function PAHMTimerPage() {
             )}
 
             {/* Current Tracking Display */}
-            <div className="text-white text-sm">
-              <p className="font-semibold mb-2">Current Tracking:</p>
+            <div className="text-sm text-white">
+              <p className="mb-2 font-semibold">Current Tracking:</p>
               <div className="grid grid-cols-3 gap-2">
                 {Object.entries(pahmTracking).map(([key, value]) => (
-                  <div key={key} className="bg-blue-800 p-2 rounded">
+                  <div key={key} className="p-2 bg-blue-800 rounded">
                     {key}: {value}
                   </div>
                 ))}
@@ -830,8 +832,8 @@ export default function PAHMTimerPage() {
             </div>
 
             {timer.totalSeconds === 0 && (
-              <div className="mt-6 bg-green-600 rounded-xl p-6">
-                <h3 className="text-2xl font-bold text-white mb-2">Session Complete! 🎉</h3>
+              <div className="p-6 mt-6 bg-green-600 rounded-xl">
+                <h3 className="mb-2 text-2xl font-bold text-white">Session Complete! 🎉</h3>
                 <p className="text-green-100">Redirecting to reflection...</p>
               </div>
             )}

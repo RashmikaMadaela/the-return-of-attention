@@ -148,6 +148,9 @@ export const sessionUpdateSchema = z.object({
 
 export const sessionCompleteSchema = z.object({
   sessionId: z.string().cuid(),
+  // Optional duration fields: clients may send the planned duration or the actual practiced duration
+  duration: z.number().min(0).optional(),
+  actualDuration: z.number().min(0).optional(),
   qualityRating: z.number().int().min(1).max(10).optional(),
   insights: z.string().max(1000).optional(),
   pahmData: z.object({

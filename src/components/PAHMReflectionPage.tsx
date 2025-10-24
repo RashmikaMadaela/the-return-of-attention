@@ -229,7 +229,9 @@ export default function PAHMReflectionPage() {
         qualityRating: reflection.qualityRating,
         insights: reflection.notes,
         pahmData: pahmDataForAPI,
-        challenges
+        challenges,
+        duration: sessionDuration,
+        actualDuration: actualSessionDuration
       }
 
       // Call API to complete session
