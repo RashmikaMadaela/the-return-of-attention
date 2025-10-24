@@ -33,6 +33,7 @@ export default function ReflectionPage() {
   const [sessionData, setSessionData] = useState<SessionData | null>(null)
   const [stage, setStage] = useState<any>(null)
   const [sessionSettings, setSessionSettings] = useState<any>(null)
+  const [actualDurationMinutes, setActualDurationMinutes] = useState<number | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saveSuccess, setSaveSuccess] = useState(false)
@@ -62,8 +63,39 @@ export default function ReflectionPage() {
       setSessionData(parsedSession)
       setSessionSettings(parsedSession.settings)
       
-      // Determine if session should count (all timer-only sessions count)
-      setReflection(prev => ({ ...prev, shouldCountAsSession: true }))
+      // Determine if session should count: only count when actual practiced minutes
+      // equal the planned session duration. Try to read actual minutes from
+      // sessionStorage (set by timer). If not present, fall back to computing
+      // elapsed minutes from startedAt. Default to not counting.
+      const actualFromStorage = sessionStorage.getItem('actualSessionDuration')
+      let actualMins: number | null = null
+      if (actualFromStorage) {
+        const parsed = Number(actualFromStorage)
+        if (!Number.isNaN(parsed)) {
+          actualMins = parsed
+          setActualDurationMinutes(parsed)
+        }
+      }
+
+      if (actualMins == null && parsedSession.startedAt) {
+        try {
+          const start = new Date(parsedSession.startedAt).getTime()
+          const now = Date.now()
+          const diffMs = Math.max(0, now - start)
+          // use ceil to match frontend rounding (partial minute counts as a minute)
+          const computed = Math.max(1, Math.ceil(diffMs / 60000))
+          actualMins = computed
+          setActualDurationMinutes(computed)
+        } catch (e) {
+          // leave actualMins as null
+        }
+      }
+
+      const shouldCount = typeof actualMins === 'number' && parsedSession.duration !== undefined
+        ? actualMins === parsedSession.duration
+        : false
+
+      setReflection(prev => ({ ...prev, shouldCountAsSession: shouldCount }))
     }
 
     // Load stage info
@@ -103,11 +135,31 @@ export default function ReflectionPage() {
       }
 
       // Prepare complete session request
+      // Determine duration values to send: prefer actual measured minutes from sessionStorage
+      let actualMinutes = actualDurationMinutes
+
+      // If not available, try to compute from sessionData.startedAt
+      if (actualMinutes == null && sessionData?.startedAt) {
+        try {
+          const start = new Date(sessionData.startedAt).getTime()
+          const now = Date.now()
+          const diffMs = Math.max(0, now - start)
+          // Count partial minutes as full minute and ensure at least 1 minute if any time elapsed
+          actualMinutes = Math.max(1, Math.ceil(diffMs / 60000))
+        } catch (e) {
+          // ignore and fallback to planned duration below
+          actualMinutes = null
+        }
+      }
+
       const request: CompleteSessionRequest = {
         sessionId,
         qualityRating: reflection.qualityRating,
         insights: reflection.notes,
-        challenges
+        challenges,
+        // include both planned duration and actual measured duration when available
+        duration: sessionSettings?.duration,
+        actualDuration: actualMinutes ?? sessionSettings?.duration,
       }
 
       // Call API to complete session
@@ -228,11 +280,32 @@ export default function ReflectionPage() {
             </div>
 
             {/* Session Summary */}
+            {/** compute display duration: prefer actual measured duration, fallback to startedAt computation, then planned duration */}
             <div className="p-4 mb-6 rounded-lg bg-blue-50">
               <h3 className="mb-2 text-lg font-bold text-blue-800">Session Summary</h3>
               <div className="space-y-1 text-blue-700">
                 <p>• Stage: {stage?.name} - Physical Stillness</p>
-                <p>• Duration: {sessionSettings?.duration || 10} minutes</p>
+                <p>• Duration: {
+                  (function() {
+                    // prefer explicit actual duration from sessionStorage/state
+                    if (actualDurationMinutes != null) return actualDurationMinutes
+
+                    // try to compute from startedAt
+                    if (sessionData?.startedAt) {
+                      try {
+                        const start = new Date(sessionData.startedAt).getTime()
+                        const now = Date.now()
+                        const diffMs = Math.max(0, now - start)
+                        return Math.max(1, Math.ceil(diffMs / 60000))
+                      } catch (e) {
+                        // fallthrough
+                      }
+                    }
+
+                    // fallback to planned setting
+                    return sessionSettings?.duration || 10
+                  })()
+                } minutes</p>
                 <p>• Posture: {sessionSettings?.posture?.replace('-', ' ') || 'Not specified'}</p>
                 <p>• Completed: {new Date().toLocaleDateString()}</p>
               </div>

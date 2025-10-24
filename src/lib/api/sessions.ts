@@ -70,6 +70,8 @@ export interface CompleteSessionRequest {
   insights?: string
   pahmData?: PAHMData
   challenges?: SessionChallenges
+  duration?: number // planned duration in minutes (optional)
+  actualDuration?: number // actual practiced duration in minutes (optional)
 }
 
 export interface CompleteSessionResponse {

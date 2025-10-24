@@ -397,24 +397,26 @@ export default function TimerPage() {
                 </button>
               )}
               
-              <button
-                onClick={() => {
-                  // Calculate actual session duration
-                  const actualDuration = Math.floor(((sessionSettings?.duration || 10) * 60 - timer.totalSeconds) / 60)
-                  sessionStorage.setItem('actualSessionDuration', actualDuration.toString())
-                  
-                  // Navigate to reflection with sessionId
-                  if (sessionId) {
-                    router.push(`/stage-1/reflection?sessionId=${sessionId}&stage=${stageId}`)
-                  } else {
-                    router.push(`/stage-1/reflection?stage=${stageId}`)
-                  }
-                }}
-                className="bg-pink-600 hover:bg-pink-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
-              >
-                <span>✓</span>
-                <span>Complete</span>
-              </button>
+              {timer.startedAt && (
+                <button
+                  onClick={() => {
+                    // Calculate actual session duration
+                    const actualDuration = Math.floor(((sessionSettings?.duration || 10) * 60 - timer.totalSeconds) / 60)
+                    sessionStorage.setItem('actualSessionDuration', actualDuration.toString())
+                    
+                    // Navigate to reflection with sessionId
+                    if (sessionId) {
+                      router.push(`/stage-1/reflection?sessionId=${sessionId}&stage=${stageId}`)
+                    } else {
+                      router.push(`/stage-1/reflection?stage=${stageId}`)
+                    }
+                  }}
+                  className="bg-pink-600 hover:bg-pink-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
+                >
+                  <span>✓</span>
+                  <span>Complete</span>
+                </button>
+              )}
             </div>
 
             {/* Session Time Controls - Available for all users */}
