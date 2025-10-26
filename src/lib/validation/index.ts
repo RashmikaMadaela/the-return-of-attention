@@ -136,7 +136,8 @@ export const sessionStartSchema = z.object({
   posture: z.enum(['sitting', 'cushion', 'half-lotus', 'lying', 'standing', 'full-lotus', 'burmese', 'seiza', 'other']).optional(),
   exerciseType: z.string().optional(), // For mind recovery exercises
   meditationBells: z.boolean().optional().default(true), // Audio: Meditation bells
-  voiceCommands: z.boolean().optional().default(true) // Audio: Voice commands
+  voiceCommands: z.boolean().optional().default(true), // Audio: Voice commands
+  useRemote: z.boolean().optional().default(false) // Whether user uses a remote for PAHM sessions
 })
 
 export const sessionUpdateSchema = z.object({

@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    const { stageNumber, subStage, sessionType, duration, posture, exerciseType, meditationBells, voiceCommands } = validation.data
+  const { stageNumber, subStage, sessionType, duration, posture, exerciseType, meditationBells, voiceCommands, useRemote } = validation.data
 
     // Check stage access
     await checkStageAccess(user.id, stageNumber)
@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
         sessionType,
         duration,
         posture,
+        useRemote: sessionType === 'timer_only' ? false : (useRemote ?? false),
         meditationBells: meditationBells ?? true,
         voiceCommands: voiceCommands ?? true,
         status: 'in_progress',
@@ -121,7 +122,12 @@ export async function POST(request: NextRequest) {
       posture: newSession.posture,
       status: newSession.status,
       startedAt: newSession.startedAt,
-      stage: newSession.stage,
+      // Return the canonical stage info fetched above (avoid relying on generated types)
+      stage: {
+        name: stage.name,
+        description: stage.description,
+        sessionType: stage.sessionType
+      },
       pahmSessionId: pahmSession?.id || null
     }, 'Session started successfully', 201)
 

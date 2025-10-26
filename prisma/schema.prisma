@@ -240,6 +240,7 @@ model Session {
   // Audio settings (session-specific preferences)
   meditationBells Boolean  @default(true)  // Authentic Meditation Bells
   voiceCommands   Boolean  @default(true)  // Voice Commands (guided instructions)
+  useRemote       Boolean  @default(false)
   
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

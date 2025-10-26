@@ -22,6 +22,7 @@ export interface StartSessionRequest {
   exerciseType?: ExerciseType
   meditationBells?: boolean
   voiceCommands?: boolean
+  useRemote?: boolean
 }
 
 export interface StartSessionResponse {

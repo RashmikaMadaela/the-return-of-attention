@@ -10,6 +10,7 @@ interface SessionSettings {
   duration: number
   bells: boolean
   voiceCommands: boolean
+  useRemote: boolean
 }
 
 export default function PAHMSessionSetupPage() {
@@ -23,7 +24,8 @@ export default function PAHMSessionSetupPage() {
     posture: 'sitting',
     duration: 30,
     bells: true,
-    voiceCommands: true
+    voiceCommands: true,
+    useRemote: false
   })
   
   const [isMindRecovery, setIsMindRecovery] = useState(false)
@@ -163,6 +165,7 @@ export default function PAHMSessionSetupPage() {
       posture: sessionSettings.posture as any,
       meditationBells: sessionSettings.bells,
       voiceCommands: sessionSettings.voiceCommands,
+      useRemote: sessionSettings.useRemote,
     }
 
     // Add exercise type for mind recovery sessions
@@ -289,7 +292,7 @@ export default function PAHMSessionSetupPage() {
                 </div>
 
                 <div className="p-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6">
-                  <h2 className="mb-3 text-lg font-bold sm:text-xl md:text-2xl sm:mb-4 md:mb-6">Audio Settings</h2>
+                    <h2 className="mb-3 text-lg font-bold sm:text-xl md:text-2xl sm:mb-4 md:mb-6">Settings</h2>
                   <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold sm:text-base">Meditation Bells</span>
@@ -317,6 +320,20 @@ export default function PAHMSessionSetupPage() {
                         }`} />
                       </button>
                     </div>
+                      {/* Remote toggle only relevant for PAHM sessions (this setup page) */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold sm:text-base">Use Remote</span>
+                        <button
+                          onClick={() => setSessionSettings(prev => ({ ...prev, useRemote: !prev.useRemote }))}
+                          className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
+                            sessionSettings.useRemote ? 'bg-purple-600' : 'bg-gray-300'
+                          }`}
+                        >
+                          <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
+                            sessionSettings.useRemote ? 'translate-x-6 sm:translate-x-7' : 'translate-x-1'
+                          }`} />
+                        </button>
+                      </div>
                   </div>
                 </div>
 
