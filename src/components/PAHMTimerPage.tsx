@@ -818,8 +818,8 @@ export default function PAHMTimerPage() {
                 </div>
               </div>
             )}
-
-            {/* Current Tracking Display */}
+          
+            {/* Current Tracking Display 
             <div className="text-sm text-white">
               <p className="mb-2 font-semibold">Current Tracking:</p>
               <div className="grid grid-cols-3 gap-2">
@@ -830,7 +830,8 @@ export default function PAHMTimerPage() {
                 ))}
               </div>
             </div>
-
+            */}
+            
             {timer.totalSeconds === 0 && (
               <div className="p-6 mt-6 bg-green-600 rounded-xl">
                 <h3 className="mb-2 text-2xl font-bold text-white">Session Complete! 🎉</h3>
