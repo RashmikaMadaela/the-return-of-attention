@@ -193,7 +193,7 @@ function calculateCurrentStateScore(
   }
 
   
-  return Math.max(0, Math.min(100, Math.round(score)))
+  return Math.max(0, Math.round(score*(100/240))) //max 240 points possible
 }
 
 // ============================================================================
@@ -230,7 +230,7 @@ function calculateAttachmentScore(selfAssessment: SelfAssessment): number {
 
   const finalScore = nonAttachmentBonus + attachmentPenalty + 50 // Base of 50 for normalization
 
-  return Math.max(0, Math.min(100, Math.round(finalScore)))
+  return Math.max(0, Math.round(finalScore*(100/122))) //max 122 points possible
 }
 
 // ============================================================================
@@ -318,7 +318,7 @@ function calculatePAHMScore(
 
   const pahmScore = assessmentFoundation + practiceRealization
 
-  return Math.max(0, Math.min(100, Math.round(pahmScore)))
+  return Math.max(0, Math.round(pahmScore*100/180)) //max 180 points possible
 }
 
 // ============================================================================
@@ -364,7 +364,7 @@ function calculateEmotionalStabilityScore(
     score += qualityBonus
   }
 
-  return Math.max(0, Math.min(100, Math.round(score)))
+  return Math.max(0, Math.round(score*(100/195))) //max 195 points possible
 }
 
 // ============================================================================
@@ -418,7 +418,7 @@ function calculateMindRecoveryScore(sessions: Session[]): number {
     else if (avgQuality >= 3.0) score += 5
   }
 
-  return Math.max(0, Math.min(100, Math.round(score)))
+  return Math.max(0, Math.round(score*(100/140))) //max 140 points possible
 }
 
 // ============================================================================
@@ -467,7 +467,7 @@ function calculateEmotionalRegulationScore(
     score += qualityRatio * 12
   }
 
-  return Math.max(0, Math.min(100, Math.round(score)))
+  return Math.max(0, Math.round(score*(100/130))) //max 130 points possible
 }
 
 // ============================================================================
@@ -513,7 +513,7 @@ function calculatePracticeConsistencyScore(sessions: Session[]): number {
   else if (totalCount >= 10) score += 10
   else if (totalCount >= 5) score += 5
 
-  return Math.max(0, Math.min(100, Math.round(score)))
+  return Math.max(0, Math.round(score*(100/140))) //max 140 points possible
 }
 
 // ============================================================================
@@ -548,7 +548,7 @@ function calculateSocialConnectionScore(questionnaire: Questionnaire): number {
   const motivation = String(questionnaire.motivation || 'neutral')
   score += serviceMotivationMap[motivation] || 0
 
-  return Math.max(0, Math.min(100, Math.round(score)))
+  return Math.max(0, Math.round(score*(100/107))) //max 107 points possible
 }
 
 // ============================================================================
