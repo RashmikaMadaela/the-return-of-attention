@@ -106,8 +106,7 @@ export default function PAHMSessionSetupPage() {
         if (parsed.stage === 'mind-recovery') {
           setSessionSettings(prev => ({
             ...prev,
-            duration: parsed.duration,
-            posture: parsed.posture || 'comfortable-seated'
+            duration: parsed.duration
           }))
         }
       }
