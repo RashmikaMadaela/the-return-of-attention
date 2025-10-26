@@ -50,45 +50,92 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
   useEffect(() => {
     if (typeof window === 'undefined') return
 
+    const CACHE_KEY = 'stage1CompletionCache'
+    const TTL_MS = 1000 * 60 * 60 // 1 hour
     let mounted = true
 
-    async function fetchProgress() {
+    const readCache = () => {
       try {
-        const res = await getStageProgress()
-        if (!mounted) return
-
-        if (res.success && res.data && Array.isArray(res.data.stages)) {
-          // Find stage #2 and use its isUnlocked flag. If it doesn't exist,
-          // fall back to checking completedStages from overall progress.
-          const stage2 = res.data.stages.find((s: any) => s.stageNumber === 2)
-          if (stage2) {
-            setHasCompletedStage1(Boolean(stage2.isUnlocked))
-            return
-          }
-
-          const completed = res.data.overall?.completedStages ?? 0
-          setHasCompletedStage1(Number(completed) >= 1)
-          return
+        const raw = localStorage.getItem(CACHE_KEY)
+        if (!raw) return null
+        const parsed = JSON.parse(raw)
+        if (parsed && typeof parsed.value === 'boolean' && typeof parsed.ts === 'number') {
+          if (Date.now() - parsed.ts < TTL_MS) return parsed.value
         }
+      } catch (e) {
+        // ignore
+      }
+      return null
+    }
 
-        // Fallback to localStorage if API didn't return expected shape
-        const completedLocal = JSON.parse(localStorage.getItem('completedStages') || '[]')
-        setHasCompletedStage1(Array.isArray(completedLocal) && (completedLocal.includes(1) || completedLocal.includes('1')))
-      } catch (err) {
-        // On any error, fallback to localStorage
+    const writeCache = (val: boolean) => {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ value: Boolean(val), ts: Date.now() }))
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    const storageHandler = (e: StorageEvent) => {
+      if (e.key === CACHE_KEY) {
         try {
-          const completedLocal = JSON.parse(localStorage.getItem('completedStages') || '[]')
-          setHasCompletedStage1(Array.isArray(completedLocal) && (completedLocal.includes(1) || completedLocal.includes('1')))
-        } catch (e) {
-          setHasCompletedStage1(false)
+          const parsed = e.newValue ? JSON.parse(e.newValue) : null
+          if (parsed && typeof parsed.value === 'boolean') {
+            setHasCompletedStage1(Boolean(parsed.value))
+          }
+        } catch (err) {
+          // ignore
         }
       }
     }
 
-    fetchProgress()
+    // Try cache first
+    const cached = readCache()
+    if (typeof cached === 'boolean') {
+      setHasCompletedStage1(cached)
+    }
+
+    const controller = new AbortController()
+
+    ;(async () => {
+      try {
+        const res = await getStageProgress()
+        if (!mounted) return
+
+        if (res && res.success && res.data && Array.isArray(res.data.stages)) {
+          const stage2 = res.data.stages.find((s: any) => s.stageNumber === 2)
+          const completed = stage2 ? Boolean(stage2.isUnlocked) : (Number(res.data.overall?.completedStages ?? 0) >= 1)
+          setHasCompletedStage1(completed)
+          writeCache(completed)
+          return
+        }
+
+        // fallback: try legacy completedStages in localStorage
+        try {
+          const completedLocal = JSON.parse(localStorage.getItem('completedStages') || '[]')
+          const derived = Array.isArray(completedLocal) && (completedLocal.includes(1) || completedLocal.includes('1'))
+          setHasCompletedStage1(Boolean(derived))
+        } catch (e) {
+          setHasCompletedStage1(false)
+        }
+      } catch (err) {
+        // On network/api error fallback to previous localStorage flag
+        try {
+          const completedLocal = JSON.parse(localStorage.getItem('completedStages') || '[]')
+          const derived = Array.isArray(completedLocal) && (completedLocal.includes(1) || completedLocal.includes('1'))
+          setHasCompletedStage1(Boolean(derived))
+        } catch (e) {
+          // if nothing, keep whatever cached state we had or false
+        }
+      }
+    })()
+
+    window.addEventListener('storage', storageHandler)
 
     return () => {
       mounted = false
+      controller.abort()
+      window.removeEventListener('storage', storageHandler)
     }
   }, [])
 
@@ -97,32 +144,32 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
 
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-gradient-to-r from-blue-500/20 to-blue-400/20 backdrop-blur-sm p-4 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 p-4 bg-gradient-to-r from-blue-500/20 to-blue-400/20 backdrop-blur-sm">
+      <div className="flex items-center justify-between mx-auto max-w-7xl">
         {/* Logo with Animated PAHM Grid */}
         <div className="flex items-center space-x-3">
           {/* Animated PAHM Grid Logo */}
-          <div className="relative w-12 h-12 sm:w-14 sm:h-14 bg-purple-600 rounded-lg flex-shrink-0" suppressHydrationWarning={true}>
+          <div className="relative flex-shrink-0 w-12 h-12 bg-purple-600 rounded-lg sm:w-14 sm:h-14" suppressHydrationWarning={true}>
             <div className="absolute inset-1 sm:inset-1.5 grid grid-cols-3 gap-0.5 sm:gap-1" suppressHydrationWarning={true}>
               {/* Row 1 */}
-              <div className="w-full aspect-square bg-orange-300 rounded-md animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full aspect-square bg-cyan-300 rounded-sm animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full aspect-square bg-purple-300 rounded-md animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full rounded-sm aspect-square bg-cyan-300 animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full bg-purple-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}} suppressHydrationWarning={true}></div>
               
               {/* Row 2 */}
-              <div className="w-full aspect-square bg-yellow-400 rounded-sm animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full aspect-square bg-gray-200 rounded-sm animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full aspect-square bg-blue-300 rounded-sm animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full bg-yellow-400 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full bg-gray-200 rounded-sm aspect-square animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full bg-blue-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}} suppressHydrationWarning={true}></div>
               
               {/* Row 3 */}
-              <div className="w-full aspect-square bg-orange-300 rounded-md animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full aspect-square bg-pink-300 rounded-sm animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full aspect-square bg-purple-200 rounded-md animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full bg-pink-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}} suppressHydrationWarning={true}></div>
+              <div className="w-full bg-purple-200 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}} suppressHydrationWarning={true}></div>
             </div>
           </div>
           
           {/* Text Logo */}
-          <div className="text-white font-bold text-xs sm:text-sm">
+          <div className="text-xs font-bold text-white sm:text-sm">
             <div>RETURN</div>
             <div>OF</div>
             <div>ATTENTION</div>
@@ -130,7 +177,7 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
         </div>
         
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex space-x-2">
+        <nav className="hidden space-x-2 lg:flex">
           {navItems.map((item) => {
             // Gate Mind Recovery until Stage 1 is completed
             if (item.key === 'mind-recovery' && !hasCompletedStage1) {
@@ -168,10 +215,10 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
           {/* Profile Button */}
           <button 
             onClick={handleProfile}
-            className="bg-blue-600 p-2 sm:p-3 rounded-lg hover:bg-blue-700 transition"
+            className="p-2 transition bg-blue-600 rounded-lg sm:p-3 hover:bg-blue-700"
             title="Profile"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
             </svg>
           </button>
@@ -179,10 +226,10 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden bg-pink-500 p-2 sm:p-3 rounded-lg hover:bg-pink-600 transition"
+            className="p-2 transition bg-pink-500 rounded-lg lg:hidden sm:p-3 hover:bg-pink-600"
             title="Menu"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMobileMenuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -195,9 +242,9 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 bg-gradient-to-r from-blue-500/95 to-blue-400/95 backdrop-blur-sm border-t border-white/10">
-          <nav className="max-w-7xl mx-auto px-4 py-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="absolute left-0 right-0 border-t lg:hidden top-full bg-gradient-to-r from-blue-500/95 to-blue-400/95 backdrop-blur-sm border-white/10">
+          <nav className="px-4 py-4 mx-auto max-w-7xl">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {navItems.map((item) => {
                 if (item.key === 'mind-recovery' && !hasCompletedStage1) {
                   return (
