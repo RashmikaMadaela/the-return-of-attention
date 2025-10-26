@@ -60,11 +60,11 @@ export async function GET(request: NextRequest) {
         currentStateScore: true,
         attachmentScore: true,
         pahmScore: true,
-        practiceScore: true,
-        progressScore: true,
-        consistencyScore: true,
-        reflectionScore: true,
-        dailyLifeScore: true,
+        emotionalStabilityScore: true,
+        mindRecoveryScore: true,
+        emotionalRegulationScore: true,
+        practiceConsistencyScore: true,
+        socialConnectionScore: true,
         calculatedAt: true
       }
     });
@@ -241,8 +241,8 @@ function calculateComponentTrends(scores: any[]) {
   if (scores.length < 2) return null;
 
   const components = [
-    'currentStateScore', 'attachmentScore', 'pahmScore', 'practiceScore',
-    'progressScore', 'consistencyScore', 'reflectionScore', 'dailyLifeScore'
+    'currentStateScore', 'attachmentScore', 'pahmScore', 'emotionalStabilityScore',
+    'mindRecoveryScore', 'emotionalRegulationScore', 'practiceConsistencyScore', 'socialConnectionScore'
   ];
 
   return components.reduce((trends, component) => {

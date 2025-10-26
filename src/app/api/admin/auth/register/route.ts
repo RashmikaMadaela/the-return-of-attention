@@ -62,12 +62,8 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingUser) {
-      // Check if this user is already an admin
-      const existingAdmin = await prisma.adminUser.findUnique({
-        where: { userId: existingUser.id }
-      });
-
-      if (existingAdmin) {
+      // If the user already has a non-default role, treat as existing admin
+      if (existingUser.role && existingUser.role !== 'user') {
         return NextResponse.json(
           {
             success: false,
@@ -77,35 +73,27 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // User exists but not admin - promote to admin
+      // User exists but not admin - promote to admin by updating role
       const hashedPassword = await bcrypt.hash(password, 12);
-      
-      // Update user password and verification status
-      await prisma.user.update({
+
+      // Update user password, verification status and role
+      const updatedUser = await prisma.user.update({
         where: { id: existingUser.id },
         data: {
           password: hashedPassword,
           emailVerified: new Date(),
           isActive: true,
+          role: role,
         }
       });
 
-      // Create admin record
       const defaultPermissions = permissions || getDefaultPermissions(role);
-      const adminUser = await prisma.adminUser.create({
-        data: {
-          userId: existingUser.id,
-          role,
-          permissions: defaultPermissions,
-          isActive: true,
-        }
-      });
 
       // Create audit log
       await createAdminAuditLog(
-        adminUser.id,
+        updatedUser.id,
         'admin_user_promoted',
-        { 
+        {
           email,
           role,
           permissions: defaultPermissions,
@@ -117,10 +105,10 @@ export async function POST(request: NextRequest) {
         success: true,
         message: 'Existing user promoted to admin successfully',
         data: {
-          adminId: adminUser.id,
-          userId: existingUser.id,
-          email: existingUser.email,
-          name: existingUser.name,
+          adminId: updatedUser.id,
+          userId: updatedUser.id,
+          email: updatedUser.email,
+          name: updatedUser.name,
           role,
           permissions: defaultPermissions,
         }
@@ -132,35 +120,26 @@ export async function POST(request: NextRequest) {
     const defaultPermissions = permissions || getDefaultPermissions(role);
 
     const result = await prisma.$transaction(async (tx) => {
-      // Create user
+      // Create user with admin role
       const newUser = await tx.user.create({
         data: {
           email,
           password: hashedPassword,
           name,
+          role: role,
           emailVerified: new Date(), // Admin users are pre-verified
           isActive: true,
         }
       });
 
-      // Create admin record
-      const adminUser = await tx.adminUser.create({
-        data: {
-          userId: newUser.id,
-          role,
-          permissions: defaultPermissions,
-          isActive: true,
-        }
-      });
-
-      return { user: newUser, admin: adminUser };
+      return { user: newUser };
     });
 
     // Create audit log
     await createAdminAuditLog(
-      result.admin.id,
+      result.user.id,
       'admin_user_created',
-      { 
+      {
         email,
         role,
         permissions: defaultPermissions,
@@ -172,7 +151,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Admin user created successfully',
       data: {
-        adminId: result.admin.id,
+        adminId: result.user.id,
         userId: result.user.id,
         email: result.user.email,
         name: result.user.name,

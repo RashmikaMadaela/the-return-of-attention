@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
         password: true,
         isActive: true,
         emailVerified: true,
+        role: true,
       }
     });
 
@@ -117,25 +118,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user has admin privileges
-    const adminUser = await prisma.adminUser.findUnique({
-      where: { userId: user.id },
-      select: {
-        id: true,
-        userId: true,
-        role: true,
-        permissions: true,
-        isActive: true,
-      }
-    });
-
-    if (!adminUser || !adminUser.isActive) {
+    // Check if user has admin role (we use User.role for admin checks)
+    if (user.role !== 'admin') {
       await createAdminAuditLog(
         'system',
         'admin_login_failed',
         { reason: 'no_admin_privileges', email, userId: user.id }
       );
-      
+
       return NextResponse.json(
         {
           success: false,
@@ -151,19 +141,25 @@ export async function POST(request: NextRequest) {
       console.log('MFA token provided (not yet implemented):', mfaToken);
     }
 
-    // Parse permissions from JSON
-    const permissions = Array.isArray(adminUser.permissions) 
-      ? adminUser.permissions as string[]
-      : [];
+    // Define admin permissions (role-based system)
+    const permissions = [
+      'user_management',
+      'system_monitoring',
+      'analytics_access',
+      'session_management',
+      'users.write',
+      'users.delete',
+      'admin.manage'
+    ];
 
     // Create audit log for successful login
     await createAdminAuditLog(
-      adminUser.id,
+      user.id,
       'admin_login_success',
-      { 
+      {
         email,
-        role: adminUser.role,
-        permissions: permissions.length 
+        role: user.role,
+        permissions: permissions.length
       }
     );
 
@@ -176,9 +172,9 @@ export async function POST(request: NextRequest) {
       success: true,
       message: 'Admin authenticated successfully',
       data: {
-        adminId: adminUser.id,
+        adminId: user.id,
         userId: user.id,
-        role: adminUser.role,
+        role: user.role,
         permissions,
         sessionExpiry: sessionExpiry.toISOString(),
         lastLogin: new Date().toISOString(),

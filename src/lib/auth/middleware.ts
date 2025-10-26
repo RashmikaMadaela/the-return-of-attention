@@ -7,6 +7,7 @@ import { NextRequest } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getAdminUser } from '@/lib/admin-auth'
 import { CommonErrors } from '@/lib/errors'
 import type { Session } from 'next-auth'
 
@@ -78,17 +79,15 @@ export async function verifyResourceOwnership(
  * Check if user is admin
  */
 export async function requireAdmin(request: NextRequest) {
-  const user = await getAuthenticatedUser(request)
-  
-  const adminUser = await prisma.adminUser.findUnique({
-    where: { userId: user.id }
-  })
-
-  if (!adminUser || !adminUser.isActive) {
+  // Use centralized admin user checker which reads User.role
+  const adminUser = await getAdminUser()
+  if (!adminUser) {
     throw CommonErrors.unauthorized()
   }
 
-  return { user, adminUser }
+  // Return the session user data and the derived adminUser object
+  const sessionUser = await getAuthenticatedUser(request)
+  return { user: sessionUser, adminUser }
 }
 
 // ============================================================================
