@@ -82,13 +82,22 @@ export const getStage1Progress = cache(async (): Promise<Stage1ProgressData | nu
       return null
     }
 
+    // Define SubStage config interface
+    interface SubStageConfig {
+      id?: string
+      name: string
+      minSessions?: number
+      minDuration?: number
+      duration?: number
+    }
+
     // Parse sub-stages from JSON
     const subStagesConfig = Array.isArray(stage1Data.subStages) 
-      ? stage1Data.subStages 
+      ? (stage1Data.subStages as SubStageConfig[])
       : []
 
     // Map sub-stages with progress data
-    const subStages: SubStageProgress[] = subStagesConfig.map((subStage: any, index: number) => {
+    const subStages: SubStageProgress[] = subStagesConfig.map((subStage: SubStageConfig, index: number) => {
       const subStageId = subStage.id || subStage.name
       const progress = userProgressData.find(p => p.subStage === subStageId)
 
@@ -104,7 +113,7 @@ export const getStage1Progress = cache(async (): Promise<Stage1ProgressData | nu
 
       // Check if sub-stage is unlocked
       const isUnlocked = index === 0 ||
-        subStagesConfig.slice(0, index).every((prevSubStage: any) => {
+        subStagesConfig.slice(0, index).every((prevSubStage: SubStageConfig) => {
           const prevId = prevSubStage.id || prevSubStage.name
           const prevProgress = userProgressData.find(p => p.subStage === prevId)
           const prevMin = prevSubStage.minSessions || 3

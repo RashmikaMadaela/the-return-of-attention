@@ -8,6 +8,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import bcrypt from 'bcryptjs'
 
 export interface UpdateProfileData {
   name?: string
@@ -214,8 +215,6 @@ export async function deleteUserAccount(): Promise<ActionResult> {
  */
 export async function changeUserPassword(currentPassword: string, newPassword: string): Promise<ActionResult> {
   try {
-    const bcrypt = require('bcryptjs')
-    
     // Check authentication
     const session = await getServerSession(authOptions)
     if (!session?.user?.email) {

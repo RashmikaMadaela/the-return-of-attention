@@ -164,26 +164,49 @@ export const getProgressOverview = cache(async (): Promise<ProgressOverviewData 
     // Get assessment completion status
     const assessmentStatus = await getAssessmentStatus(session.user.id)
 
+    // Define interfaces for stage data
+    interface SubStageConfig {
+      id?: string
+      name: string
+    }
+
+    interface UserProgress {
+      subStage: string | null
+      sessionsCompleted: number
+      hoursCompleted: any
+      isCompleted: boolean
+    }
+
+    interface StageData {
+      stageNumber: number
+      name: string
+      hasSubStages: boolean
+      subStages: any
+      minHours: any
+      minSessions: number
+      userProgress: UserProgress[]
+    }
+
     // Helper function to check if stage is completed
-    const isStageCompleted = (stage: any) => {
+    const isStageCompleted = (stage: StageData): boolean => {
       if (stage.hasSubStages && stage.subStages) {
-        const subStagesArray = Array.isArray(stage.subStages) ? stage.subStages : []
-        const allSubStagesCompleted = subStagesArray.every((subStage: any) => 
-          stage.userProgress.some((p: any) => p.subStage === subStage.id && p.isCompleted)
+        const subStagesArray = Array.isArray(stage.subStages) ? (stage.subStages as SubStageConfig[]) : []
+        const allSubStagesCompleted = subStagesArray.every((subStage: SubStageConfig) => 
+          stage.userProgress.some((p: UserProgress) => p.subStage === subStage.id && p.isCompleted)
         )
-        const pahmIntroProgress = stage.userProgress.find((p: any) => p.subStage === 'PAHM')
+        const pahmIntroProgress = stage.userProgress.find((p: UserProgress) => p.subStage === 'PAHM')
         const pahmIntroCompleted = pahmIntroProgress?.isCompleted || false
-        const totalHours = stage.userProgress.reduce((sum: number, p: any) => 
+        const totalHours = stage.userProgress.reduce((sum: number, p: UserProgress) => 
           sum + (p.hoursCompleted ? p.hoursCompleted.toNumber() : 0), 0
         )
         const hoursRequirementMet = totalHours >= stage.minHours.toNumber()
-        const totalSessions = stage.userProgress.reduce((sum: number, p: any) => 
+        const totalSessions = stage.userProgress.reduce((sum: number, p: UserProgress) => 
           sum + (p.sessionsCompleted || 0), 0
         )
         const sessionsRequirementMet = totalSessions >= stage.minSessions
         return allSubStagesCompleted && pahmIntroCompleted && hoursRequirementMet && sessionsRequirementMet
       }
-      return stage.userProgress.some((p: any) => p.isCompleted)
+      return stage.userProgress.some((p: UserProgress) => p.isCompleted)
     }
 
     // Calculate journey progress
@@ -213,28 +236,28 @@ export const getProgressOverview = cache(async (): Promise<ProgressOverviewData 
       let isCompleted = false
 
       if (stage.hasSubStages && stage.subStages) {
-        const subStagesArray = Array.isArray(stage.subStages) ? stage.subStages : []
-        const allSubStagesCompleted = subStagesArray.every((subStage: any) => 
-          stage.userProgress.some((p: any) => p.subStage === subStage.id && p.isCompleted)
+        const subStagesArray = Array.isArray(stage.subStages) ? (stage.subStages as SubStageConfig[]) : []
+        const allSubStagesCompleted = subStagesArray.every((subStage: SubStageConfig) => 
+          stage.userProgress.some((p: UserProgress) => p.subStage === subStage.id && p.isCompleted)
         )
-        const pahmIntroProgress = stage.userProgress.find((p: any) => p.subStage === 'PAHM')
+        const pahmIntroProgress = stage.userProgress.find((p: UserProgress) => p.subStage === 'PAHM')
         const pahmIntroCompleted = pahmIntroProgress?.isCompleted || false
-        const totalHours = stage.userProgress.reduce((sum: number, p: any) => 
+        const totalHours = stage.userProgress.reduce((sum: number, p: UserProgress) => 
           sum + (p.hoursCompleted ? p.hoursCompleted.toNumber() : 0), 0
         )
         const hoursRequirementMet = totalHours >= stage.minHours.toNumber()
-        const totalSessions = stage.userProgress.reduce((sum: number, p: any) => 
+        const totalSessions = stage.userProgress.reduce((sum: number, p: UserProgress) => 
           sum + (p.sessionsCompleted || 0), 0
         )
         const sessionsRequirementMet = totalSessions >= stage.minSessions
         isCompleted = allSubStagesCompleted && pahmIntroCompleted && hoursRequirementMet && sessionsRequirementMet
-        const completedSubStages = subStagesArray.filter((subStage: any) =>
-          stage.userProgress.some((p: any) => p.subStage === subStage.id && p.isCompleted)
+        const completedSubStages = subStagesArray.filter((subStage: SubStageConfig) =>
+          stage.userProgress.some((p: UserProgress) => p.subStage === subStage.id && p.isCompleted)
         ).length
         overallProgress = subStagesArray.length > 0 ? 
           Math.round((completedSubStages / subStagesArray.length) * 100) : 0
       } else {
-        isCompleted = stage.userProgress.some((p: any) => p.isCompleted)
+        isCompleted = stage.userProgress.some((p: UserProgress) => p.isCompleted)
         if (progress) {
           const sessionsProgress = Math.round((progress.sessionsCompleted / stage.minSessions) * 100)
           const hoursProgress = Math.round((progress.hoursCompleted.toNumber() / stage.minHours.toNumber()) * 100)
@@ -249,8 +272,8 @@ export const getProgressOverview = cache(async (): Promise<ProgressOverviewData 
         minHours: stage.minHours?.toNumber ? stage.minHours.toNumber() : stage.minHours,
         progress: overallProgress,
         isCompleted,
-        sessionsCompleted: stage.userProgress.reduce((sum: number, p: any) => sum + p.sessionsCompleted, 0),
-        hoursCompleted: stage.userProgress.reduce((sum: number, p: any) => sum + p.hoursCompleted.toNumber(), 0)
+        sessionsCompleted: stage.userProgress.reduce((sum: number, p: UserProgress) => sum + p.sessionsCompleted, 0),
+        hoursCompleted: stage.userProgress.reduce((sum: number, p: UserProgress) => sum + p.hoursCompleted.toNumber(), 0)
       }
     })
 
@@ -416,9 +439,9 @@ function calculateStreak(sessions: any[]): number {
   if (!currentDate) return 0
 
   for (let i = 0; i < sessionDates.length; i++) {
-    if (sessionDates[i] === currentDate) {
+    if (currentDate && sessionDates[i] === currentDate) {
       streak++
-      const prevDate: Date = new Date(currentDate!)
+      const prevDate: Date = new Date(currentDate)
       prevDate.setDate(prevDate.getDate() - 1)
       currentDate = prevDate.toISOString().split('T')[0]
     } else {
