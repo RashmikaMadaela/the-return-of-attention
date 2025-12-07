@@ -144,40 +144,37 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
 
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 p-4 bg-gradient-to-r from-blue-500/20 to-blue-400/20 backdrop-blur-sm">
-      <div className="flex items-center justify-between mx-auto max-w-7xl">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
+      <div className="flex items-center justify-between mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16">
         {/* Logo with Animated PAHM Grid */}
         <div className="flex items-center space-x-3">
           {/* Animated PAHM Grid Logo */}
-          <div className="relative flex-shrink-0 w-12 h-12 bg-purple-600 rounded-lg sm:w-14 sm:h-14" suppressHydrationWarning={true}>
-            <div className="absolute inset-1 sm:inset-1.5 grid grid-cols-3 gap-0.5 sm:gap-1" suppressHydrationWarning={true}>
-              {/* Row 1 */}
-              <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full rounded-sm aspect-square bg-cyan-300 animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full bg-purple-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}} suppressHydrationWarning={true}></div>
-              
-              {/* Row 2 */}
-              <div className="w-full bg-yellow-400 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full bg-gray-200 rounded-sm aspect-square animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full bg-blue-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}} suppressHydrationWarning={true}></div>
-              
-              {/* Row 3 */}
-              <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full bg-pink-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}} suppressHydrationWarning={true}></div>
-              <div className="w-full bg-purple-200 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}} suppressHydrationWarning={true}></div>
-            </div>
+          <div className="relative flex-shrink-0 w-10 h-10 grid grid-cols-3 gap-0.5" suppressHydrationWarning={true}>
+            {/* Row 1 */}
+            <div className="w-full bg-orange-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}} suppressHydrationWarning={true}></div>
+            <div className="w-full rounded-sm aspect-square bg-cyan-300 animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}} suppressHydrationWarning={true}></div>
+            <div className="w-full bg-purple-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}} suppressHydrationWarning={true}></div>
+            
+            {/* Row 2 */}
+            <div className="w-full bg-yellow-400 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}} suppressHydrationWarning={true}></div>
+            <div className="w-full bg-gray-200 rounded-sm aspect-square animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}} suppressHydrationWarning={true}></div>
+            <div className="w-full bg-blue-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}} suppressHydrationWarning={true}></div>
+            
+            {/* Row 3 */}
+            <div className="w-full bg-orange-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}} suppressHydrationWarning={true}></div>
+            <div className="w-full bg-pink-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}} suppressHydrationWarning={true}></div>
+            <div className="w-full bg-purple-200 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}} suppressHydrationWarning={true}></div>
           </div>
           
           {/* Text Logo */}
-          <div className="text-xs font-bold text-white sm:text-sm">
-            <div>RETURN</div>
-            <div>OF</div>
+          <div className="text-xs font-bold text-gray-800 sm:text-sm leading-tight">
+            <div>RETURN OF</div>
             <div>ATTENTION</div>
           </div>
         </div>
         
         {/* Desktop Navigation */}
-        <nav className="hidden space-x-2 lg:flex">
+        <nav className="hidden lg:flex items-center space-x-1">
           {navItems.map((item) => {
             // Gate Mind Recovery until Stage 1 is completed
             if (item.key === 'mind-recovery' && !hasCompletedStage1) {
@@ -187,7 +184,7 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
                   onClick={() => { /* locked - no-op */ }}
                   title="Locked — complete Stage 1 to unlock"
                   aria-disabled={true}
-                  className={`text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base opacity-60 cursor-not-allowed bg-gray-500`}
+                  className="text-gray-400 px-4 py-2 rounded-lg font-medium transition text-sm opacity-60 cursor-not-allowed hover:text-gray-500"
                 >
                   {item.label} 🔒
                 </button>
@@ -198,10 +195,10 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
               <button
                 key={item.key}
                 onClick={() => handleNavigation(item.path, item.key)}
-                className={`text-white px-3 xl:px-6 py-2 rounded-lg font-semibold transition text-sm xl:text-base ${
+                className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
                   currentPage === item.key
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'bg-pink-500 hover:bg-pink-600'
+                    ? 'text-blue-600'
+                    : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
                 {item.label}
@@ -210,26 +207,37 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
           })}
         </nav>
 
-        {/* Mobile/Tablet Navigation Button & Profile */}
-        <div className="flex items-center space-x-2">
-          {/* Profile Button */}
+        {/* Right Side Actions */}
+        <div className="flex items-center space-x-3">
+          {/* Profile Icon - Desktop */}
           <button 
             onClick={handleProfile}
-            className="p-2 transition bg-blue-600 rounded-lg sm:p-3 hover:bg-blue-700"
+            className="hidden lg:flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 border-2 border-gray-300 hover:border-gray-400 rounded-full transition"
             title="Profile"
           >
-            <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </button>
+
+          {/* Profile Icon - Mobile/Tablet */}
+          <button 
+            onClick={handleProfile}
+            className="lg:hidden flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 border-2 border-gray-300 hover:border-gray-400 rounded-full transition"
+            title="Profile"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </button>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 transition bg-pink-500 rounded-lg lg:hidden sm:p-3 hover:bg-pink-600"
+            className="lg:hidden p-2 text-gray-600 hover:text-gray-900 transition rounded-lg"
             title="Menu"
           >
-            <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMobileMenuOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -242,9 +250,9 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="absolute left-0 right-0 border-t lg:hidden top-full bg-gradient-to-r from-blue-500/95 to-blue-400/95 backdrop-blur-sm border-white/10">
+        <div className="lg:hidden border-t border-gray-200/50 bg-white/95 backdrop-blur-md">
           <nav className="px-4 py-4 mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="flex flex-col space-y-2">
               {navItems.map((item) => {
                 if (item.key === 'mind-recovery' && !hasCompletedStage1) {
                   return (
@@ -253,7 +261,7 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
                       onClick={() => {}}
                       title="Locked — complete Stage 1 to unlock"
                       aria-disabled={true}
-                      className={`text-white px-4 py-3 rounded-lg font-semibold transition text-center opacity-60 cursor-not-allowed bg-gray-500`}
+                      className="text-gray-400 px-4 py-3 rounded-lg font-medium transition text-left opacity-60 cursor-not-allowed"
                     >
                       {item.label} 🔒
                     </button>
@@ -264,10 +272,10 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
                   <button
                     key={item.key}
                     onClick={() => handleNavigation(item.path, item.key)}
-                    className={`text-white px-4 py-3 rounded-lg font-semibold transition text-center ${
+                    className={`px-4 py-3 rounded-lg font-medium transition text-left ${
                       currentPage === item.key
-                        ? 'bg-blue-600 hover:bg-blue-700'
-                        : 'bg-pink-500 hover:bg-pink-600'
+                        ? 'text-blue-600 bg-blue-50'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     }`}
                   >
                     {item.label}
