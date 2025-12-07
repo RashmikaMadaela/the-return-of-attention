@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getStage1Progress } from '@/lib/data/stage1-progress'
@@ -8,7 +8,7 @@ import { getStage1Progress } from '@/lib/data/stage1-progress'
  * Fetch Stage 1 (Seeker) progress with all sub-stages (T1-T5) and PAHM intro
  * Optimized to use server-side data fetching
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check authentication
     const session = await getServerSession(authOptions)

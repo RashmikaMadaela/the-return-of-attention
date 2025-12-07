@@ -8,7 +8,7 @@ import { getUserProfile } from '@/lib/data/user-profile'
  * Retrieve user profile data for the profile page
  * Optimized to use server-side data fetching
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check authentication
     const session = await getServerSession(authOptions)
@@ -70,7 +70,7 @@ export async function PUT(request: NextRequest) {
       emailChanged: result.emailChanged
     })
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating user profile:', error)
     
     return NextResponse.json(
