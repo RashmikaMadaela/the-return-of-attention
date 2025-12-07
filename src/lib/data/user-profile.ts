@@ -99,11 +99,18 @@ export const getUserProfile = cache(async (): Promise<UserProfileData | null> =>
     const questionnaireCompleted = !!user.questionnaire?.isCompleted
     const selfAssessmentCompleted = user.selfAssessments.length > 0
 
-    // Get user role separately using raw query since Prisma client doesn't recognize it yet
-    const userRoleResult = await prisma.$queryRaw<Array<{role: string}>>`
-      SELECT role FROM users WHERE email = ${session.user.email}
-    `
-    const userRole = userRoleResult[0]?.role || 'user'
+    // Try to get role from user object, fallback to query if not available
+    let userRole = 'user'
+    try {
+      // @ts-ignore - role field may not be in generated Prisma types yet
+      userRole = user.role || 'user'
+    } catch {
+      // Fallback to query if role is not in Prisma types
+      const userRoleResult = await prisma.$queryRaw<Array<{role: string}>>`
+        SELECT role FROM "User" WHERE id = ${user.id} LIMIT 1
+      `
+      userRole = userRoleResult[0]?.role || 'user'
+    }
 
     return {
       name: user.name || user.email.split('@')[0],

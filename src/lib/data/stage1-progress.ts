@@ -7,6 +7,15 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { cache } from 'react'
 
+// Type definitions
+interface SubStageConfig {
+  id?: string
+  name: string
+  minSessions?: number
+  minDuration?: number
+  duration?: number
+}
+
 export interface SubStageProgress {
   id: string
   name: string
@@ -80,15 +89,6 @@ export const getStage1Progress = cache(async (): Promise<Stage1ProgressData | nu
 
     if (!stage1Data) {
       return null
-    }
-
-    // Define SubStage config interface
-    interface SubStageConfig {
-      id?: string
-      name: string
-      minSessions?: number
-      minDuration?: number
-      duration?: number
     }
 
     // Parse sub-stages from JSON

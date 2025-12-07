@@ -7,6 +7,29 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { cache } from 'react'
 
+// Type definitions
+interface SubStageConfig {
+  id?: string
+  name: string
+}
+
+interface UserProgress {
+  subStage: string | null
+  sessionsCompleted: number
+  hoursCompleted: any
+  isCompleted: boolean
+}
+
+interface StageData {
+  stageNumber: number
+  name: string
+  hasSubStages: boolean
+  subStages: any
+  minHours: any
+  minSessions: number
+  userProgress: UserProgress[]
+}
+
 export interface ProgressOverviewData {
   user: {
     name: string | null
@@ -163,29 +186,6 @@ export const getProgressOverview = cache(async (): Promise<ProgressOverviewData 
 
     // Get assessment completion status
     const assessmentStatus = await getAssessmentStatus(session.user.id)
-
-    // Define interfaces for stage data
-    interface SubStageConfig {
-      id?: string
-      name: string
-    }
-
-    interface UserProgress {
-      subStage: string | null
-      sessionsCompleted: number
-      hoursCompleted: any
-      isCompleted: boolean
-    }
-
-    interface StageData {
-      stageNumber: number
-      name: string
-      hasSubStages: boolean
-      subStages: any
-      minHours: any
-      minSessions: number
-      userProgress: UserProgress[]
-    }
 
     // Helper function to check if stage is completed
     const isStageCompleted = (stage: StageData): boolean => {

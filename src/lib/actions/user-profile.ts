@@ -101,7 +101,7 @@ export async function updateUserProfile(data: UpdateProfileData): Promise<Action
     }
 
     // Track if email is being changed
-    const emailChanged = email && email.trim().toLowerCase() !== user.email
+    const emailChanged = email && email.trim().toLowerCase() !== user.email.toLowerCase()
 
     // Update user basic info
     await prisma.user.update({
