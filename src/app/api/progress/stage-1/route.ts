@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth/next'
+import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { getStage1Progress } from '@/lib/data/stage1-progress'
 
 /**
  * GET /api/progress/stage-1
  * Fetch Stage 1 (Seeker) progress with all sub-stages (T1-T5) and PAHM intro
- * Optimized with parallel queries
+ * Optimized to use server-side data fetching
  */
 export async function GET(request: NextRequest) {
   try {
@@ -19,127 +19,19 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const userId = session.user.id
+    // Use optimized data fetching function
+    const data = await getStage1Progress()
 
-    // Parallel query optimization - fetch all data at once
-    const [stage1Data, userProgressData] = await Promise.all([
-      // Get Stage 1 details
-      prisma.stage.findFirst({
-        where: { stageNumber: 1 },
-        select: {
-          id: true,
-          stageNumber: true,
-          name: true,
-          hasSubStages: true,
-          subStages: true,
-        }
-      }),
-      
-      // Get all user progress for Stage 1
-      prisma.userStageProgress.findMany({
-        where: {
-          userId,
-          stageNumber: 1
-        },
-        select: {
-          subStage: true,
-          sessionsCompleted: true,
-          hoursCompleted: true,
-          isCompleted: true,
-        }
-      })
-    ])
-
-    if (!stage1Data) {
+    if (!data) {
       return NextResponse.json(
         { success: false, error: 'Stage 1 not found' },
         { status: 404 }
       )
     }
 
-    // Parse sub-stages from JSON
-    const subStagesConfig = Array.isArray(stage1Data.subStages) 
-      ? stage1Data.subStages 
-      : []
-
-    // Map sub-stages with progress data
-    const subStages = subStagesConfig.map((subStage: any, index: number) => {
-      const subStageId = subStage.id || subStage.name
-      const progress = userProgressData.find(p => p.subStage === subStageId)
-
-      const sessionsCompleted = progress?.sessionsCompleted || 0
-      const hoursCompleted = progress?.hoursCompleted ? Number(progress.hoursCompleted) : 0
-      const minSessions = subStage.minSessions || 3
-
-      // Determine whether the user meets the session requirement (sessions only)
-      const meetsSessionRequirement = sessionsCompleted >= minSessions
-
-      // Cap progress percent at 100% so extra sessions don't extend the bar
-      const progressPercent = Math.min(100, Math.round((sessionsCompleted / Math.max(1, minSessions)) * 100))
-
-      // Check if sub-stage is unlocked
-      // T1 is always unlocked, others unlock when previous sub-stage meets its session requirement
-      const isUnlocked = index === 0 ||
-        subStagesConfig.slice(0, index).every((prevSubStage: any) => {
-          const prevId = prevSubStage.id || prevSubStage.name
-          const prevProgress = userProgressData.find(p => p.subStage === prevId)
-          const prevMin = prevSubStage.minSessions || 3
-          const prevSessions = prevProgress?.sessionsCompleted || 0
-          return prevSessions >= prevMin
-        })
-
-      return {
-        id: subStageId,
-        name: subStage.name,
-        duration: subStage.minDuration || subStage.duration || 10,
-        minSessions,
-        sessionsCompleted,
-        hoursCompleted: Math.round(hoursCompleted * 100) / 100,
-        // Only consider sessions for completion state (ignore hours/duration)
-        isCompleted: meetsSessionRequirement,
-        // Expose explicit meetsSessionRequirement so client can decide UX behavior
-        meetsSessionRequirement,
-        isUnlocked,
-        progressPercent
-      }
-    })
-
-    // Check PAHM intro status
-    // PAHM intro unlocks when all T1-T5 are completed
-    const allSubStagesCompleted = subStages
-      .filter(s => s.id !== 'PAHM')
-      .every(s => s.isCompleted)
-    
-    const pahmIntroProgress = userProgressData.find(p => p.subStage === 'PAHM')
-    
-    const pahmIntro = {
-      isCompleted: pahmIntroProgress?.isCompleted || false,
-      isUnlocked: allSubStagesCompleted,
-      sessionsCompleted: pahmIntroProgress?.sessionsCompleted || 0
-    }
-
-    // Calculate summary statistics
-    const completedLevels = subStages.filter(s => s.isCompleted).length
-    const totalSessions = subStages.reduce((sum, s) => sum + s.sessionsCompleted, 0)
-    const totalHours = subStages.reduce((sum, s) => sum + s.hoursCompleted, 0)
-    const completionPercent = subStages.length > 0 
-      ? Math.round((completedLevels / subStages.length) * 100)
-      : 0
-
-    const responseData = {
-      subStages,
-      pahmIntro,
-      summary: {
-        completedLevels,
-        totalSessions,
-        totalHours: Math.round(totalHours * 100) / 100,
-        completionPercent
-      }
-    }
-
     return NextResponse.json({
       success: true,
-      data: responseData
+      data
     })
 
   } catch (error) {
