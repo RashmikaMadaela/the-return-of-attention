@@ -204,7 +204,7 @@ export default function DailyNotesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-400 to-blue-300">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="daily-notes" />
@@ -213,8 +213,8 @@ export default function DailyNotesPage() {
         <div className="max-w-6xl mx-auto">
           {/* Title Section */}
           <div className="text-center mb-8">
-            <h1 className="text-white text-5xl font-bold mb-3">Emotional Check-ins</h1>
-            <p className="text-white text-xl">Capture how you're feeling Today</p>
+            <h1 className="text-[#03478f] text-5xl font-bold mb-3">Emotional Check-ins</h1>
+            <p className="text-black text-xl">Capture how you're feeling Today</p>
           </div>
 
           {/* Error Message */}
@@ -228,20 +228,20 @@ export default function DailyNotesPage() {
           <div className="flex justify-center gap-3 mb-8">
             <button
               onClick={() => setViewMode('quick')}
-              className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
+              className={`px-8 py-3 rounded-lg font-semibold transition-all ${
                 viewMode === 'quick'
-                  ? 'bg-white text-pink-600'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-[#e5f3ff] text-[#6465e0]'
+                  : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
               }`}
             >
               Quick Log
             </button>
             <button
               onClick={() => setViewMode('detailed')}
-              className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
+              className={`px-8 py-3 rounded-lg font-semibold transition-all ${
                 viewMode === 'detailed'
-                  ? 'bg-white text-pink-600'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-[#e5f3ff] text-[#6465e0]'
+                  : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
               }`}
             >
               Detailed
@@ -250,7 +250,7 @@ export default function DailyNotesPage() {
 
           {/* Quick Log View */}
           {viewMode === 'quick' && (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-xl">
+            <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
               <h2 className="text-gray-800 font-bold text-lg sm:text-xl mb-4 sm:mb-6">How are you feeling right now?</h2>
               
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
@@ -281,7 +281,7 @@ export default function DailyNotesPage() {
 
           {/* Detailed View */}
           {viewMode === 'detailed' && (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-xl">
+            <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
               {/* What's happening */}
               <div className="mb-4 sm:mb-6">
                 <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
@@ -356,7 +356,7 @@ export default function DailyNotesPage() {
               <button
                 onClick={handleDetailedLog}
                 disabled={isLoading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white font-bold py-4 rounded-xl transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Saving...' : 'Log Emotion'}
               </button>
@@ -364,7 +364,7 @@ export default function DailyNotesPage() {
           )}
 
           {/* Today's Emotional Journey */}
-          <div className="bg-white rounded-3xl p-8 shadow-xl">
+          <div className="bg-[#e5f3ff] rounded-3xl p-8 shadow-2xl">
             <h2 className="text-gray-800 font-bold text-2xl mb-6">Today's Emotional Journey</h2>
             
             {isLoading && emotionalJourney.length === 0 ? (

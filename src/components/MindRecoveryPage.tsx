@@ -87,7 +87,7 @@ export default function MindRecoveryPage() {
     if (sessionId === recommendedSession) {
       return 'bg-gradient-to-r from-yellow-400 to-blue-600'
     }
-    return 'bg-blue-600 hover:bg-blue-700'
+    return 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0]'
   }
 
   const getCardBackground = (imageName: string) => {
@@ -121,29 +121,29 @@ export default function MindRecoveryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Navigation */}
       <Navigation currentPage="mind-recovery" />
       
       <div className="p-8 pt-24">
         {/* Header */}
         <div className="max-w-6xl mx-auto mb-12">
-          <div className="text-center text-white">
-            <h1 className="text-5xl font-bold mb-4 text-white">Take a Moment to Reset !</h1>
-            <p className="text-xl opacity-90 text-white">Choose a PAHM practice to reset and recover your mind</p>
+          <div className="text-center">
+            <h1 className="text-5xl font-bold mb-4 text-[#03478f]">Take a Moment to Reset !</h1>
+            <p className="text-xl text-black">Choose a PAHM practice to reset and recover your mind</p>
           </div>
         </div>
 
         {/* Training Cards Grid */}
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
           {sessions.map((session) => (
             <div
               key={session.id}
-              className="bg-white rounded-3xl overflow-hidden shadow-2xl transform transition-all hover:scale-105"
+              className="bg-[#e5f3ff] rounded-3xl overflow-hidden shadow-2xl transform transition-all hover:scale-105"
             >
               {/* Card Image Header */}
               <div 
-                className={`${getCardBackground(session.imageName)} h-56 relative flex items-center justify-center`}
+                className={`${getCardBackground(session.imageName)} h-48 relative flex items-center justify-center`}
                 style={getCardBackgroundImage(session.imageName)}
               >
                 {session.id === recommendedSession && (
@@ -152,24 +152,24 @@ export default function MindRecoveryPage() {
                     Recommended
                   </div>
                 )}
-                <h2 className="text-white text-3xl font-bold text-center px-4 drop-shadow-lg">
+                <h2 className="text-white text-2xl font-bold text-center px-4 drop-shadow-lg">
                   {session.title}
                 </h2>
               </div>
 
               {/* Card Content */}
-              <div className="p-8">
-                <p className="text-gray-800 text-center text-lg mb-6">
+              <div className="p-6">
+                <p className="text-gray-800 text-center text-base mb-4">
                   {session.description}
                 </p>
                 
-                <div className="bg-gray-100 rounded-full px-6 py-2 text-center mb-6 inline-block w-full">
+                <div className="bg-gray-100 rounded-full px-6 py-2 text-center mb-4 inline-block w-full">
                   <span className="text-gray-700 font-semibold">{session.duration} minutes</span>
                 </div>
 
                 <button
                   onClick={() => handleStartExercise(session.id)}
-                  className={`w-full ${getButtonColor(session.id)} text-white font-bold py-4 px-6 rounded-xl text-lg transition-all hover:shadow-lg`}
+                  className={`w-full ${getButtonColor(session.id)} text-white font-bold py-3 px-6 rounded-xl text-base transition-all hover:shadow-lg`}
                 >
                   Start Exercise
                 </button>
