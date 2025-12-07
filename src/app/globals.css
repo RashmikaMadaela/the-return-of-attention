@@ -48,6 +48,22 @@ body {
   }
 }
 
+/* Matrix cell pulse animation - scale effect */
+@keyframes matrixPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.matrix-pulse {
+  animation: matrixPulse 2s ease-in-out;
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
 }

@@ -25,6 +25,7 @@ import {
 export default function HomePageOptimized() {
   const router = useRouter()
   const { data: overview, error, isLoading, isValidating } = useProgressOverview()
+  const [activeCellIndex, setActiveCellIndex] = React.useState(0)
 
   // Handle authentication error
   React.useEffect(() => {
@@ -32,6 +33,15 @@ export default function HomePageOptimized() {
       router.push('/signin')
     }
   }, [error, router])
+
+  // Matrix animation effect - randomly select one cell to pulse at a time
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveCellIndex(Math.floor(Math.random() * 9))
+    }, 2000) // Change every 2 seconds
+
+    return () => clearInterval(interval)
+  }, [])
 
   // Show full skeleton on first load
   if (isLoading) {
@@ -197,7 +207,7 @@ export default function HomePageOptimized() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-400 to-blue-300">
+    <div className="min-h-screen bg-[#fffafa]">
       {/* Background refresh indicator */}
       {isValidating && (
         <div className="fixed z-50 px-4 py-2 text-white bg-blue-500 rounded-lg shadow-lg top-20 right-4 animate-fade-in">
@@ -212,40 +222,39 @@ export default function HomePageOptimized() {
 
       {/* Hero Section */}
       <div 
-        className="pt-20 bg-center bg-no-repeat bg-cover sm:pt-24" 
-        style={{ backgroundImage: "url('/png_images/dcds.png')" }}
+        className="pt-20 sm:pt-24 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]"
       >
         <div className="px-4 py-8 mx-auto max-w-7xl sm:py-12 md:py-16">
           <div className="flex flex-col items-center justify-center gap-4 md:flex-row sm:gap-6 md:gap-8">
-            <div className="p-4 bg-purple-400 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl">
+            <div className="p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl">
               <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <div className="w-8 h-8 bg-orange-300 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse"></div>
-                <div className="w-8 h-8 delay-100 bg-teal-300 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse"></div>
-                <div className="w-8 h-8 delay-200 bg-purple-300 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse"></div>
-                <div className="w-8 h-8 delay-300 bg-yellow-300 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse"></div>
-                <div className="w-8 h-8 bg-gray-100 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse delay-400"></div>
-                <div className="w-8 h-8 delay-500 bg-blue-200 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse"></div>
-                <div className="w-8 h-8 delay-700 bg-orange-200 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse"></div>
-                <div className="w-8 h-8 bg-pink-200 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse delay-800"></div>
-                <div className="w-8 h-8 delay-1000 bg-purple-200 rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl animate-pulse"></div>
+                <div className={`w-8 h-8 bg-orange-500 shadow-5xl rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 0 ? 'matrix-pulse' : ''}`}></div>
+                <div className={`w-8 h-8 bg-teal-500 shadow-5xl rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 1 ? 'matrix-pulse' : ''}`}></div>
+                <div className={`w-8 h-8 bg-purple-500 shadow-5xl rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 2 ? 'matrix-pulse' : ''}`}></div>
+                <div className={`w-8 h-8 bg-yellow-500 shadow-5xl rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 3 ? 'matrix-pulse' : ''}`}></div>
+                <div className={`w-8 h-8 bg-gray-400 rounded-lg shadow-5xl sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 4 ? 'matrix-pulse' : ''}`}></div>
+                <div className={`w-8 h-8 bg-blue-400 shadow-5xl rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 5 ? 'matrix-pulse' : ''}`}></div>
+                <div className={`w-8 h-8 bg-orange-400 shadow-5xl rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 6 ? 'matrix-pulse' : ''}`}></div>
+                <div className={`w-8 h-8 bg-pink-400 shadow-5xl rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 7 ? 'matrix-pulse' : ''}`}></div>
+                <div className={`w-8 h-8 bg-purple-400 shadow-5xl rounded-lg sm:w-10 sm:h-10 md:w-12 md:h-12 sm:rounded-xl transition-transform ${activeCellIndex === 8 ? 'matrix-pulse' : ''}`}></div>
               </div>
             </div>
             
-            <div className="text-center text-white md:text-left">
-              <h1 className="mb-1 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-2">The Return</h1>
-              <h1 className="mb-2 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-3 md:mb-4">Of Attention</h1>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl">Practices for the Happiness that Stays</p>
+            <div className="text-center md:text-left">
+              <h1 className="mb-1 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-2 text-[#03478f]">The Return</h1>
+              <h1 className="mb-2 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-3 md:mb-4 text-[#03478f]">Of Attention</h1>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-black">Practices for the Happiness that Stays</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-4 py-8 mx-auto max-w-7xl">
+      <div className="px-4 py-8 mx-auto max-w-7xl bg-[#fffafa]">
         {/* Welcome Card */}
-        <div className="flex flex-col p-4 mb-6 space-y-4 bg-cyan-300 rounded-3xl sm:p-6 lg:p-8 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <div className="flex flex-col p-4 mb-6 space-y-4 bg-[#e5f3ff] rounded-3xl sm:p-6 lg:p-8 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 shadow-lg">
           <div className="text-center sm:text-left">
-            <h2 className="mb-1 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-2">Welcome Back</h2>
-            <h3 className="mb-2 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-4">{userName}</h3>
+            <h2 className="mb-1 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-2 text-[#03478f]">Welcome Back</h2>
+            <h3 className="mb-2 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-4 text-[#03478f]">{userName}</h3>
             <p className="text-sm font-semibold sm:text-base lg:text-lg">
               {assessmentsCompleted && hasHappinessScore 
                 ? "Your Journey to Happiness that Stays" 
@@ -258,11 +267,11 @@ export default function HomePageOptimized() {
               <div className="hidden w-1 h-full mx-4 bg-blue-500 sm:block lg:mx-8"></div>
               
               <div className="space-y-3 sm:space-y-4">
-                <div className="bg-blue-500 text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]">
+                <div className="bg-[#6465e0] text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]">
                   <span className="text-sm font-semibold sm:text-base lg:text-lg">Current Stage</span>
                   <span className="text-2xl font-bold sm:text-3xl lg:text-4xl">{String(currentStage).padStart(2, '0')}</span>
                 </div>
-                <div className="bg-blue-500 text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]">
+                <div className="bg-[#6465e0] text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]">
                   <span className="text-sm font-semibold sm:text-base lg:text-lg">Happiness Points</span>
                   <span className="text-2xl font-bold sm:text-3xl lg:text-4xl">{happinessPoints}</span>
                 </div>
@@ -350,10 +359,10 @@ export default function HomePageOptimized() {
             {stages.map((stage) => (
               <div
                 key={stage.id}
-                className={`bg-white rounded-[25px] shadow-xl overflow-hidden transition-all duration-300 ${
+                className={`bg-[#e5f3ff] rounded-[25px] shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)] overflow-hidden transition-all duration-300 ${
                   !stage.unlocked 
                     ? 'opacity-50 cursor-not-allowed filter grayscale' 
-                    : 'cursor-pointer hover:scale-105 hover:shadow-2xl active:scale-95'
+                    : 'cursor-pointer hover:scale-105 active:scale-95'
                 }`}
                 onClick={() => stage.unlocked && handleStageClick(stage)}
               >
@@ -380,14 +389,14 @@ export default function HomePageOptimized() {
                   <p className="mb-2 text-xs text-gray-600 sm:text-sm font-lexend">{stage.description}</p>
                   <p className="mb-4 text-xs text-gray-600 sm:text-sm font-lexend">{stage.progress}</p>
                   <button
-                    className={`w-full py-3 sm:py-4 rounded-[15px] font-bold font-lexend transition-colors text-sm sm:text-base min-h-[44px] ${
+                    className={`w-full py-3 sm:py-4 rounded-[15px] font-bold font-lexend transition-all text-sm sm:text-base min-h-[44px] ${
                       !stage.unlocked
                         ? 'bg-orange-400 text-white cursor-not-allowed'
                         : stage.completed
-                        ? 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800'
+                        ? 'bg-gradient-to-r from-green-600 to-green-500 text-white hover:from-green-700 hover:to-green-600 active:from-green-800 active:to-green-700'
                         : stage.id === currentStage
-                        ? 'bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800'
-                        : 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800'
+                        ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0] active:from-[#4a4bc2] active:to-[#5658d1]'
+                        : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0] active:from-[#4a4bc2] active:to-[#5658d1]'
                     }`}
                     disabled={!stage.unlocked}
                   >
