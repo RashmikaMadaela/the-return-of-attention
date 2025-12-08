@@ -3,8 +3,10 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function PAHMMatrixGuidePage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
 
   const handleBack = () => {
@@ -18,7 +20,7 @@ export default function PAHMMatrixGuidePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Navigation */}
       <Navigation currentPage="learn" />
       
@@ -27,7 +29,7 @@ export default function PAHMMatrixGuidePage() {
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-6 sm:mb-8 mt-4 sm:mt-6">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#03478f] mb-3 sm:mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4" style={{ color: topicColor }}>
               The PAHM Matrix
             </h1>
             <p className="text-black text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
@@ -37,7 +39,7 @@ export default function PAHMMatrixGuidePage() {
           </div>
 
           {/* PAHM Matrix Visual */}
-          <div className="bg-[#e5f3ff] rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl">
+          <div className="rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 text-center mb-4">
               The PAHM Matrix
             </h2>
@@ -98,7 +100,7 @@ export default function PAHMMatrixGuidePage() {
           </div>
 
           {/* Understanding the Nine Positions */}
-          <div className="bg-[#e5f3ff] rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl">
+          <div className="rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-6">
               Understanding the Nine Positions
             </h2>
@@ -148,7 +150,7 @@ export default function PAHMMatrixGuidePage() {
           </div>
 
           {/* How PAHM Works */}
-          <div className="bg-[#e5f3ff] rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl">
+          <div className="rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-4">
               How PAHM Practice Works
             </h2>
@@ -196,7 +198,7 @@ export default function PAHMMatrixGuidePage() {
           </div>
 
           {/* Benefits */}
-          <div className="bg-[#e5f3ff] rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl">
+          <div className="rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-4">
               Benefits of PAHM Practice
             </h2>

@@ -4,12 +4,14 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 import { useToast } from '@/hooks/useToast'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface SelfAssessmentPageProps {
   onComplete?: (answers: any) => void
 }
 
 export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPageProps) {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const { showWarning, showError, showSuccess, ToastContainer } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -142,7 +144,7 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="self-assessment" />
@@ -152,10 +154,10 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
           {/* Questions */}
           <div className="space-y-4 sm:space-y-5 md:space-y-6">
             {questions.map((question) => (
-              <div key={question.id} className="bg-[#e5f3ff] backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-lg">
+              <div key={question.id} className="backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-lg" style={{ backgroundColor: containerColor }}>
                 <div className="text-center mb-4 sm:mb-5 md:mb-6">
                   <div className="text-3xl sm:text-4xl md:text-5xl mb-2 sm:mb-3">{question.emoji}</div>
-                  <h2 className="text-[#03478f] text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{question.title}</h2>
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2" style={{ color: topicColor }}>{question.title}</h2>
                   <p className="text-black text-xs sm:text-sm mb-1">{question.subtitle}</p>
                   <p className="text-gray-700 text-[10px] sm:text-xs opacity-80">{question.description}</p>
                 </div>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock } from 'lucide-react'
 import Navigation from './Navigation'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface StageInfo {
   id: number
@@ -21,6 +22,7 @@ interface StageInfo {
 }
 
 export default function AllStagesPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   
   const [stages, setStages] = useState<StageInfo[]>([
@@ -197,7 +199,7 @@ export default function AllStagesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Navigation */}
       <Navigation currentPage="all-stages" />
       
@@ -205,7 +207,7 @@ export default function AllStagesPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-[#03478f] mb-4">Your Meditation Journey</h1>
+            <h1 className="text-4xl font-bold mb-4" style={{ color: topicColor }}>Your Meditation Journey</h1>
             <p className="text-black text-xl">
               Progress through 6 stages to achieve lasting happiness through attention awareness
             </p>

@@ -6,8 +6,10 @@ import { Lock } from 'lucide-react'
 import Navigation from './Navigation'
 import { useStage1Progress } from '@/hooks/useStage1Progress'
 import { Stage1PageSkeleton } from './LoadingSkeletons'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function Stage1Page() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const searchParams = useSearchParams()
   const { data, error, isLoading, isValidating, mutate } = useStage1Progress()
@@ -45,7 +47,8 @@ export default function Stage1Page() {
           <p className="mb-6 text-gray-600">We encountered an error loading your stage progress. Please try again.</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-8 py-3 font-bold text-white transition-colors bg-blue-600 hover:bg-blue-700 rounded-xl"
+            className="px-8 py-3 font-bold text-white transition-colors rounded-xl hover:opacity-90"
+            style={{ backgroundColor: buttonColor }}
           >
             Retry
           </button>
@@ -85,15 +88,15 @@ export default function Stage1Page() {
   } as any)
 
   const getStageButton = (stage: any) => {
-    if (!stage.unlocked) return { text: 'Locked', color: 'bg-orange-400', disabled: true }
+    if (!stage.unlocked) return { text: 'Locked', color: 'bg-orange-400', disabled: true, useTheme: false }
     if (stage.isPAHM) {
-      if (stage.completed) return { text: 'Completed', color: 'bg-green-600', disabled: false }
-      return { text: 'Complete', color: 'bg-blue-600', disabled: false }
+      if (stage.completed) return { text: 'Completed', color: 'bg-green-600', disabled: false, useTheme: false }
+      return { text: 'Complete', color: '', disabled: false, useTheme: true }
     }
     // Allow practice even after meeting the session requirement - show "Practice" or "Continue"
-    if (stage.meetsSessionRequirement) return { text: 'Practice', color: 'bg-blue-600', disabled: false }
-    if (stage.sessions > 0) return { text: 'Continue', color: 'bg-blue-600', disabled: false }
-    return { text: 'Start', color: 'bg-blue-600', disabled: false }
+    if (stage.meetsSessionRequirement) return { text: 'Practice', color: '', disabled: false, useTheme: true }
+    if (stage.sessions > 0) return { text: 'Continue', color: '', disabled: false, useTheme: true }
+    return { text: 'Start', color: '', disabled: false, useTheme: true }
   }
 
   const handleStageClick = (stage: any) => {
@@ -119,10 +122,10 @@ export default function Stage1Page() {
   const summary = data?.summary || { completedLevels: 0, totalSessions: 0, completionPercent: 0 }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Background refresh indicator */}
       {isValidating && (
-        <div className="fixed z-50 px-4 py-2 text-white bg-[#6465e0] rounded-lg shadow-lg top-20 right-4">
+        <div className="fixed z-50 px-4 py-2 rounded-lg shadow-lg top-20 right-4" style={{ backgroundColor: buttonColor, color: textColor2 }}>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
             <span className="text-sm font-medium">Refreshing...</span>
@@ -136,7 +139,7 @@ export default function Stage1Page() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-8 text-center">
-            <h1 className="mb-4 text-4xl font-bold text-[#03478f]">Stage 1: Physical Stillness</h1>
+            <h1 className="mb-4 text-4xl font-bold" style={{ color: topicColor }}>Stage 1: Physical Stillness</h1>
             <p className="text-xl text-gray-700">Develop physical foundation through progressive stillness training from 10 to 30 minutes.</p>
           </div>
 
@@ -158,8 +161,8 @@ export default function Stage1Page() {
               }
               
               return (
-                <div key={stage.id} className="p-6 bg-[#e5f3ff] shadow-2xl rounded-xl">
-                  <h3 className="mb-4 text-2xl font-bold text-[#03478f]">
+                <div key={stage.id} className="p-6 shadow-2xl rounded-xl" style={{ backgroundColor: containerColor }}>
+                  <h3 className="mb-4 text-2xl font-bold" style={{ color: topicColor }}>
                     {stage.isPAHM ? 'PAHM Matrix Intro' : getStageTitle(stage.name)}
                   </h3>
                   {!stage.isPAHM && (
@@ -169,8 +172,8 @@ export default function Stage1Page() {
                       <div className="mb-4">
                         <div className="w-full h-2 bg-gray-200 rounded-full">
                           <div
-                            className="h-2 transition-all duration-300 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-full"
-                            style={{ width: `${Math.min(100, stage.progressPercent || 0)}%` }}
+                            className="h-2 transition-all duration-300 rounded-full"
+                            style={{ width: `${Math.min(100, stage.progressPercent || 0)}%`, background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)` }}
                           ></div>
                         </div>
                       </div>
@@ -182,7 +185,7 @@ export default function Stage1Page() {
                       <p className="mb-4 text-gray-700">Sessions: {stage.sessions}/1</p>
                       <div className="mb-4">
                         <div className="w-full h-2 bg-gray-200 rounded-full">
-                          <div className="h-2 transition-all duration-300 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-full" style={{ width: `${(stage.sessions / 1) * 100}%` }}></div>
+                          <div className="h-2 transition-all duration-300 rounded-full" style={{ width: `${(stage.sessions / 1) * 100}%`, background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)` }}></div>
                         </div>
                       </div>
                     </>
@@ -190,9 +193,10 @@ export default function Stage1Page() {
                   <button
                     onClick={() => handleStageClick(stage)}
                     disabled={buttonConfig.disabled}
-                    className={`w-full ${buttonConfig.color} text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${
+                    className={`w-full ${buttonConfig.useTheme ? '' : buttonConfig.color} text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${
                       buttonConfig.disabled ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90'
                     }`}
+                    style={buttonConfig.useTheme ? { backgroundColor: buttonColor } : {}}
                   >
                     {!stage.unlocked && <Lock size={20} />}
                     {buttonConfig.text}
@@ -203,9 +207,9 @@ export default function Stage1Page() {
           </div>
 
           {/* Progress Summary */}
-          <div className="p-6 mt-8 bg-[#e5f3ff] shadow-2xl rounded-xl">
-            <h2 className="mb-4 text-2xl font-bold text-[#03478f]">Your Progress</h2>
-            <div className="grid grid-cols-1 gap-4 text-black md:grid-cols-3">
+          <div className="p-6 mt-8 shadow-2xl rounded-xl" style={{ backgroundColor: containerColor }}>
+            <h2 className="mb-4 text-2xl font-bold" style={{ color: topicColor }}>Your Progress</h2>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3" style={{ color: textColor1 }}>
               <div className="text-center">
                 <div className="text-3xl font-bold">{summary.completedLevels}</div>
                 <div className="text-sm">Completed Levels</div>

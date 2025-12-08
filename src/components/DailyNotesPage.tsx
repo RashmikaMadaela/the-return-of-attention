@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from 'react'
 import Navigation from './Navigation'
 import { useToast } from '@/hooks/useToast'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function DailyNotesPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const { showWarning, showError, showSuccess, ToastContainer } = useToast()
   // Add Lexend font
   useEffect(() => {
@@ -204,7 +206,7 @@ export default function DailyNotesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="daily-notes" />
@@ -213,8 +215,8 @@ export default function DailyNotesPage() {
         <div className="max-w-6xl mx-auto">
           {/* Title Section */}
           <div className="text-center mb-8">
-            <h1 className="text-[#03478f] text-5xl font-bold mb-3">Emotional Check-ins</h1>
-            <p className="text-black text-xl">Capture how you're feeling Today</p>
+            <h1 className="text-5xl font-bold mb-3" style={{ color: topicColor }}>Emotional Check-ins</h1>
+            <p className="text-xl" style={{ color: textColor1 }}>Capture how you're feeling Today</p>
           </div>
 
           {/* Error Message */}
@@ -228,29 +230,23 @@ export default function DailyNotesPage() {
           <div className="flex justify-center gap-3 mb-8">
             <button
               onClick={() => setViewMode('quick')}
-              className={`px-8 py-3 rounded-lg font-semibold transition-all ${
-                viewMode === 'quick'
-                  ? 'bg-[#e5f3ff] text-[#6465e0]'
-                  : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
-              }`}
+              className="px-8 py-3 rounded-lg font-semibold transition-all hover:opacity-90"
+              style={viewMode === 'quick' ? { backgroundColor: containerColor, color: buttonColor } : { background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`, color: textColor2 }}
             >
               Quick Log
             </button>
             <button
               onClick={() => setViewMode('detailed')}
-              className={`px-8 py-3 rounded-lg font-semibold transition-all ${
-                viewMode === 'detailed'
-                  ? 'bg-[#e5f3ff] text-[#6465e0]'
-                  : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
-              }`}
+              className="px-8 py-3 rounded-lg font-semibold transition-all hover:opacity-90"
+              style={viewMode === 'detailed' ? { backgroundColor: containerColor, color: buttonColor } : { background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`, color: textColor2 }}
             >
               Detailed
             </button>
           </div>
 
-          {/* Quick Log View */}
+          {/* Quick View */}
           {viewMode === 'quick' && (
-            <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
+            <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl" style={{ backgroundColor: containerColor }}>
               <h2 className="text-gray-800 font-bold text-lg sm:text-xl mb-4 sm:mb-6">How are you feeling right now?</h2>
               
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
@@ -281,7 +277,7 @@ export default function DailyNotesPage() {
 
           {/* Detailed View */}
           {viewMode === 'detailed' && (
-            <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
+            <div className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl" style={{ backgroundColor: containerColor }}>
               {/* What's happening */}
               <div className="mb-4 sm:mb-6">
                 <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
@@ -364,7 +360,7 @@ export default function DailyNotesPage() {
           )}
 
           {/* Today's Emotional Journey */}
-          <div className="bg-[#e5f3ff] rounded-3xl p-8 shadow-2xl">
+          <div className="rounded-3xl p-8 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <h2 className="text-gray-800 font-bold text-2xl mb-6">Today's Emotional Journey</h2>
             
             {isLoading && emotionalJourney.length === 0 ? (

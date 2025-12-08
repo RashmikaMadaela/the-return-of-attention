@@ -3,8 +3,10 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function Stage1IntroPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
 
   const handleStart = () => {
@@ -26,20 +28,20 @@ export default function Stage1IntroPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       
       <div className="p-8 pt-24">
         <div className="max-w-4xl mx-auto">
           {/* Header Card */}
-          <div className="bg-[#e5f3ff] rounded-lg p-6 mb-6 shadow-2xl">
+          <div className="rounded-lg p-6 mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <h1 className="text-3xl font-bold text-black mb-2">Stage 1: Physical Foundation</h1>
             <p className="text-black">You're beginning the journey of developing physical readiness for meditation!</p>
           </div>
 
           {/* Welcome Card */}
-          <div className="bg-[#e5f3ff] rounded-lg p-8 mb-6 shadow-2xl">
+          <div className="rounded-lg p-8 mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <div className="text-center mb-6">
               <span className="text-5xl">🌱</span>
             </div>
@@ -52,7 +54,7 @@ export default function Stage1IntroPage() {
           </div>
 
           {/* Physical Foundation Card */}
-          <div className="bg-[#e5f3ff] rounded-lg p-8 mb-6 shadow-2xl">
+          <div className="rounded-lg p-8 mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <div className="text-center mb-6">
               <span className="text-5xl">📝</span>
             </div>
@@ -65,7 +67,7 @@ export default function Stage1IntroPage() {
           </div>
 
           {/* T1-T5 Progression Card */}
-          <div className="bg-[#e5f3ff] rounded-lg p-8 mb-6 shadow-2xl">
+          <div className="rounded-lg p-8 mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <div className="text-center mb-6">
               <span className="text-5xl">📊</span>
             </div>
@@ -81,13 +83,15 @@ export default function Stage1IntroPage() {
           <div className="flex gap-4 justify-center">
             <button 
               onClick={handleBack}
-              className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white px-8 py-3 rounded-lg font-semibold transition-all"
+              className="text-white px-8 py-3 rounded-lg font-semibold transition-all hover:opacity-90"
+              style={{ backgroundColor: buttonColor }}
             >
               Back
             </button>
             <button 
               onClick={handleStart}
-              className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white px-8 py-3 rounded-lg font-semibold transition-all"
+              className="text-white px-8 py-3 rounded-lg font-semibold transition-all hover:opacity-90"
+              style={{ backgroundColor: buttonColor }}
             >
               Start
             </button>

@@ -3,8 +3,10 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function PostureGuidePage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const [activeSection, setActiveSection] = useState('overview')
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -30,14 +32,15 @@ export default function PostureGuidePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       <Navigation currentPage="learn" />
       
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-20 left-4 z-50">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-[#e5f3ff] text-[#03478f] p-3 rounded-lg shadow-2xl min-h-[44px] min-w-[44px] flex items-center justify-center"
+          className="p-3 rounded-lg shadow-2xl min-h-[44px] min-w-[44px] flex items-center justify-center"
+          style={{ backgroundColor: containerColor, color: topicColor }}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {sidebarOpen ? (
@@ -53,19 +56,18 @@ export default function PostureGuidePage() {
         {/* Sidebar */}
         <div className={`${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 fixed inset-y-0 left-0 z-40 w-80 lg:w-64 bg-[#e5f3ff] transition-transform duration-300 ease-in-out overflow-y-auto shadow-2xl`}
-        style={{ top: '64px', height: 'calc(100vh - 64px)' }}>
+        } lg:translate-x-0 fixed inset-y-0 left-0 z-40 w-80 lg:w-64 transition-transform duration-300 ease-in-out overflow-y-auto shadow-2xl`}
+        style={{ backgroundColor: containerColor, top: '64px', height: 'calc(100vh - 64px)' }}>
           <div className="p-4 lg:p-6">
             <div className="space-y-2">
               {sidebarItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all text-base ${
-                    activeSection === item.id
-                      ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white' 
-                      : 'text-[#03478f] hover:bg-white/50'
-                  }`}
+                  className="w-full text-left px-4 py-3 rounded-lg transition-all text-base hover:opacity-90"
+                  style={activeSection === item.id ? { background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`, color: textColor2 } : { color: topicColor, backgroundColor: 'transparent' }}
+                  onMouseEnter={(e) => { if (activeSection !== item.id) e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.5)'; }}
+                  onMouseLeave={(e) => { if (activeSection !== item.id) e.currentTarget.style.backgroundColor = 'transparent'; }}
                 >
                   {item.label}
                 </button>
@@ -74,7 +76,8 @@ export default function PostureGuidePage() {
 
             <button
               onClick={() => router.push('/learn')}
-              className="w-full bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white font-bold py-3 px-4 rounded-lg mt-8 min-h-[44px]"
+              className="w-full text-white font-bold py-3 px-4 rounded-lg mt-8 min-h-[44px] hover:opacity-90"
+              style={{ backgroundColor: buttonColor }}
             >
               Back to Learn
             </button>
@@ -94,7 +97,7 @@ export default function PostureGuidePage() {
         <div className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-12 overflow-y-auto">
           <div className="max-w-4xl">
             <section id="overview" className="mb-16 scroll-mt-8">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#03478f] mb-4 sm:mb-6">Foundation of Practice</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6" style={{ color: topicColor }}>Foundation of Practice</h1>
               <p className="text-black text-sm sm:text-base lg:text-lg mb-6 sm:mb-8">
                 Proper posture is essential for effective meditation practice. It creates the physical foundation that allows your mind to settle and your attention to stabilize. This guide covers all aspects of meditation posture, including the often-overlooked but crucial element of eye position.
               </p>
@@ -127,12 +130,12 @@ export default function PostureGuidePage() {
 
             {/* Sitting Position */}
             <section id="sitting" className="mb-16 scroll-mt-8">
-              <h2 className="text-3xl font-bold text-[#03478f] mb-4">Sitting Position</h2>
+              <h2 className="text-3xl font-bold mb-4" style={{ color: topicColor }}>Sitting Position</h2>
               <p className="text-black mb-4">
                 Find a comfortable, seated position that allows your spine to be straight but not rigid. You may sit on a cushion on the floor, a meditation bench, or a chair.
               </p>
               
-              <h3 className="text-xl font-bold text-[#03478f] mb-3">Available Sitting Postures:</h3>
+              <h3 className="text-xl font-bold mb-3" style={{ color: topicColor }}>Available Sitting Postures:</h3>
               <ul className="text-black space-y-2 mb-6">
                 <li><strong>Chair Sitting</strong> - Sitting upright on a chair with feet flat on the floor</li>
                 <li><strong>Cushion Sitting</strong> - Sitting cross-legged on a meditation cushion</li>
@@ -142,8 +145,8 @@ export default function PostureGuidePage() {
                 <li><strong>Full Lotus</strong> - Both feet resting on opposite thighs (advanced)</li>
               </ul>
 
-              <div className="bg-[#e5f3ff] border-l-4 border-[#6465e0] p-4 rounded shadow-2xl">
-                <h4 className="text-[#03478f] font-bold mb-2">Chair Sitting:</h4>
+              <div className="border-l-4 p-4 rounded shadow-2xl" style={{ backgroundColor: containerColor, borderColor: buttonColor }}>
+                <h4 className="font-bold mb-2" style={{ color: topicColor }}>Chair Sitting:</h4>
                 <p className="text-black">
                   Sit toward the front edge of the chair with both feet flat on the floor. Your knees should be at or below hip level. Avoid leaning against the backrest.
                 </p>
@@ -152,12 +155,12 @@ export default function PostureGuidePage() {
 
             {/* Other Meditation Positions */}
             <section id="other" className="mb-16 scroll-mt-8">
-              <h2 className="text-3xl font-bold text-[#03478f] mb-4">Other Meditation Positions</h2>
+              <h2 className="text-3xl font-bold mb-4" style={{ color: topicColor }}>Other Meditation Positions</h2>
               <p className="text-black mb-4">
                 While sitting is the most common meditation posture, these alternatives can be helpful depending on your physical needs and practice goals.
               </p>
               
-              <h3 className="text-xl font-bold text-[#03478f] mb-3">Available Alternative Postures:</h3>
+              <h3 className="text-xl font-bold mb-3" style={{ color: topicColor }}>Available Alternative Postures:</h3>
               <ul className="text-black space-y-2 mb-6">
                 <li><strong>Lying Down</strong> - For body scan or relaxation practices (risk of falling asleep)</li>
                 <li><strong>Standing</strong> - Standing with feet shoulder-width apart. This energetic posture promotes alertness and can be particularly helpful when feeling drowsy.</li>
@@ -170,12 +173,12 @@ export default function PostureGuidePage() {
 
             {/* Spine Alignment */}
             <section id="spine" className="mb-16 scroll-mt-8">
-              <h2 className="text-3xl font-bold text-[#03478f] mb-4">Spine Alignment</h2>
+              <h2 className="text-3xl font-bold mb-4" style={{ color: topicColor }}>Spine Alignment</h2>
               <p className="text-black mb-4">
                 The spine should be straight but not rigid - imagine a string gently pulling upward from the crown of your head. This creates a natural S-curve that supports proper energy flow and breathing.
               </p>
               
-              <h3 className="text-xl font-bold text-[#03478f] mb-3">Key Points:</h3>
+              <h3 className="text-xl font-bold mb-3" style={{ color: topicColor }}>Key Points:</h3>
               <ul className="text-black space-y-2">
                 <li>• Sit with your hips slightly higher than your knees (use a cushion if needed)</li>
                 <li>• Allow your lower back to maintain its natural curve</li>
@@ -187,12 +190,12 @@ export default function PostureGuidePage() {
 
             {/* Hand Position */}
             <section id="hand" className="mb-16 scroll-mt-8">
-              <h2 className="text-3xl font-bold text-[#03478f] mb-4">Hand Position</h2>
+              <h2 className="text-3xl font-bold mb-4" style={{ color: topicColor }}>Hand Position</h2>
               <p className="text-black mb-4">
                 Your hands should rest in a comfortable position that promotes stability and relaxation.
               </p>
               
-              <h3 className="text-xl font-bold text-[#03478f] mb-3">Recommended Positions:</h3>
+              <h3 className="text-xl font-bold mb-3" style={{ color: topicColor }}>Recommended Positions:</h3>
               <ul className="text-black space-y-2 mb-4">
                 <li><strong>Resting on Thighs</strong> - Place hands palms down on your thighs</li>
                 <li><strong>Cosmic Mudra</strong> - Left hand resting in right hand, palms up, thumbs lightly touching to form an oval</li>
@@ -206,12 +209,12 @@ export default function PostureGuidePage() {
 
             {/* Eye Position */}
             <section id="eye" className="mb-16 scroll-mt-8">
-              <h2 className="text-3xl font-bold text-[#03478f] mb-4">Eye Position</h2>
+              <h2 className="text-3xl font-bold mb-4" style={{ color: topicColor }}>Eye Position</h2>
               <p className="text-black mb-4">
                 Eye position is a crucial but often overlooked aspect of meditation posture. The position of your eyes directly influences your mental state during meditation.
               </p>
               
-              <h3 className="text-xl font-bold text-[#03478f] mb-3">Available Eye Positions:</h3>
+              <h3 className="text-xl font-bold mb-3" style={{ color: topicColor }}>Available Eye Positions:</h3>
               <ul className="text-black space-y-2 mb-6">
                 <li><strong>Softly Downcast</strong> - Eyes partially open with gaze resting about 3-5 feet in front of you on the floor. This is the traditional Zen approach and helps balance alertness with calmness.</li>
                 <li><strong>Closed</strong> - Eyelids closed gently (not squeezed shut)</li>
@@ -219,7 +222,7 @@ export default function PostureGuidePage() {
                 <li><strong>Straight Ahead</strong> - Eyes closed with attention directed straight ahead. This neutral position works well for many practitioners.</li>
               </ul>
 
-              <div className="bg-[#e5f3ff] border-l-4 border-blue-400 p-6 rounded mb-6 shadow-2xl">
+              <div className="border-l-4 border-blue-400 p-6 rounded mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
                 <p className="text-black mb-4">
                   According to the Foundation of Practice section in the Return of Attention, eye position significantly affects your mental state during meditation:
                 </p>
@@ -236,7 +239,7 @@ export default function PostureGuidePage() {
 
             {/* Breathing */}
             <section id="breathing" className="mb-16 scroll-mt-8">
-              <h2 className="text-3xl font-bold text-[#03478f] mb-4">Breathing</h2>
+              <h2 className="text-3xl font-bold mb-4" style={{ color: topicColor }}>Breathing</h2>
               <p className="text-black mb-4">
                 While not strictly posture, breathing is intimately connected to how you hold your body.
               </p>

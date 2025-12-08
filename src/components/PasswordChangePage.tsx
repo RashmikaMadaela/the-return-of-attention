@@ -4,8 +4,10 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, Eye, EyeOff, KeyRound } from 'lucide-react'
 import { useToast } from '@/hooks/useToast'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function PasswordChangePage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const { showSuccess, showError, ToastContainer } = useToast()
   const [currentPassword, setCurrentPassword] = useState('')
@@ -135,14 +137,14 @@ export default function PasswordChangePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] flex items-center justify-center p-5">
+    <div className="min-h-screen bg-gradient-to-b flex items-center justify-center p-5" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       <ToastContainer />
       
-      <div className="bg-[#e5f3ff] rounded-3xl shadow-2xl p-8 w-full max-w-md">
+      <div className="rounded-3xl shadow-2xl p-8 w-full max-w-md" style={{ backgroundColor: containerColor }}>
         {/* Header */}
         <div className="flex items-center justify-center mb-8">
           <KeyRound className="w-10 h-10 text-[#6465e0] mr-3" />
-          <h1 className="text-3xl font-bold text-[#03478f]">Change Password</h1>
+          <h1 className="text-3xl font-bold" style={{ color: topicColor }}>Change Password</h1>
         </div>
         
         <div className="space-y-5">

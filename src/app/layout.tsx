@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Lexend, Arimo } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -41,7 +42,9 @@ export default function RootLayout({
         className={`${inter.variable} ${lexend.variable} ${arimo.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

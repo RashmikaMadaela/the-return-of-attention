@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
 import { startSession, type StartSessionRequest } from '@/lib/api/sessions'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface SessionSettings {
   posture: string
@@ -13,6 +14,7 @@ interface SessionSettings {
 }
 
 export default function SessionSetupPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stage')
@@ -131,19 +133,19 @@ export default function SessionSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#03478f] text-center mb-4 sm:mb-6 md:mb-8">'</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-4 sm:mb-6 md:mb-8" style={{ color: topicColor }}>'</h1>
           
-          <div className="bg-[#e5f3ff] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl">
+          <div className="rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
               {/* Posture Selection */}
               <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-md">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-[#03478f]">Select Your Posture</h2>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6" style={{ color: topicColor }}>Select Your Posture</h2>
                 <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
                   {postures.map(posture => (
                     <button
@@ -151,9 +153,10 @@ export default function SessionSetupPage() {
                       onClick={() => setSessionSettings(prev => ({ ...prev, posture: posture.id }))}
                       className={`aspect-square p-2 sm:p-3 md:p-4 rounded-lg border-2 flex flex-col items-center justify-center gap-1 sm:gap-2 transition-all ${
                         sessionSettings.posture === posture.id 
-                          ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] border-[#6465e0] text-white' 
-                          : 'bg-white border-gray-300 hover:border-[#6465e0]'
+                          ? 'text-white' 
+                          : 'bg-white border-gray-300'
                       }`}
+                      style={sessionSettings.posture === posture.id ? { backgroundColor: buttonColor, borderColor: buttonColor } : {}}
                     >
                       <span className="text-2xl sm:text-3xl md:text-4xl">{posture.icon}</span>
                       <span className="text-[10px] sm:text-xs md:text-sm font-medium text-center leading-tight">{posture.label}</span>
@@ -165,7 +168,7 @@ export default function SessionSetupPage() {
               {/* Duration and Audio Settings */}
               <div>
                 <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6 shadow-md">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-center text-[#03478f]">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-center" style={{ color: topicColor }}>
                     Select Duration
                   </h2>
                   <div className="flex items-center justify-center gap-3 sm:gap-4">
@@ -196,7 +199,7 @@ export default function SessionSetupPage() {
                 </div>
 
                 <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-md">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-[#03478f]">Audio Settings</h2>
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6" style={{ color: topicColor }}>Audio Settings</h2>
                   <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-sm sm:text-base">Meditation Bells</span>
@@ -252,7 +255,8 @@ export default function SessionSetupPage() {
                   <button
                     onClick={handleStart}
                     disabled={isStarting}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+                    className="flex-1 text-white py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base hover:opacity-90"
+                    style={{ backgroundColor: buttonColor }}
                   >
                     {isStarting ? (
                       <>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface PreferenceData {
   id: number
@@ -15,6 +16,7 @@ interface PreferenceData {
 }
 
 export default function AssessmentStatsPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const [preferences, setPreferences] = useState<PreferenceData[]>([])
   const [loading, setLoading] = useState(true)
@@ -101,22 +103,22 @@ export default function AssessmentStatsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
-        <div className="text-2xl font-bold text-[#03478f]">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
+        <div className="text-2xl font-bold" style={{ color: topicColor }}>Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Navigation */}
       <Navigation currentPage="assessment-stats" />
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-28">
-        <div className="p-4 mx-auto shadow-2xl max-w-7xl bg-[#e5f3ff] rounded-2xl sm:rounded-3xl sm:p-6 md:p-8">
+        <div className="p-4 mx-auto shadow-2xl max-w-7xl rounded-2xl sm:rounded-3xl sm:p-6 md:p-8" style={{ backgroundColor: containerColor }}>
           {/* Header */}
           <div className="mb-6 text-center sm:mb-8">
-            <h1 className="text-2xl font-bold sm:text-3xl md:text-4xl text-[#03478f] mb-2">Assessment Progress</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl md:text-4xl mb-2" style={{ color: topicColor }}>Assessment Progress</h1>
             <p className="text-sm text-gray-700 sm:text-base">Track your preference changes throughout your journey</p>
           </div>
 

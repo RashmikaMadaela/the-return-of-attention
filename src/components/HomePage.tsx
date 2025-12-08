@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Navigation from './Navigation'
 import { useProgressOverview } from '@/hooks/useProgressOverview'
+import { useThemeColors } from '@/hooks/useThemeColors'
 import { 
   HomePageSkeleton, 
   WelcomeCardSkeleton, 
@@ -25,6 +26,7 @@ import {
 export default function HomePageOptimized() {
   const router = useRouter()
   const { data: overview, error, isLoading, isValidating } = useProgressOverview()
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const [activeCellIndex, setActiveCellIndex] = React.useState(0)
 
   // Handle authentication error
@@ -207,7 +209,7 @@ export default function HomePageOptimized() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fffafa]">
+    <div className="min-h-screen" style={{ backgroundColor: bgGradientBottom }}>
       {/* Background refresh indicator */}
       {isValidating && (
         <div className="fixed z-50 px-4 py-2 text-white bg-blue-500 rounded-lg shadow-lg top-20 right-4 animate-fade-in">
@@ -222,7 +224,8 @@ export default function HomePageOptimized() {
 
       {/* Hero Section */}
       <div 
-        className="pt-20 sm:pt-24 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]"
+        className="pt-20 sm:pt-24"
+        style={{ background: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}
       >
         <div className="px-4 py-8 mx-auto max-w-7xl sm:py-12 md:py-16">
           <div className="flex flex-col items-center justify-center gap-4 md:flex-row sm:gap-6 md:gap-8">
@@ -241,20 +244,20 @@ export default function HomePageOptimized() {
             </div>
             
             <div className="text-center md:text-left">
-              <h1 className="mb-1 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-2 text-[#03478f]">The Return</h1>
-              <h1 className="mb-2 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-3 md:mb-4 text-[#03478f]">Of Attention</h1>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-black">Practices for the Happiness that Stays</p>
+              <h1 className="mb-1 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-2" style={{ color: topicColor }}>The Return</h1>
+              <h1 className="mb-2 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-3 md:mb-4" style={{ color: topicColor }}>Of Attention</h1>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl" style={{ color: textColor1 }}>Practices for the Happiness that Stays</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="px-4 py-8 mx-auto max-w-7xl bg-[#fffafa]">
+      <div className="px-4 py-8 mx-auto max-w-7xl" style={{ backgroundColor: bgGradientBottom }}>
         {/* Welcome Card */}
-        <div className="flex flex-col p-4 mb-6 space-y-4 bg-[#e5f3ff] rounded-3xl sm:p-6 lg:p-8 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 shadow-lg">
+        <div className="flex flex-col p-4 mb-6 space-y-4 rounded-3xl sm:p-6 lg:p-8 sm:mb-8 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 shadow-lg" style={{ backgroundColor: containerColor }}>
           <div className="text-center sm:text-left">
-            <h2 className="mb-1 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-2 text-[#03478f]">Welcome Back</h2>
-            <h3 className="mb-2 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-4 text-[#03478f]">{userName}</h3>
+            <h2 className="mb-1 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-2" style={{ color: topicColor }}>Welcome Back</h2>
+            <h3 className="mb-2 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-4" style={{ color: topicColor }}>{userName}</h3>
             <p className="text-sm font-semibold sm:text-base lg:text-lg">
               {assessmentsCompleted && hasHappinessScore 
                 ? "Your Journey to Happiness that Stays" 
@@ -267,11 +270,11 @@ export default function HomePageOptimized() {
               <div className="hidden w-1 h-full mx-4 bg-blue-500 sm:block lg:mx-8"></div>
               
               <div className="space-y-3 sm:space-y-4">
-                <div className="bg-[#6465e0] text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]">
+                <div className="px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]" style={{ backgroundColor: buttonColor, color: textColor2 }}>
                   <span className="text-sm font-semibold sm:text-base lg:text-lg">Current Stage</span>
                   <span className="text-2xl font-bold sm:text-3xl lg:text-4xl">{String(currentStage).padStart(2, '0')}</span>
                 </div>
-                <div className="bg-[#6465e0] text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]">
+                <div className="px-6 sm:px-8 lg:px-12 py-3 sm:py-4 rounded-xl flex items-center justify-between min-w-[250px] sm:min-w-[280px] lg:min-w-[300px]" style={{ backgroundColor: buttonColor, color: textColor2 }}>
                   <span className="text-sm font-semibold sm:text-base lg:text-lg">Happiness Points</span>
                   <span className="text-2xl font-bold sm:text-3xl lg:text-4xl">{happinessPoints}</span>
                 </div>
@@ -327,9 +330,13 @@ export default function HomePageOptimized() {
                   onClick={() => router.push('/questionnaire')}
                   className={`px-8 py-4 rounded-[15px] font-bold font-lexend transition-colors text-lg shadow-lg flex-1 sm:flex-none ${
                     questionnaireCompleted 
-                      ? 'bg-green-500 text-white cursor-default' 
-                      : 'bg-white text-blue-600 hover:bg-blue-50'
+                      ? 'cursor-default' 
+                      : 'hover:opacity-90'
                   }`}
+                  style={{
+                    backgroundColor: questionnaireCompleted ? '#10b981' : textColor2,
+                    color: questionnaireCompleted ? textColor2 : buttonColor
+                  }}
                   disabled={questionnaireCompleted}
                 >
                   {questionnaireCompleted ? '✓ Questionnaire Complete' : '📋 Start Questionnaire'}
@@ -338,9 +345,13 @@ export default function HomePageOptimized() {
                   onClick={() => router.push('/self-assessment')}
                   className={`px-8 py-4 rounded-[15px] font-bold font-lexend transition-colors text-lg shadow-lg flex-1 sm:flex-none ${
                     selfAssessmentCompleted 
-                      ? 'bg-green-500 text-white cursor-default' 
-                      : 'bg-purple-700 text-white hover:bg-purple-800'
+                      ? 'cursor-default' 
+                      : 'hover:opacity-90'
                   }`}
+                  style={{
+                    backgroundColor: selfAssessmentCompleted ? '#10b981' : buttonColor,
+                    color: textColor2
+                  }}
                   disabled={selfAssessmentCompleted}
                 >
                   {selfAssessmentCompleted ? '✓ Self-Assessment Complete' : '✍️ Self Assessment'}
@@ -352,18 +363,19 @@ export default function HomePageOptimized() {
 
         {/* Practice Stages */}
         <div className="mb-4 sm:mb-8">
-          <h2 className="mb-4 text-2xl font-bold text-center text-black sm:text-3xl font-lexend sm:mb-8 sm:text-left">
+          <h2 className="mb-4 text-2xl font-bold text-center sm:text-3xl font-lexend sm:mb-8 sm:text-left" style={{ color: textColor1 }}>
             Practice Stages
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 lg:gap-8">
             {stages.map((stage) => (
               <div
                 key={stage.id}
-                className={`bg-[#e5f3ff] rounded-[25px] shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)] overflow-hidden transition-all duration-300 ${
+                className={`rounded-[25px] shadow-2xl hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)] overflow-hidden transition-all duration-300 ${
                   !stage.unlocked 
                     ? 'opacity-50 cursor-not-allowed filter grayscale' 
                     : 'cursor-pointer hover:scale-105 active:scale-95'
                 }`}
+                style={{ backgroundColor: containerColor }}
                 onClick={() => stage.unlocked && handleStageClick(stage)}
               >
                 <div className="relative h-48 sm:h-56 lg:h-64">
@@ -391,13 +403,19 @@ export default function HomePageOptimized() {
                   <button
                     className={`w-full py-3 sm:py-4 rounded-[15px] font-bold font-lexend transition-all text-sm sm:text-base min-h-[44px] ${
                       !stage.unlocked
-                        ? 'bg-orange-400 text-white cursor-not-allowed'
+                        ? 'cursor-not-allowed'
                         : stage.completed
-                        ? 'bg-gradient-to-r from-green-600 to-green-500 text-white hover:from-green-700 hover:to-green-600 active:from-green-800 active:to-green-700'
-                        : stage.id === currentStage
-                        ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0] active:from-[#4a4bc2] active:to-[#5658d1]'
-                        : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0] active:from-[#4a4bc2] active:to-[#5658d1]'
+                        ? 'hover:opacity-90'
+                        : 'hover:opacity-90'
                     }`}
+                    style={{
+                      background: !stage.unlocked
+                        ? '#fb923c'
+                        : stage.completed
+                        ? 'linear-gradient(to right, #059669, #10b981)'
+                        : `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`,
+                      color: textColor2
+                    }}
                     disabled={!stage.unlocked}
                   >
                     {stage.buttonText}

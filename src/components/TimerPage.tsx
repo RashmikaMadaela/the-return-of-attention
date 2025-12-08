@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
 import SessionTimeControls from './SessionTimeControls'
 import ConfirmDialog from './ui/ConfirmDialog'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface TimerState {
   minutes: number
@@ -27,6 +28,7 @@ interface SessionData {
 }
 
 export default function TimerPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stage')
@@ -321,7 +323,7 @@ export default function TimerPage() {
     ((sessionSettings.duration * 60 - timer.totalSeconds) / (sessionSettings.duration * 60)) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b flex flex-col" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showSkipConfirm}
@@ -339,14 +341,14 @@ export default function TimerPage() {
       
       <div className="flex-1 flex items-center justify-center p-8 pt-24">
         <div className="max-w-4xl mx-auto w-full">
-          <h1 className="text-4xl font-bold text-[#03478f] text-center mb-8">
+          <h1 className="text-4xl font-bold text-center mb-8" style={{ color: topicColor }}>
             {stage?.name}: Physical Stillness Training
           </h1>
           
-          <div className="bg-[#e5f3ff] rounded-2xl p-8 shadow-2xl">
+          <div className="rounded-2xl p-8 shadow-2xl" style={{ backgroundColor: containerColor }}>
             {/* Timer Display */}
             <div className="text-center mb-8">
-              <div className="text-8xl font-mono font-bold text-[#03478f] mb-4">
+              <div className="text-8xl font-mono font-bold mb-4" style={{ color: topicColor }}>
                 {formatTime(timer.totalSeconds)}
               </div>
               
@@ -358,7 +360,7 @@ export default function TimerPage() {
                 />
               </div>
               
-              <p className="text-[#03478f] text-lg mb-2">
+              <p className="text-lg mb-2" style={{ color: topicColor }}>
                 Posture: {sessionSettings?.posture?.replace('-', ' ') || 'Not set'}
               </p>
               <p className="text-black">

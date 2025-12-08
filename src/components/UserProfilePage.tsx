@@ -15,11 +15,14 @@ import { User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import Navigation from './Navigation'
+import AppearanceSettings from './AppearanceSettings'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import { ProfilePageSkeleton } from './LoadingSkeletons'
 import { useToast } from '@/hooks/useToast'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function UserProfilePageOptimized() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const { data: profileData, error, isLoading, isValidating, mutate } = useUserProfile()
   const { showSuccess, showError, showInfo, ToastContainer } = useToast()
@@ -66,7 +69,7 @@ export default function UserProfilePageOptimized() {
   // Handle errors
   if (error && error.message !== 'UNAUTHORIZED') {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
         <div className="max-w-md p-8 text-center bg-white shadow-2xl rounded-3xl">
           <div className="mb-4 text-6xl">⚠️</div>
           <h2 className="mb-2 text-2xl font-bold text-gray-800">Failed to Load Profile</h2>
@@ -75,7 +78,8 @@ export default function UserProfilePageOptimized() {
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="px-8 py-3 font-bold text-white transition-colors bg-blue-600 hover:bg-blue-700 rounded-xl"
+            className="px-8 py-3 font-bold text-white transition-colors rounded-xl hover:opacity-90"
+            style={{ backgroundColor: buttonColor }}
           >
             Retry
           </button>
@@ -260,7 +264,7 @@ export default function UserProfilePageOptimized() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       <ToastContainer />
       {/* Background refresh indicator */}
       {isValidating && !isSaving && (
@@ -276,7 +280,7 @@ export default function UserProfilePageOptimized() {
       <Navigation currentPage="profile" />
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-28">
-        <div className="p-4 mx-auto shadow-2xl sm:p-6 md:p-8 max-w-7xl bg-[#e5f3ff] rounded-2xl sm:rounded-3xl">
+        <div className="p-4 mx-auto shadow-2xl sm:p-6 md:p-8 max-w-7xl rounded-2xl sm:rounded-3xl" style={{ backgroundColor: containerColor }}>
           {/* Error Message */}
           {saveError && (
             <div className="px-3 py-2 mb-4 text-sm text-center text-red-700 bg-red-100 border border-red-400 rounded-lg sm:px-4 sm:py-3 sm:mb-6 sm:text-base">
@@ -294,6 +298,7 @@ export default function UserProfilePageOptimized() {
                 ADMIN
               </button>
             )}
+            <AppearanceSettings />
             <button 
               onClick={handleBack}
               className="px-3 py-2 text-xs font-bold text-blue-600 transition-colors bg-white rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-gray-100 sm:rounded-xl sm:text-sm md:text-base"
@@ -302,7 +307,8 @@ export default function UserProfilePageOptimized() {
             </button>
             <button 
               onClick={handlePrivacy}
-              className="px-3 py-2 text-xs font-bold text-white transition-colors bg-blue-600 rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-blue-700 sm:rounded-xl sm:text-sm md:text-base"
+              className="px-3 py-2 text-xs font-bold text-white transition-colors rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:opacity-90 sm:rounded-xl sm:text-sm md:text-base"
+              style={{ backgroundColor: buttonColor }}
             >
               Privacy
             </button>
@@ -465,7 +471,8 @@ export default function UserProfilePageOptimized() {
                     <button 
                       onClick={handleLogout}
                       disabled={isLoggingOut}
-                      className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white transition-colors bg-blue-600 rounded-lg sm:px-6 sm:py-2 md:px-8 md:py-3 hover:bg-blue-700 sm:rounded-xl sm:text-sm md:text-base disabled:bg-blue-400 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white transition-colors rounded-lg sm:px-6 sm:py-2 md:px-8 md:py-3 hover:opacity-90 sm:rounded-xl sm:text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ backgroundColor: buttonColor }}
                     >
                       {isLoggingOut ? (
                         <>
@@ -498,7 +505,8 @@ export default function UserProfilePageOptimized() {
                         <button 
                           onClick={handleSave}
                           disabled={isSaving}
-                          className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white transition-colors bg-green-600 rounded-lg sm:px-5 sm:py-2 md:px-6 hover:bg-green-700 disabled:bg-gray-400 sm:rounded-xl sm:text-sm md:text-base"
+                          className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white transition-colors rounded-lg sm:px-5 sm:py-2 md:px-6 hover:opacity-90 disabled:opacity-50 sm:rounded-xl sm:text-sm md:text-base"
+                          style={{ backgroundColor: buttonColor }}
                         >
                           {isSaving ? (
                             <>

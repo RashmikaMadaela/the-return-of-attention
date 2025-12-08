@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@/hooks/useToast'
 import { Shield, Lock, Trash2, AlertTriangle } from 'lucide-react'
 import { signOut } from 'next-auth/react'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function PrivacyPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const { showSuccess, showError, showInfo, ToastContainer } = useToast()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -121,14 +123,14 @@ export default function PrivacyPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-5 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="flex items-center justify-center min-h-screen p-5 bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       <ToastContainer />
       
-      <div className="w-full max-w-2xl p-8 bg-[#e5f3ff] shadow-2xl rounded-3xl">
+      <div className="w-full max-w-2xl p-8 shadow-2xl rounded-3xl" style={{ backgroundColor: containerColor }}>
         {/* Header */}
         <div className="flex items-center justify-center mb-8">
           <Shield className="w-10 h-10 mr-3 text-[#6465e0]" />
-          <h1 className="text-3xl font-bold text-[#03478f]">Privacy & Security</h1>
+          <h1 className="text-3xl font-bold" style={{ color: topicColor }}>Privacy & Security</h1>
         </div>
 
         {/* Change Password Section */}

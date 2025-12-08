@@ -4,12 +4,14 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 import { useToast } from '@/hooks/useToast'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface QuestionnaireAnswers {
   [key: string]: any
 }
 
 export default function QuestionnairePage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const { showWarning, showError, showSuccess, ToastContainer } = useToast()
   const [currentPage, setCurrentPage] = useState(1)
@@ -232,7 +234,7 @@ export default function QuestionnairePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="questionnaire" />
@@ -240,10 +242,10 @@ export default function QuestionnairePage() {
       <div className="p-3 pt-20 sm:p-4 sm:pt-24">
         <div className="max-w-4xl mx-auto">
           {/* Progress Bar */}
-          <div className="bg-[#e5f3ff] rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6 shadow-2xl">
+          <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6 shadow-2xl" style={{ backgroundColor: containerColor }}>
             <div className="flex justify-between items-center mb-2">
               <span className="text-gray-700 font-semibold text-sm sm:text-base">Question {getQuestionRange()}</span>
-              <span className="text-[#03478f] font-bold text-sm sm:text-base">{getProgress()}%</span>
+              <span className="font-bold text-sm sm:text-base" style={{ color: topicColor }}>{getProgress()}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 mb-2">
               <div 
@@ -251,7 +253,7 @@ export default function QuestionnairePage() {
                 style={{ width: `${getProgress()}%` }}
               ></div>
             </div>
-            <div className="text-xs sm:text-sm text-[#03478f] font-semibold">{getPhaseTitle()}</div>
+            <div className="text-xs sm:text-sm font-semibold" style={{ color: topicColor }}>{getPhaseTitle()}</div>
           </div>
 
           {/* Page 1 Content */}

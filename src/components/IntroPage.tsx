@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 export default function IntroPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const [isChecking, setIsChecking] = useState(true)
 
@@ -54,7 +56,7 @@ export default function IntroPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]" suppressHydrationWarning={true}>
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }} suppressHydrationWarning={true}>
       {/* Navigation Bar */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/20 bg-white/80 backdrop-blur-sm shadow-md">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8" suppressHydrationWarning={true}>
@@ -79,19 +81,23 @@ export default function IntroPage() {
               </div>
               
               {/* Text Logo */}
-              <div className="text-sm font-bold sm:text-lg md:text-xl text-[#03478f]" suppressHydrationWarning={true}>
+              <div className="text-sm font-bold sm:text-lg md:text-xl" style={{ color: topicColor }} suppressHydrationWarning={true}>
                 The Return of Attention
               </div>
             </div>
             <div className="flex gap-2 sm:gap-3" suppressHydrationWarning={true}>
               <button 
                 onClick={handleLogin}
-                className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-[#6465e0] border-2 border-[#6465e0] hover:bg-[#6465e0] hover:text-white transition-all rounded-lg">
+                className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium border-2 transition-all rounded-lg hover:opacity-90"
+                style={{ color: buttonColor, borderColor: buttonColor }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = buttonColor; e.currentTarget.style.color = textColor2; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = buttonColor; }}>
                 Login
               </button>
               <button 
                 onClick={handleRegister}
-                className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] transition-all rounded-lg shadow-md">
+                className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium transition-all rounded-lg shadow-md hover:opacity-90"
+                style={{ background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`, color: textColor2 }}>
                 Register
               </button>
             </div>
@@ -100,11 +106,11 @@ export default function IntroPage() {
       </nav>
 
       {/* Hero Section - Full Viewport Height */}
-      <section className="relative flex items-center justify-center min-h-screen px-4 py-20 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] text-center" style={{paddingTop: '80px'}}>
+      <section className="relative flex items-center justify-center min-h-screen px-4 py-20 bg-gradient-to-b text-center" style={{paddingTop: '80px', backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})`}}>
         <div className="relative w-full max-w-4xl mx-auto text-center">
           {/* Animated Grid Icon */}
           <div className="flex justify-center mb-6 sm:mb-8 md:mb-10">
-            <div className="relative w-48 h-48 bg-[#03478f] rounded-lg sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72">
+            <div className="relative w-48 h-48 rounded-lg sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72" style={{ backgroundColor: topicColor }}>
               {/* Using CSS Grid for perfect alignment */}
               <div className="absolute grid grid-cols-3 gap-2 inset-4 sm:inset-5 md:inset-6 sm:gap-3">
                 {/* Row 1 */}
@@ -125,10 +131,10 @@ export default function IntroPage() {
             </div>
           </div>
 
-          <h1 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl text-[#03478f] sm:mb-6">
+          <h1 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl sm:mb-6" style={{ color: topicColor }}>
             "You are not your thoughts"
           </h1>
-          <p className="mb-2 text-lg font-semibold sm:text-xl md:text-2xl lg:text-3xl text-[#03478f] sm:mb-3">
+          <p className="mb-2 text-lg font-semibold sm:text-xl md:text-2xl lg:text-3xl sm:mb-3" style={{ color: topicColor }}>
             Practices for the Happiness that Stays
           </p>
           <p className="mb-8 text-base sm:text-lg md:text-xl text-gray-700 sm:mb-10 md:mb-12">
@@ -136,18 +142,19 @@ export default function IntroPage() {
           </p>
           <button 
             onClick={handlePracticeToday}
-            className="px-8 py-3 text-base font-semibold text-white transition-all bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-full shadow-lg sm:px-10 sm:py-4 sm:text-lg md:text-xl hover:shadow-xl transform hover:scale-105">
+            className="px-8 py-3 text-base font-semibold transition-all rounded-full shadow-lg sm:px-10 sm:py-4 sm:text-lg md:text-xl hover:shadow-xl transform hover:scale-105 hover:opacity-90"
+            style={{ background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`, color: textColor2 }}>
             Practice Today!
           </button>
         </div>
       </section>
 
       {/* Sound Familiar & What If Section */}
-      <section className="px-4 py-12 sm:py-16 bg-[#fffafa]">
-        <div className="grid max-w-6xl gap-6 mx-auto sm:gap-8 md:grid-cols-2 bg-[#fffafa]">
+      <section className="px-4 py-12 sm:py-16" style={{ backgroundColor: bgGradientBottom }}>
+        <div className="grid max-w-6xl gap-6 mx-auto sm:gap-8 md:grid-cols-2" style={{ backgroundColor: bgGradientBottom }}>
           {/* Sound Familiar */}
-          <div className="order-2 md:order-1 bg-[#e5f3ff] rounded-2xl p-6 sm:p-8 shadow-2xl">
-            <h2 className="mb-6 text-xl font-bold text-center sm:text-2xl md:text-3xl text-[#03478f]">Sound Familiar?</h2>
+          <div className="order-2 md:order-1 rounded-2xl p-6 sm:p-8 shadow-2xl" style={{ backgroundColor: containerColor }}>
+            <h2 className="mb-6 text-xl font-bold text-center sm:text-2xl md:text-3xl" style={{ color: topicColor }}>Sound Familiar?</h2>
             <div className="space-y-3 sm:space-y-4">
               {[
                 { icon: '🌀', text: 'Mind won\'t quiet down' },
@@ -156,7 +163,7 @@ export default function IntroPage() {
                 { icon: '😔', text: 'Nothing feels quite right' },
                 { icon: '🔄', text: 'Always seeking, never satisfied' }
               ].map((item, index) => (
-                <div key={index} className="p-3 sm:p-4 text-sm sm:text-base font-medium bg-white rounded-lg shadow-sm border-l-4 border-[#6465e0] flex items-center gap-2">
+                <div key={index} className="p-3 sm:p-4 text-sm sm:text-base font-medium bg-white rounded-lg shadow-sm border-l-4 flex items-center gap-2" style={{ borderColor: buttonColor }}>
                   <span className="text-lg">{item.icon}</span>
                   <span>{item.text}</span>
                 </div>
@@ -165,11 +172,11 @@ export default function IntroPage() {
           </div>
 
           {/* What If There's a Way Out */}
-          <div className="order-1 md:order-2 bg-[#e5f3ff] rounded-2xl p-6 sm:p-8 shadow-2xl">
-            <h2 className="mb-6 text-xl font-bold text-center sm:text-2xl md:text-3xl text-[#03478f]">What If There's a Way Out?</h2>
+          <div className="order-1 md:order-2 rounded-2xl p-6 sm:p-8 shadow-2xl" style={{ backgroundColor: containerColor }}>
+            <h2 className="mb-6 text-xl font-bold text-center sm:text-2xl md:text-3xl" style={{ color: topicColor }}>What If There's a Way Out?</h2>
             <div className="p-6 text-center bg-white rounded-xl sm:p-8 shadow-md">
               <div className="flex justify-center mb-6">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-full bg-gradient-to-br from-[#6465e0] to-[#7c7de8] p-1">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 overflow-hidden rounded-full p-1" style={{ background: `linear-gradient(to bottom right, ${buttonColor}, ${buttonColor}dd)` }}>
                   <div className="w-full h-full rounded-full overflow-hidden">
                     <img 
                       src="/png_images/Gemini_Generated_Image_tccj9vtccj9vtccj.png" 
@@ -179,13 +186,13 @@ export default function IntroPage() {
                   </div>
                 </div>
               </div>
-              <h3 className="mb-4 text-lg font-bold sm:text-xl text-[#03478f]">The Universal Solution</h3>
+              <h3 className="mb-4 text-lg font-bold sm:text-xl" style={{ color: topicColor }}>The Universal Solution</h3>
               <p className="mb-6 text-sm sm:text-base text-gray-700">
                 Unlike your body, your mind is trainable. Thousands have found lasting peace through this simple practice.
               </p>
-              <div className="p-4 rounded-lg bg-gradient-to-r from-[#6465e0] to-[#7c7de8]">
-                <h4 className="mb-2 text-2xl font-bold sm:text-3xl text-white">6 Stages</h4>
-                <p className="text-sm sm:text-base text-white">From chaos to clarity</p>
+              <div className="p-4 rounded-lg" style={{ background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)` }}>
+                <h4 className="mb-2 text-2xl font-bold sm:text-3xl" style={{ color: textColor2 }}>6 Stages</h4>
+                <p className="text-sm sm:text-base" style={{ color: textColor2 }}>From chaos to clarity</p>
               </div>
             </div>
           </div>
@@ -193,9 +200,9 @@ export default function IntroPage() {
       </section>
 
       {/* Your Journey to Freedom */}
-      <section className="px-4 py-12 sm:py-16 bg-gradient-to-b from-[#fffafa] to-[#b9d4ee]">
+      <section className="px-4 py-12 sm:py-16 bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientBottom}, ${bgGradientTop})` }}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="mb-8 text-2xl font-bold text-center sm:text-3xl md:text-4xl text-[#03478f] sm:mb-12">
+          <h2 className="mb-8 text-2xl font-bold text-center sm:text-3xl md:text-4xl sm:mb-12" style={{ color: topicColor }}>
             Your Journey to Freedom
           </h2>
           
@@ -220,14 +227,14 @@ export default function IntroPage() {
                     </div>
                   </div>
                 </div>
-                <h3 className="mb-2 text-base font-bold sm:text-lg text-[#03478f]">{stage.title}</h3>
+                <h3 className="mb-2 text-base font-bold sm:text-lg" style={{ color: topicColor }}>{stage.title}</h3>
                 <p className="text-xs text-gray-600 sm:text-sm">{stage.subtitle}</p>
               </div>
             ))}
           </div>
 
           <div className="max-w-3xl p-6 mx-auto bg-white rounded-xl shadow-2xl sm:p-8">
-            <h3 className="mb-4 text-xl font-bold text-center sm:text-2xl text-[#03478f]">The Simple Truth</h3>
+            <h3 className="mb-4 text-xl font-bold text-center sm:text-2xl" style={{ color: topicColor }}>The Simple Truth</h3>
             <p className="mb-6 text-sm text-center text-gray-700 sm:text-base">
               Most approaches to happiness involve adding something new. This approach is different. It involves removing the obstacles to the peace that is already your natural state.
             </p>
@@ -237,8 +244,8 @@ export default function IntroPage() {
                 'Gently return to the present',
                 'Repeat until it becomes natural'
               ].map((step, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 sm:p-4 bg-[#e5f3ff] rounded-lg">
-                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-[#6465e0] to-[#7c7de8] flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                <div key={index} className="flex items-center gap-3 p-3 sm:p-4 rounded-lg" style={{ backgroundColor: containerColor }}>
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-base" style={{ background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`, color: textColor2 }}>
                     {index + 1}
                   </div>
                   <span className="text-sm font-medium text-gray-800 sm:text-base">{step}</span>
@@ -250,10 +257,10 @@ export default function IntroPage() {
       </section>
 
       {/* Ready to Begin */}
-      <section className="px-4 py-12 sm:py-16 bg-[#b9d4ee]">
+      <section className="px-4 py-12 sm:py-16" style={{ backgroundColor: bgGradientTop }}>
         <div className="flex flex-col items-center max-w-4xl gap-6 mx-auto md:flex-row sm:gap-8">
           <div className="flex-shrink-0 order-2 md:order-1">
-            <div className="w-48 h-48 overflow-hidden rounded-full sm:w-64 sm:h-64 ring-4 ring-[#6465e0] ring-offset-4">
+            <div className="w-48 h-48 overflow-hidden rounded-full sm:w-64 sm:h-64 ring-4 ring-offset-4" style={{ ringColor: buttonColor, '--tw-ring-color': buttonColor } as React.CSSProperties}>
               <img 
                 src="/png_images/Gemini_Generated_Image_mwmwf9mwmwf9mwmw.png" 
                 alt="Ready to Begin" 
@@ -262,19 +269,23 @@ export default function IntroPage() {
             </div>
           </div>
           <div className="order-1 text-center md:text-left md:order-2">
-            <h2 className="mb-4 text-2xl font-bold sm:text-3xl md:text-4xl text-[#03478f]">Ready to Begin?</h2>
+            <h2 className="mb-4 text-2xl font-bold sm:text-3xl md:text-4xl" style={{ color: topicColor }}>Ready to Begin?</h2>
             <p className="mb-6 text-sm text-gray-700 sm:text-base">
               Join thousands who have discovered that lasting happiness isn't something to achieve. It's something to recognize.
             </p>
             <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4 md:justify-start">
               <button 
                 onClick={handleStartJourney}
-                className="px-6 py-3 text-sm font-bold text-white transition-all shadow-lg sm:px-8 sm:text-base bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-full">
+                className="px-6 py-3 text-sm font-bold transition-all shadow-lg sm:px-8 sm:text-base rounded-full hover:opacity-90"
+                style={{ background: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)`, color: textColor2 }}>
                 Start Your Journey!
               </button>
               <button 
                 onClick={handleLearnMore}
-                className="px-6 py-3 text-sm font-bold transition-all shadow-lg sm:px-8 sm:text-base bg-white text-[#6465e0] border-2 border-[#6465e0] hover:bg-[#6465e0] hover:text-white rounded-full">
+                className="px-6 py-3 text-sm font-bold transition-all shadow-lg sm:px-8 sm:text-base bg-white border-2 rounded-full"
+                style={{ color: buttonColor, borderColor: buttonColor }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = buttonColor; e.currentTarget.style.color = textColor2; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = buttonColor; }}>
                 Learn More
               </button>
             </div>
@@ -286,8 +297,8 @@ export default function IntroPage() {
       </section>
 
       {/* Footer */}
-      <footer className="px-4 py-8 sm:py-12 bg-gradient-to-r from-[#6465e0] to-[#7c7de8]">
-        <div className="max-w-4xl mx-auto text-center text-white">
+      <footer className="px-4 py-8 sm:py-12 bg-gradient-to-r" style={{ backgroundImage: `linear-gradient(to right, ${buttonColor}, ${buttonColor}dd)` }}>
+        <div className="max-w-4xl mx-auto text-center" style={{ color: textColor2 }}>
           <p className="mb-4 text-base italic sm:text-lg">
             "This book offers a practice, not a philosophy. It's about returning—bringing attention back to what is already here."
           </p>

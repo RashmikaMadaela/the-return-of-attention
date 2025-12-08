@@ -6,6 +6,7 @@ import Navigation from './Navigation'
 import SessionTimeControls from './SessionTimeControls'
 import { type PAHMClick, type PAHMPosition } from '@/lib/api/sessions'
 import ConfirmDialog from './ui/ConfirmDialog'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface TimerState {
   minutes: number
@@ -42,6 +43,7 @@ interface SessionData {
 }
 
 export default function PAHMTimerPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stage') || '2'
@@ -423,7 +425,7 @@ export default function PAHMTimerPage() {
     ((sessionSettings.duration * 60 - timer.totalSeconds) / (sessionSettings.duration * 60)) * 100 : 0
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showSkipConfirm}
@@ -471,7 +473,7 @@ export default function PAHMTimerPage() {
         <div className="flex items-center justify-between mx-auto max-w-7xl">
           {/* Logo */}
           <div className="flex items-center space-x-4">
-            <div className="text-xs font-bold text-[#03478f] sm:text-sm">
+            <div className="text-xs font-bold sm:text-sm" style={{ color: topicColor }}>
               <div>RETURN</div>
               <div>OF</div>
               <div>ATTENTION</div>
@@ -536,7 +538,8 @@ export default function PAHMTimerPage() {
                 sessionStorage.setItem('previousPage', window.location.pathname)
                 router.push('/user-profile')
               }}
-              className="p-2 transition bg-[#6465e0] hover:bg-[#5658d1] rounded-lg sm:p-3"
+              className="p-2 transition rounded-lg sm:p-3 hover:opacity-90"
+              style={{ backgroundColor: buttonColor }}
               title="Profile"
             >
               <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -623,9 +626,9 @@ export default function PAHMTimerPage() {
       </header>
       
       <div className="flex items-center justify-center flex-1 p-4 sm:p-6 lg:p-8">
-        <div className="w-full max-w-3xl p-4 bg-[#e5f3ff] rounded-2xl sm:p-6 lg:p-12 shadow-2xl">
+        <div className="w-full max-w-3xl p-4 rounded-2xl sm:p-6 lg:p-12 shadow-2xl" style={{ backgroundColor: containerColor }}>
           <div className="text-center">
-            <h1 className="px-2 mb-4 text-2xl font-bold text-[#03478f] sm:text-3xl lg:text-4xl sm:mb-6">
+            <h1 className="px-2 mb-4 text-2xl font-bold sm:text-3xl lg:text-4xl sm:mb-6" style={{ color: topicColor }}>
               Stage {stageId}: {stage?.name}
             </h1>
             

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Star } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface Session {
   id: string
@@ -15,6 +16,7 @@ interface Session {
 }
 
 export default function MindRecoveryPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const [recommendedSession, setRecommendedSession] = useState('')
 
@@ -87,7 +89,7 @@ export default function MindRecoveryPage() {
     if (sessionId === recommendedSession) {
       return 'bg-gradient-to-r from-yellow-400 to-blue-600'
     }
-    return 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0]'
+    return 'hover:opacity-90'
   }
 
   const getCardBackground = (imageName: string) => {
@@ -121,7 +123,7 @@ export default function MindRecoveryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Navigation */}
       <Navigation currentPage="mind-recovery" />
       
@@ -129,7 +131,7 @@ export default function MindRecoveryPage() {
         {/* Header */}
         <div className="max-w-6xl mx-auto mb-12">
           <div className="text-center">
-            <h1 className="text-5xl font-bold mb-4 text-[#03478f]">Take a Moment to Reset !</h1>
+            <h1 className="text-5xl font-bold mb-4" style={{ color: topicColor }}>Take a Moment to Reset !</h1>
             <p className="text-xl text-black">Choose a PAHM practice to reset and recover your mind</p>
           </div>
         </div>
@@ -139,7 +141,8 @@ export default function MindRecoveryPage() {
           {sessions.map((session) => (
             <div
               key={session.id}
-              className="bg-[#e5f3ff] rounded-3xl overflow-hidden shadow-2xl transform transition-all hover:scale-105"
+              className="rounded-3xl overflow-hidden shadow-2xl transform transition-all hover:scale-105"
+              style={{ backgroundColor: containerColor }}
             >
               {/* Card Image Header */}
               <div 

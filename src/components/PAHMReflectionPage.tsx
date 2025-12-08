@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
 import { completeSession, type CompleteSessionRequest, type SessionChallenges, type PAHMClick, type PAHMData as APIPAHMData } from '@/lib/api/sessions'
+import { useThemeColors } from '@/hooks/useThemeColors'
 
 interface PAHMData {
   nostalgia: number
@@ -38,6 +39,7 @@ interface SessionData {
 }
 
 export default function PAHMReflectionPage() {
+  const { bgGradientTop, bgGradientBottom, topicColor, buttonColor, containerColor, textColor1, textColor2 } = useThemeColors()
   const router = useRouter()
   const searchParams = useSearchParams()
   const stageId = searchParams.get('stage') || '2'
@@ -360,15 +362,15 @@ export default function PAHMReflectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+    <div className="min-h-screen bg-gradient-to-b" style={{ backgroundImage: `linear-gradient(to bottom, ${bgGradientTop}, ${bgGradientBottom})` }}>
       {/* Navigation */}
       <Navigation currentPage="pahm-reflection" />
       
       <div className="p-4 sm:p-6 md:p-8 pt-20 sm:pt-24">
         <div className="max-w-5xl mx-auto">
-          <h1 className="mb-4 sm:mb-6 md:mb-8 text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#03478f]">Practice Reflection</h1>
+          <h1 className="mb-4 sm:mb-6 md:mb-8 text-2xl sm:text-3xl md:text-4xl font-bold text-center" style={{ color: topicColor }}>Practice Reflection</h1>
           
-          <div className="p-4 sm:p-6 md:p-8 bg-[#e5f3ff] rounded-xl sm:rounded-2xl shadow-2xl">
+          <div className="p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl shadow-2xl" style={{ backgroundColor: containerColor }}>
             {/* Session Counting Status */}
             {!shouldCountAsSession && (
               <div className="p-3 sm:p-4 mb-4 sm:mb-6 text-black bg-yellow-100 border-l-4 border-yellow-500 rounded">
@@ -387,7 +389,7 @@ export default function PAHMReflectionPage() {
 
             {/* Stage and Session Info */}
             <div className="p-3 sm:p-4 mb-4 sm:mb-6 rounded-lg bg-white shadow-md">
-              <h3 className="mb-2 sm:mb-3 text-base sm:text-lg font-bold text-[#03478f]">Session Summary</h3>
+              <h3 className="mb-2 sm:mb-3 text-base sm:text-lg font-bold" style={{ color: topicColor }}>Session Summary</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-black">
                 <div className="p-2 bg-blue-50 rounded">• <span className="font-semibold">Stage:</span> {stageId} - {stage?.name}</div>
                 <div className="p-2 bg-blue-50 rounded">• <span className="font-semibold">Planned:</span> {sessionDuration} min</div>
@@ -397,7 +399,7 @@ export default function PAHMReflectionPage() {
               </div>
             </div>
 
-            <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-[#03478f]">What did you notice during practice</h2>
+            <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold" style={{ color: topicColor }}>What did you notice during practice</h2>
             <textarea
               value={reflection.notes}
               onChange={(e) => setReflection(prev => ({ ...prev, notes: e.target.value }))}
@@ -407,7 +409,7 @@ export default function PAHMReflectionPage() {
 
             {/* Quality Rating Slider */}
             <div className="mb-6 sm:mb-8">
-              <h2 className="mb-2 text-lg sm:text-xl font-bold text-[#03478f]">Session Quality Rating</h2>
+              <h2 className="mb-2 text-lg sm:text-xl font-bold" style={{ color: topicColor }}>Session Quality Rating</h2>
               <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-600">How would you rate the overall quality of this practice session?</p>
               <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
                 <span className="text-xs sm:text-sm font-medium text-gray-700 w-full sm:w-auto text-center sm:text-left sm:min-w-[80px]">Poor (1)</span>
@@ -428,7 +430,7 @@ export default function PAHMReflectionPage() {
               </div>
             </div>
 
-            <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-[#03478f]">Challenges</h2>
+            <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold" style={{ color: topicColor }}>Challenges</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
               {challenges.map(challenge => (
                 <button
@@ -451,7 +453,7 @@ export default function PAHMReflectionPage() {
               ))}
             </div>
 
-            <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-[#03478f]">PAHM Tracking Results</h2>
+            <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold" style={{ color: topicColor }}>PAHM Tracking Results</h2>
             <div className="mb-6 sm:mb-8 overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
               <table className="w-full border-collapse min-w-[600px] text-xs sm:text-sm">
                 <thead>
@@ -503,7 +505,7 @@ export default function PAHMReflectionPage() {
 
             {/* Individual Matrix Clicks Detail */}
             <div className="mb-6 sm:mb-8">
-              <h3 className="mb-3 sm:mb-4 text-base sm:text-lg font-bold text-[#03478f]">Detailed Matrix Clicks</h3>
+              <h3 className="mb-3 sm:mb-4 text-base sm:text-lg font-bold" style={{ color: topicColor }}>Detailed Matrix Clicks</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
                 {Object.entries(pahmData).map(([key, value]) => (
                   <div key={key} className="p-2 sm:p-3 text-center bg-gray-100 rounded-lg">
