@@ -99,19 +99,14 @@ export default function IntroPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative px-4 pt-20 pb-12 sm:pt-24 sm:pb-16">
-        <div 
-          className="absolute inset-0 w-full h-full bg-center bg-no-repeat bg-cover" 
-          style={{ backgroundImage: "url('/png_images/ChatGPT Image Sep 25, 2025, 11_50_43 AM.png')" }}
-          suppressHydrationWarning={true}
-        />
-        <div className="relative max-w-4xl mx-auto text-center">
+      {/* Hero Section - Full Viewport Height */}
+      <section className="relative flex items-center justify-center min-h-screen px-4 py-20">
+        <div className="relative w-full max-w-4xl mx-auto text-center">
           {/* Animated Grid Icon */}
-          <div className="flex justify-center mb-6 sm:mb-8">
-            <div className="relative w-48 h-48 bg-purple-600 rounded-lg sm:w-64 sm:h-64">
+          <div className="flex justify-center mb-6 sm:mb-8 md:mb-10">
+            <div className="relative w-48 h-48 bg-purple-600 rounded-lg sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72">
               {/* Using CSS Grid for perfect alignment */}
-              <div className="absolute grid grid-cols-3 gap-2 inset-4 sm:inset-6 sm:gap-3">
+              <div className="absolute grid grid-cols-3 gap-2 inset-4 sm:inset-5 md:inset-6 sm:gap-3">
                 {/* Row 1 */}
                 <div className="w-full bg-orange-300 aspect-square rounded-2xl animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}}></div>
                 <div className="w-full rounded-lg aspect-square bg-cyan-300 animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}}></div>
@@ -130,18 +125,18 @@ export default function IntroPage() {
             </div>
           </div>
 
-          <h1 className="mb-4 text-2xl font-bold text-white sm:text-3xl md:text-4xl lg:text-5xl drop-shadow-lg">
+          <h1 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl text-[#03478f] sm:mb-6">
             "You are not your thoughts"
           </h1>
-          <p className="mb-2 text-base font-semibold text-white sm:text-lg md:text-xl drop-shadow-lg">
+          <p className="mb-2 text-lg font-semibold sm:text-xl md:text-2xl lg:text-3xl text-[#03478f] sm:mb-3">
             Practices for the Happiness that Stays
           </p>
-          <p className="mb-6 text-sm sm:text-base text-white/90 sm:mb-8 drop-shadow-lg">
+          <p className="mb-8 text-base sm:text-lg md:text-xl text-gray-700 sm:mb-10 md:mb-12">
             A simple, practical guide to happiness that actually stays
           </p>
           <button 
             onClick={handlePracticeToday}
-            className="px-6 py-3 text-sm font-semibold text-white transition-colors bg-blue-600 rounded-full shadow-lg sm:px-8 sm:text-base md:text-lg hover:bg-blue-700">
+            className="px-8 py-3 text-base font-semibold text-white transition-all bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-full shadow-lg sm:px-10 sm:py-4 sm:text-lg md:text-xl hover:shadow-xl transform hover:scale-105">
             Practice Today!
           </button>
         </div>
