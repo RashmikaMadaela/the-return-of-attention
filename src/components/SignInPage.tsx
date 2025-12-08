@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { LogIn, Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react'
+import { LogIn, Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff } from 'lucide-react'
 
 export default function SignInPage() {
   const router = useRouter()
@@ -12,7 +12,7 @@ export default function SignInPage() {
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({})
-
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleSignIn = async () => {
@@ -177,13 +177,26 @@ export default function SignInPage() {
               <Lock className="inline w-4 h-4 mr-1" />
               Password
             </label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 pr-12 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 sm:pr-12 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute text-gray-500 transition-colors transform -translate-y-1/2 right-3 top-1/2 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
             {fieldErrors.password && (
               <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
                 <span>⚠️</span> {fieldErrors.password}

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { UserPlus, Mail, Lock, User, ArrowRight, Shield, ArrowLeft } from 'lucide-react'
+import { UserPlus, Mail, Lock, User, ArrowRight, Shield, ArrowLeft, Eye, EyeOff } from 'lucide-react'
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -14,6 +14,8 @@ export default function SignUpPage() {
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string }>({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleSignUp = async () => {
@@ -226,13 +228,26 @@ export default function SignUpPage() {
               <Lock className="inline w-4 h-4 mr-1" />
               Password
             </label>
-            <input
-              type="password"
-              placeholder="Create a password (min 8 characters)"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-lg"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Create a password (min 8 characters)"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 pr-12 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 sm:pr-12 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-lg"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute text-gray-500 transition-colors transform -translate-y-1/2 right-3 top-1/2 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
             {fieldErrors.password && (
               <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
                 <span>⚠️</span> {fieldErrors.password}
@@ -246,13 +261,26 @@ export default function SignUpPage() {
               <Shield className="inline w-4 h-4 mr-1" />
               Confirm Password
             </label>
-            <input
-              type="password"
-              placeholder="Re-enter your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-lg"
-            />
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Re-enter your password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full p-3 pr-12 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 sm:pr-12 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-purple-500 focus:bg-white focus:shadow-lg"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute text-gray-500 transition-colors transform -translate-y-1/2 right-3 top-1/2 hover:text-gray-700 focus:outline-none"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
             {fieldErrors.confirmPassword && (
               <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
                 <span>⚠️</span> {fieldErrors.confirmPassword}
