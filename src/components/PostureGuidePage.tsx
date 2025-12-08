@@ -53,7 +53,7 @@ export default function PostureGuidePage() {
         {/* Sidebar */}
         <div className={`${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 w-80 lg:w-64 bg-[#e5f3ff] transition-transform duration-300 ease-in-out overflow-y-auto shadow-2xl`}
+        } lg:translate-x-0 fixed inset-y-0 left-0 z-40 w-80 lg:w-64 bg-[#e5f3ff] transition-transform duration-300 ease-in-out overflow-y-auto shadow-2xl`}
         style={{ top: '64px', height: 'calc(100vh - 64px)' }}>
           <div className="p-4 lg:p-6">
             <div className="space-y-2">
