@@ -137,7 +137,7 @@ export default function SessionSetupPage() {
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#03478f] text-center mb-4 sm:mb-6 md:mb-8">Training Session</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#03478f] text-center mb-4 sm:mb-6 md:mb-8">'</h1>
           
           <div className="bg-[#e5f3ff] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">

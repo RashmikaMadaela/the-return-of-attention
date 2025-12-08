@@ -200,57 +200,57 @@ export default function ReflectionPage() {
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       
-      <div className="p-8 pt-24">
+      <div className="p-4 sm:p-6 md:p-8 pt-20 sm:pt-24">
         <div className="max-w-5xl mx-auto">
-          <h1 className="mb-8 text-4xl font-bold text-center text-[#03478f]">Practice Reflection</h1>
+          <h1 className="mb-4 sm:mb-6 md:mb-8 text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#03478f]">Practice Reflection</h1>
           
           {!reflection.shouldCountAsSession && (
-            <div className="p-4 mb-6 text-yellow-700 bg-yellow-100 border-l-4 border-yellow-500 rounded">
-              <p className="font-semibold">Note: This session will not count towards your progress.</p>
-              <p className="text-sm">You need to complete at least {stage?.minTime || 0} minutes for it to count as a completed session.</p>
+            <div className="p-3 sm:p-4 mb-4 sm:mb-6 text-yellow-700 bg-yellow-100 border-l-4 border-yellow-500 rounded">
+              <p className="text-sm sm:text-base font-semibold">Note: This session will not count towards your progress.</p>
+              <p className="text-xs sm:text-sm mt-1">You need to complete at least {stage?.minTime || 0} minutes for it to count as a completed session.</p>
             </div>
           )}
           
           {reflection.shouldCountAsSession && (
-            <div className="p-4 mb-6 text-green-700 bg-green-100 border-l-4 border-green-500 rounded">
-              <p className="font-semibold">Great job! This session will count towards your progress.</p>
+            <div className="p-3 sm:p-4 mb-4 sm:mb-6 text-green-700 bg-green-100 border-l-4 border-green-500 rounded">
+              <p className="text-sm sm:text-base font-semibold">Great job! This session will count towards your progress.</p>
             </div>
           )}
           
-          <div className="p-8 bg-[#e5f3ff] rounded-2xl shadow-2xl">
-            <h2 className="mb-4 text-xl font-bold text-[#03478f]">What did you notice during practice</h2>
+          <div className="p-4 sm:p-6 md:p-8 bg-[#e5f3ff] rounded-xl sm:rounded-2xl shadow-2xl">
+            <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-[#03478f]">What did you notice during practice</h2>
             <textarea
               value={reflection.notes}
               onChange={(e) => setReflection(prev => ({ ...prev, notes: e.target.value }))}
               placeholder="Enter your reflections and insights here"
-              className="w-full h-32 p-4 mb-8 bg-white border-2 border-gray-200 rounded-lg resize-none focus:outline-none focus:border-[#6465e0]"
+              className="w-full h-32 sm:h-40 p-3 sm:p-4 mb-6 sm:mb-8 text-sm sm:text-base bg-white border-2 border-gray-200 rounded-lg resize-none focus:outline-none focus:border-[#6465e0]"
             />
 
             {/* Quality Rating Slider */}
-            <div className="mb-8">
-              <h2 className="mb-2 text-xl font-bold text-[#03478f]">Session Quality Rating</h2>
-              <p className="mb-4 text-sm text-gray-600">How would you rate the overall quality of this practice session?</p>
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-gray-700 min-w-[80px]">Poor (1)</span>
+            <div className="mb-6 sm:mb-8">
+              <h2 className="mb-2 text-lg sm:text-xl font-bold text-[#03478f]">Session Quality Rating</h2>
+              <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-600">How would you rate the overall quality of this practice session?</p>
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                <span className="text-xs sm:text-sm font-medium text-gray-700 w-full sm:w-auto text-center sm:text-left sm:min-w-[80px]">Poor (1)</span>
                 <input
                   type="range"
                   min="1"
                   max="10"
                   value={reflection.qualityRating}
                   onChange={(e) => setReflection(prev => ({ ...prev, qualityRating: parseInt(e.target.value) }))}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#6465e0]"
+                  className="flex-1 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#6465e0]"
                 />
-                <span className="text-sm font-medium text-gray-700 min-w-[100px]">Excellent (10)</span>
+                <span className="text-xs sm:text-sm font-medium text-gray-700 w-full sm:w-auto text-center sm:text-left sm:min-w-[100px]">Excellent (10)</span>
               </div>
-              <div className="mt-2 text-center">
-                <span className="inline-block px-4 py-2 text-lg font-bold text-white bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-lg">
+              <div className="mt-3 sm:mt-2 text-center">
+                <span className="inline-block px-4 sm:px-6 py-2 sm:py-3 text-lg sm:text-xl font-bold text-white bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-lg">
                   {reflection.qualityRating} / 10
                 </span>
               </div>
             </div>
 
-            <h2 className="mb-4 text-xl font-bold text-[#03478f]">Challenges</h2>
-            <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
+            <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-[#03478f]">Challenges</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
               {challenges.map(challenge => (
                 <button
                   key={challenge}
@@ -262,7 +262,7 @@ export default function ReflectionPage() {
                         : [...prev.challenges, challenge]
                     }))
                   }}
-                  className={`p-4 rounded-lg border-2 text-left transition-all ${
+                  className={`p-3 sm:p-4 rounded-lg border-2 text-left transition-all text-sm sm:text-base ${
                     reflection.challenges.includes(challenge)
                       ? 'bg-white border-[#6465e0] shadow-md'
                       : 'bg-white border-gray-300 hover:border-gray-400'
@@ -272,7 +272,7 @@ export default function ReflectionPage() {
                     type="checkbox"
                     checked={reflection.challenges.includes(challenge)}
                     readOnly
-                    className="mr-3"
+                    className="mr-2 sm:mr-3"
                   />
                   {challenge}
                 </button>
@@ -281,11 +281,11 @@ export default function ReflectionPage() {
 
             {/* Session Summary */}
             {/** compute display duration: prefer actual measured duration, fallback to startedAt computation, then planned duration */}
-            <div className="p-4 mb-6 rounded-lg bg-blue-50">
-              <h3 className="mb-2 text-lg font-bold text-blue-800">Session Summary</h3>
-              <div className="space-y-1 text-blue-700">
-                <p>• Stage: {stage?.name} - Physical Stillness</p>
-                <p>• Duration: {
+            <div className="p-3 sm:p-4 mb-4 sm:mb-6 rounded-lg bg-blue-50">
+              <h3 className="mb-2 sm:mb-3 text-base sm:text-lg font-bold text-blue-800">Session Summary</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-blue-700">
+                <div className="p-2 bg-white rounded">• <span className="font-semibold">Stage:</span> {stage?.name} - Physical Stillness</div>
+                <div className="p-2 bg-white rounded">• <span className="font-semibold">Duration:</span> {
                   (function() {
                     // prefer explicit actual duration from sessionStorage/state
                     if (actualDurationMinutes != null) return actualDurationMinutes
@@ -305,9 +305,9 @@ export default function ReflectionPage() {
                     // fallback to planned setting
                     return sessionSettings?.duration || 10
                   })()
-                } minutes</p>
-                <p>• Posture: {sessionSettings?.posture?.replace('-', ' ') || 'Not specified'}</p>
-                <p>• Completed: {new Date().toLocaleDateString()}</p>
+                } min</div>
+                <div className="p-2 bg-white rounded">• <span className="font-semibold">Posture:</span> {sessionSettings?.posture?.replace('-', ' ') || 'Not specified'}</div>
+                <div className="p-2 bg-white rounded">• <span className="font-semibold">Completed:</span> {new Date().toLocaleDateString()}</div>
               </div>
             </div>
 
@@ -339,7 +339,7 @@ export default function ReflectionPage() {
             <button
               onClick={saveReflection}
               disabled={isSaving || saveSuccess}
-              className="w-full py-4 text-lg font-semibold text-white transition-all bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-3 sm:py-4 text-base sm:text-lg font-semibold text-white transition-all bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isSaving ? (
                 <>

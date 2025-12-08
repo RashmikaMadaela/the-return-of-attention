@@ -60,19 +60,22 @@ export default function IntroPage() {
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8" suppressHydrationWarning={true}>
           <div className="flex items-center justify-between h-16" suppressHydrationWarning={true}>
             <div className="flex items-center space-x-2 sm:space-x-3" suppressHydrationWarning={true}>
-              {/* PAHM Grid Logo */}
-              <div className="relative flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#6465e0] to-[#7c7de8] rounded-lg p-1.5" suppressHydrationWarning={true}>
-                <div className="grid grid-cols-3 gap-0.5 h-full" suppressHydrationWarning={true}>
-                  <div className="bg-orange-400 rounded-sm"></div>
-                  <div className="bg-teal-400 rounded-sm"></div>
-                  <div className="bg-purple-400 rounded-sm"></div>
-                  <div className="bg-yellow-400 rounded-sm"></div>
-                  <div className="bg-gray-300 rounded-sm"></div>
-                  <div className="bg-blue-300 rounded-sm"></div>
-                  <div className="bg-orange-300 rounded-sm"></div>
-                  <div className="bg-pink-300 rounded-sm"></div>
-                  <div className="bg-purple-300 rounded-sm"></div>
-                </div>
+              {/* PAHM Grid Logo - Animated Matrix */}
+              <div className="relative flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 grid grid-cols-3 gap-0.5" suppressHydrationWarning={true}>
+                {/* Row 1 */}
+                <div className="w-full bg-orange-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0s', animationDuration: '3s'}} suppressHydrationWarning={true}></div>
+                <div className="w-full rounded-sm aspect-square bg-cyan-300 animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.5s'}} suppressHydrationWarning={true}></div>
+                <div className="w-full bg-purple-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}} suppressHydrationWarning={true}></div>
+                
+                {/* Row 2 */}
+                <div className="w-full bg-yellow-400 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.5s', animationDuration: '3.5s'}} suppressHydrationWarning={true}></div>
+                <div className="w-full bg-gray-200 rounded-sm aspect-square animate-pulse" style={{animationDelay: '2s', animationDuration: '2s'}} suppressHydrationWarning={true}></div>
+                <div className="w-full bg-blue-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0.3s', animationDuration: '3.2s'}} suppressHydrationWarning={true}></div>
+                
+                {/* Row 3 */}
+                <div className="w-full bg-orange-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '2.5s', animationDuration: '2.8s'}} suppressHydrationWarning={true}></div>
+                <div className="w-full bg-pink-300 rounded-sm aspect-square animate-pulse" style={{animationDelay: '1.2s', animationDuration: '3.8s'}} suppressHydrationWarning={true}></div>
+                <div className="w-full bg-purple-200 rounded-sm aspect-square animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.3s'}} suppressHydrationWarning={true}></div>
               </div>
               
               {/* Text Logo */}

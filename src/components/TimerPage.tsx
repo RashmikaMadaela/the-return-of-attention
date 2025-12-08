@@ -339,14 +339,14 @@ export default function TimerPage() {
       
       <div className="flex-1 flex items-center justify-center p-8 pt-24">
         <div className="max-w-4xl mx-auto w-full">
-          <h1 className="text-4xl font-bold text-white text-center mb-8">
+          <h1 className="text-4xl font-bold text-[#03478f] text-center mb-8">
             {stage?.name}: Physical Stillness Training
           </h1>
           
           <div className="bg-[#e5f3ff] rounded-2xl p-8 shadow-2xl">
             {/* Timer Display */}
             <div className="text-center mb-8">
-              <div className="text-8xl font-mono font-bold text-white mb-4">
+              <div className="text-8xl font-mono font-bold text-[#03478f] mb-4">
                 {formatTime(timer.totalSeconds)}
               </div>
               
@@ -358,10 +358,10 @@ export default function TimerPage() {
                 />
               </div>
               
-              <p className="text-white text-lg mb-2">
+              <p className="text-[#03478f] text-lg mb-2">
                 Posture: {sessionSettings?.posture?.replace('-', ' ') || 'Not set'}
               </p>
-              <p className="text-cyan-200">
+              <p className="text-black">
                 Focus on maintaining complete physical stillness
               </p>
             </div>

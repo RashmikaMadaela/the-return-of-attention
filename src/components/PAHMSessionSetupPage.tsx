@@ -223,7 +223,7 @@ export default function PAHMSessionSetupPage() {
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="mb-4 text-2xl font-bold text-center text-[#03478f] sm:text-3xl md:text-4xl sm:mb-6 md:mb-8">PAHM Session Setup</h1>
+          <h1 className="mb-4 text-2xl font-bold text-center text-[#03478f] sm:text-3xl md:text-4xl sm:mb-6 md:mb-8">'</h1>
           
           <div className="p-4 bg-[#e5f3ff] rounded-xl sm:rounded-2xl sm:p-6 md:p-8 shadow-2xl">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 sm:gap-6 md:gap-8">
