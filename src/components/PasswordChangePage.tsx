@@ -135,14 +135,14 @@ export default function PasswordChangePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-300 flex items-center justify-center p-5">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] flex items-center justify-center p-5">
       <ToastContainer />
       
-      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
+      <div className="bg-[#e5f3ff] rounded-3xl shadow-2xl p-8 w-full max-w-md">
         {/* Header */}
         <div className="flex items-center justify-center mb-8">
-          <KeyRound className="w-10 h-10 text-blue-600 mr-3" />
-          <h1 className="text-3xl font-bold text-gray-800">Change Password</h1>
+          <KeyRound className="w-10 h-10 text-[#6465e0] mr-3" />
+          <h1 className="text-3xl font-bold text-[#03478f]">Change Password</h1>
         </div>
         
         <div className="space-y-5">
@@ -229,7 +229,7 @@ export default function PasswordChangePage() {
         <button
           onClick={handleChangePassword}
           disabled={isChanging || !currentPassword || !newPassword || !confirmPassword}
-          className="w-full mt-6 px-6 py-3 bg-blue-600 text-white rounded-full font-bold uppercase tracking-wide hover:bg-blue-700 transition-colors shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+          className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white rounded-full font-bold uppercase tracking-wide hover:from-[#5658d1] hover:to-[#6465e0] transition-colors shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
         >
           {isChanging ? (
             <>

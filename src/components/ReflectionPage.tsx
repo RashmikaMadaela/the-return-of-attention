@@ -196,13 +196,13 @@ export default function ReflectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-700">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       
       <div className="p-8 pt-24">
         <div className="max-w-5xl mx-auto">
-          <h1 className="mb-8 text-4xl font-bold text-center text-white">Practice Reflection</h1>
+          <h1 className="mb-8 text-4xl font-bold text-center text-[#03478f]">Practice Reflection</h1>
           
           {!reflection.shouldCountAsSession && (
             <div className="p-4 mb-6 text-yellow-700 bg-yellow-100 border-l-4 border-yellow-500 rounded">
@@ -217,18 +217,18 @@ export default function ReflectionPage() {
             </div>
           )}
           
-          <div className="p-8 bg-white rounded-2xl">
-            <h2 className="mb-4 text-xl font-bold">What did you notice during practice</h2>
+          <div className="p-8 bg-[#e5f3ff] rounded-2xl shadow-2xl">
+            <h2 className="mb-4 text-xl font-bold text-[#03478f]">What did you notice during practice</h2>
             <textarea
               value={reflection.notes}
               onChange={(e) => setReflection(prev => ({ ...prev, notes: e.target.value }))}
               placeholder="Enter your reflections and insights here"
-              className="w-full h-32 p-4 mb-8 border-2 border-gray-200 rounded-lg resize-none focus:outline-none focus:border-blue-500"
+              className="w-full h-32 p-4 mb-8 bg-white border-2 border-gray-200 rounded-lg resize-none focus:outline-none focus:border-[#6465e0]"
             />
 
             {/* Quality Rating Slider */}
             <div className="mb-8">
-              <h2 className="mb-2 text-xl font-bold">Session Quality Rating</h2>
+              <h2 className="mb-2 text-xl font-bold text-[#03478f]">Session Quality Rating</h2>
               <p className="mb-4 text-sm text-gray-600">How would you rate the overall quality of this practice session?</p>
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium text-gray-700 min-w-[80px]">Poor (1)</span>
@@ -238,18 +238,18 @@ export default function ReflectionPage() {
                   max="10"
                   value={reflection.qualityRating}
                   onChange={(e) => setReflection(prev => ({ ...prev, qualityRating: parseInt(e.target.value) }))}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#6465e0]"
                 />
                 <span className="text-sm font-medium text-gray-700 min-w-[100px]">Excellent (10)</span>
               </div>
               <div className="mt-2 text-center">
-                <span className="inline-block px-4 py-2 text-lg font-bold text-blue-800 bg-blue-100 rounded-lg">
+                <span className="inline-block px-4 py-2 text-lg font-bold text-white bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-lg">
                   {reflection.qualityRating} / 10
                 </span>
               </div>
             </div>
 
-            <h2 className="mb-4 text-xl font-bold">Challenges</h2>
+            <h2 className="mb-4 text-xl font-bold text-[#03478f]">Challenges</h2>
             <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
               {challenges.map(challenge => (
                 <button
@@ -264,7 +264,7 @@ export default function ReflectionPage() {
                   }}
                   className={`p-4 rounded-lg border-2 text-left transition-all ${
                     reflection.challenges.includes(challenge)
-                      ? 'bg-blue-100 border-blue-500'
+                      ? 'bg-white border-[#6465e0] shadow-md'
                       : 'bg-white border-gray-300 hover:border-gray-400'
                   }`}
                 >
@@ -339,7 +339,7 @@ export default function ReflectionPage() {
             <button
               onClick={saveReflection}
               disabled={isSaving || saveSuccess}
-              className="w-full py-4 text-lg font-semibold text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-4 text-lg font-semibold text-white transition-all bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isSaving ? (
                 <>

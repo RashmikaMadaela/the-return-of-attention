@@ -217,19 +217,19 @@ export default function PAHMSessionSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 to-purple-800">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Navigation */}
       <Navigation currentPage="pahm-session" />
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="mb-4 text-2xl font-bold text-center text-white sm:text-3xl md:text-4xl sm:mb-6 md:mb-8">PAHM Session Setup</h1>
+          <h1 className="mb-4 text-2xl font-bold text-center text-[#03478f] sm:text-3xl md:text-4xl sm:mb-6 md:mb-8">PAHM Session Setup</h1>
           
-          <div className="p-4 bg-purple-900 rounded-xl sm:rounded-2xl sm:p-6 md:p-8">
+          <div className="p-4 bg-[#e5f3ff] rounded-xl sm:rounded-2xl sm:p-6 md:p-8 shadow-2xl">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 sm:gap-6 md:gap-8">
               {/* Posture Selection */}
-              <div className="p-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6">
-                <h2 className="mb-3 text-lg font-bold sm:text-xl md:text-2xl sm:mb-4 md:mb-6">Select Your Posture</h2>
+              <div className="p-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6 shadow-md">
+                <h2 className="mb-3 text-lg font-bold text-[#03478f] sm:text-xl md:text-2xl sm:mb-4 md:mb-6">Select Your Posture</h2>
                 <div className="grid grid-cols-3 gap-2 mb-4 sm:gap-3 md:gap-4 sm:mb-5 md:mb-6">
                   {postures.map(posture => (
                     <button
@@ -237,8 +237,8 @@ export default function PAHMSessionSetupPage() {
                       onClick={() => setSessionSettings(prev => ({ ...prev, posture: posture.id }))}
                       className={`aspect-square p-2 sm:p-3 md:p-4 rounded-lg border-2 flex flex-col items-center justify-center gap-1 sm:gap-2 transition-all ${
                         sessionSettings.posture === posture.id 
-                          ? 'bg-purple-400 border-purple-600' 
-                          : 'bg-purple-300 border-purple-400 hover:bg-purple-400'
+                          ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] border-[#6465e0] text-white' 
+                          : 'bg-white border-gray-300 hover:border-[#6465e0]'
                       }`}
                     >
                       <span className="text-2xl sm:text-3xl md:text-4xl">{posture.icon}</span>
@@ -250,8 +250,8 @@ export default function PAHMSessionSetupPage() {
 
               {/* Duration and Audio Settings */}
               <div>
-                <div className="p-4 mb-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6 sm:mb-5 md:mb-6">
-                  <h2 className="mb-3 text-lg font-bold text-center sm:text-xl md:text-2xl sm:mb-4 md:mb-6">
+                <div className="p-4 mb-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6 sm:mb-5 md:mb-6 shadow-md">
+                  <h2 className="mb-3 text-lg font-bold text-center text-[#03478f] sm:text-xl md:text-2xl sm:mb-4 md:mb-6">
                     {stage.isMindRecovery ? 'Fixed Duration' : 'Select Duration'}
                   </h2>
                   <div className="flex items-center justify-center gap-3 sm:gap-4">
@@ -290,15 +290,15 @@ export default function PAHMSessionSetupPage() {
                   )}
                 </div>
 
-                <div className="p-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6">
-                    <h2 className="mb-3 text-lg font-bold sm:text-xl md:text-2xl sm:mb-4 md:mb-6">Settings</h2>
+                <div className="p-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6 shadow-md">
+                    <h2 className="mb-3 text-lg font-bold text-[#03478f] sm:text-xl md:text-2xl sm:mb-4 md:mb-6">Settings</h2>
                   <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold sm:text-base">Meditation Bells</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, bells: !prev.bells }))}
                         className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
-                          sessionSettings.bells ? 'bg-purple-600' : 'bg-gray-300'
+                          sessionSettings.bells ? 'bg-[#6465e0]' : 'bg-gray-300'
                         }`}
                       >
                         <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
@@ -311,7 +311,7 @@ export default function PAHMSessionSetupPage() {
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, voiceCommands: !prev.voiceCommands }))}
                         className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
-                          sessionSettings.voiceCommands ? 'bg-purple-600' : 'bg-gray-300'
+                          sessionSettings.voiceCommands ? 'bg-[#6465e0]' : 'bg-gray-300'
                         }`}
                       >
                         <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
@@ -325,7 +325,7 @@ export default function PAHMSessionSetupPage() {
                         <button
                           onClick={() => setSessionSettings(prev => ({ ...prev, useRemote: !prev.useRemote }))}
                           className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
-                            sessionSettings.useRemote ? 'bg-purple-600' : 'bg-gray-300'
+                            sessionSettings.useRemote ? 'bg-[#6465e0]' : 'bg-gray-300'
                           }`}
                         >
                           <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
@@ -361,7 +361,7 @@ export default function PAHMSessionSetupPage() {
                   <button
                     onClick={handleStart}
                     disabled={isStarting}
-                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+                    className="flex-1 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
                   >
                     {isStarting ? (
                       <>
@@ -377,9 +377,9 @@ export default function PAHMSessionSetupPage() {
             </div>
 
             {/* Stage Info */}
-            <div className="p-3 mt-4 bg-white rounded-lg sm:mt-5 md:mt-6 bg-opacity-20 backdrop-blur-sm sm:rounded-xl sm:p-4">
+            <div className="p-3 mt-4 bg-white rounded-lg sm:mt-5 md:mt-6 sm:rounded-xl sm:p-4 shadow-md">
               <div className="text-center text-black">
-                <h3 className="mb-1 text-base font-bold sm:text-lg md:text-xl sm:mb-2">
+                <h3 className="mb-1 text-base font-bold text-[#03478f] sm:text-lg md:text-xl sm:mb-2">
                   {stage.isMindRecovery ? stage.name : `Stage ${stage.id}: ${stage.name}`}
                 </h3>
                 <p className="text-xs sm:text-sm">

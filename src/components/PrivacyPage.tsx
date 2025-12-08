@@ -121,20 +121,20 @@ export default function PrivacyPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-5 bg-gradient-to-br from-blue-400 to-blue-300">
+    <div className="flex items-center justify-center min-h-screen p-5 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       <ToastContainer />
       
-      <div className="w-full max-w-2xl p-8 bg-white shadow-2xl rounded-3xl">
+      <div className="w-full max-w-2xl p-8 bg-[#e5f3ff] shadow-2xl rounded-3xl">
         {/* Header */}
         <div className="flex items-center justify-center mb-8">
-          <Shield className="w-10 h-10 mr-3 text-blue-600" />
-          <h1 className="text-3xl font-bold text-gray-800">Privacy & Security</h1>
+          <Shield className="w-10 h-10 mr-3 text-[#6465e0]" />
+          <h1 className="text-3xl font-bold text-[#03478f]">Privacy & Security</h1>
         </div>
 
         {/* Change Password Section */}
-        <div className="p-6 mb-6 border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl">
+        <div className="p-6 mb-6 border border-[#6465e0] bg-white rounded-2xl shadow-md">
           <div className="flex items-start mb-4">
-            <Lock className="w-6 h-6 mt-1 mr-3 text-blue-600" />
+            <Lock className="w-6 h-6 mt-1 mr-3 text-[#6465e0]" />
             <div>
               <h2 className="mb-2 text-xl font-bold text-gray-800">Change Password</h2>
               <p className="text-sm leading-relaxed text-gray-700">
@@ -145,7 +145,7 @@ export default function PrivacyPage() {
           </div>
           <button
             onClick={handleChangePassword}
-            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors shadow-md"
+            className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white rounded-full font-semibold hover:from-[#5658d1] hover:to-[#6465e0] transition-colors shadow-md"
           >
             Change Password
           </button>
@@ -182,7 +182,7 @@ export default function PrivacyPage() {
         <div className="flex justify-center">
           <button
             onClick={handleBack}
-            className="px-12 py-3 font-bold tracking-wide text-white uppercase transition-colors bg-blue-600 rounded-full shadow-lg hover:bg-blue-700"
+            className="px-12 py-3 font-bold tracking-wide text-white uppercase transition-colors bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-full shadow-lg hover:from-[#5658d1] hover:to-[#6465e0]"
           >
             BACK
           </button>

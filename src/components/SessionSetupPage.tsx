@@ -131,19 +131,19 @@ export default function SessionSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-center mb-4 sm:mb-6 md:mb-8">Training Session</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#03478f] text-center mb-4 sm:mb-6 md:mb-8">Training Session</h1>
           
-          <div className="bg-blue-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
+          <div className="bg-[#e5f3ff] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
               {/* Posture Selection */}
-              <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6">Select Your Posture</h2>
+              <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-md">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-[#03478f]">Select Your Posture</h2>
                 <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
                   {postures.map(posture => (
                     <button
@@ -151,8 +151,8 @@ export default function SessionSetupPage() {
                       onClick={() => setSessionSettings(prev => ({ ...prev, posture: posture.id }))}
                       className={`aspect-square p-2 sm:p-3 md:p-4 rounded-lg border-2 flex flex-col items-center justify-center gap-1 sm:gap-2 transition-all ${
                         sessionSettings.posture === posture.id 
-                          ? 'bg-cyan-400 border-cyan-600' 
-                          : 'bg-cyan-300 border-cyan-400 hover:bg-cyan-400'
+                          ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] border-[#6465e0] text-white' 
+                          : 'bg-white border-gray-300 hover:border-[#6465e0]'
                       }`}
                     >
                       <span className="text-2xl sm:text-3xl md:text-4xl">{posture.icon}</span>
@@ -164,8 +164,8 @@ export default function SessionSetupPage() {
 
               {/* Duration and Audio Settings */}
               <div>
-                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-center">
+                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6 shadow-md">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-center text-[#03478f]">
                     Select Duration
                   </h2>
                   <div className="flex items-center justify-center gap-3 sm:gap-4">
@@ -195,8 +195,8 @@ export default function SessionSetupPage() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6">Audio Settings</h2>
+                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-md">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-[#03478f]">Audio Settings</h2>
                   <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-sm sm:text-base">Meditation Bells</span>

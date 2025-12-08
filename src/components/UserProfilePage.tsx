@@ -66,7 +66,7 @@ export default function UserProfilePageOptimized() {
   // Handle errors
   if (error && error.message !== 'UNAUTHORIZED') {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 to-blue-300">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
         <div className="max-w-md p-8 text-center bg-white shadow-2xl rounded-3xl">
           <div className="mb-4 text-6xl">⚠️</div>
           <h2 className="mb-2 text-2xl font-bold text-gray-800">Failed to Load Profile</h2>
@@ -260,7 +260,7 @@ export default function UserProfilePageOptimized() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-blue-300">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       <ToastContainer />
       {/* Background refresh indicator */}
       {isValidating && !isSaving && (
@@ -276,7 +276,7 @@ export default function UserProfilePageOptimized() {
       <Navigation currentPage="profile" />
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8 md:pt-28">
-        <div className="p-4 mx-auto shadow-2xl sm:p-6 md:p-8 max-w-7xl bg-gradient-to-b from-blue-700 to-blue-600 rounded-2xl sm:rounded-3xl">
+        <div className="p-4 mx-auto shadow-2xl sm:p-6 md:p-8 max-w-7xl bg-[#e5f3ff] rounded-2xl sm:rounded-3xl">
           {/* Error Message */}
           {saveError && (
             <div className="px-3 py-2 mb-4 text-sm text-center text-red-700 bg-red-100 border border-red-400 rounded-lg sm:px-4 sm:py-3 sm:mb-6 sm:text-base">

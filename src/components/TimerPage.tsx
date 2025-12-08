@@ -321,7 +321,7 @@ export default function TimerPage() {
     ((sessionSettings.duration * 60 - timer.totalSeconds) / (sessionSettings.duration * 60)) * 100 : 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] flex flex-col">
       {/* Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showSkipConfirm}
@@ -343,7 +343,7 @@ export default function TimerPage() {
             {stage?.name}: Physical Stillness Training
           </h1>
           
-          <div className="bg-blue-900 rounded-2xl p-8">
+          <div className="bg-[#e5f3ff] rounded-2xl p-8 shadow-2xl">
             {/* Timer Display */}
             <div className="text-center mb-8">
               <div className="text-8xl font-mono font-bold text-white mb-4">
