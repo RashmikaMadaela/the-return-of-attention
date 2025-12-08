@@ -100,11 +100,11 @@ export default function IntroPage() {
       </nav>
 
       {/* Hero Section - Full Viewport Height */}
-      <section className="relative flex items-center justify-center min-h-screen px-4 py-20">
+      <section className="relative flex items-center justify-center min-h-screen px-4 py-20 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] text-center" style={{paddingTop: '80px'}}>
         <div className="relative w-full max-w-4xl mx-auto text-center">
           {/* Animated Grid Icon */}
           <div className="flex justify-center mb-6 sm:mb-8 md:mb-10">
-            <div className="relative w-48 h-48 bg-purple-600 rounded-lg sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72">
+            <div className="relative w-48 h-48 bg-[#03478f] rounded-lg sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72">
               {/* Using CSS Grid for perfect alignment */}
               <div className="absolute grid grid-cols-3 gap-2 inset-4 sm:inset-5 md:inset-6 sm:gap-3">
                 {/* Row 1 */}
@@ -143,8 +143,8 @@ export default function IntroPage() {
       </section>
 
       {/* Sound Familiar & What If Section */}
-      <section className="px-4 py-12 sm:py-16">
-        <div className="grid max-w-6xl gap-6 mx-auto sm:gap-8 md:grid-cols-2">
+      <section className="px-4 py-12 sm:py-16 bg-[#fffafa]">
+        <div className="grid max-w-6xl gap-6 mx-auto sm:gap-8 md:grid-cols-2 bg-[#fffafa]">
           {/* Sound Familiar */}
           <div className="order-2 md:order-1 bg-[#e5f3ff] rounded-2xl p-6 sm:p-8 shadow-2xl">
             <h2 className="mb-6 text-xl font-bold text-center sm:text-2xl md:text-3xl text-[#03478f]">Sound Familiar?</h2>
@@ -193,7 +193,7 @@ export default function IntroPage() {
       </section>
 
       {/* Your Journey to Freedom */}
-      <section className="px-4 py-12 sm:py-16 bg-[#e5f3ff]">
+      <section className="px-4 py-12 sm:py-16 bg-gradient-to-b from-[#fffafa] to-[#b9d4ee]">
         <div className="max-w-6xl mx-auto">
           <h2 className="mb-8 text-2xl font-bold text-center sm:text-3xl md:text-4xl text-[#03478f] sm:mb-12">
             Your Journey to Freedom
@@ -250,7 +250,7 @@ export default function IntroPage() {
       </section>
 
       {/* Ready to Begin */}
-      <section className="px-4 py-12 sm:py-16">
+      <section className="px-4 py-12 sm:py-16 bg-[#b9d4ee]">
         <div className="flex flex-col items-center max-w-4xl gap-6 mx-auto md:flex-row sm:gap-8">
           <div className="flex-shrink-0 order-2 md:order-1">
             <div className="w-48 h-48 overflow-hidden rounded-full sm:w-64 sm:h-64 ring-4 ring-[#6465e0] ring-offset-4">
