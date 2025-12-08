@@ -202,7 +202,7 @@ export default function ReflectionPage() {
       
       <div className="p-4 sm:p-6 md:p-8 pt-20 sm:pt-24">
         <div className="max-w-5xl mx-auto">
-          <h1 className="mb-4 sm:mb-6 md:mb-8 text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#03478f]">Practice Reflection</h1>
+          <h1 className="mb-4 sm:mb-6 md:mb-8 text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#03478f]">'</h1>
           
           {!reflection.shouldCountAsSession && (
             <div className="p-3 sm:p-4 mb-4 sm:mb-6 text-yellow-700 bg-yellow-100 border-l-4 border-yellow-500 rounded">
