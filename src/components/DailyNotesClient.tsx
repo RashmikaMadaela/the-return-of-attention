@@ -191,14 +191,14 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
       <div className="p-4 pt-24">
         <div className="max-w-6xl mx-auto">
           {/* Title Section */}
-          <div className="text-center mb-8">
+          <div className="mb-8 text-center">
             <h1 className="text-[#03478f] text-5xl font-bold mb-3">Emotional Check-ins</h1>
-            <p className="text-black text-xl">Capture how you're feeling Today</p>
+            <p className="text-xl text-black">Capture how you're feeling Today</p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-center">
+            <div className="px-4 py-3 mb-6 text-center text-red-700 bg-red-100 border border-red-400 rounded-lg">
               {error}
             </div>
           )}
@@ -230,9 +230,9 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
           {/* Quick Log View */}
           {viewMode === 'quick' && (
             <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
-              <h2 className="text-gray-800 font-bold text-lg sm:text-xl mb-4 sm:mb-6">How are you feeling right now?</h2>
+              <h2 className="mb-4 text-lg font-bold text-gray-800 sm:text-xl sm:mb-6">How are you feeling right now?</h2>
               
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 sm:gap-3 md:gap-4">
                 {emotions.map((emotion) => (
                   <button
                     key={emotion.name}
@@ -240,14 +240,14 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                     disabled={isLoading}
                     className={`${emotion.color} hover:opacity-80 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
-                    <span className="text-3xl sm:text-4xl mb-1 sm:mb-2">{emotion.emoji}</span>
-                    <span className="text-white font-semibold text-xs sm:text-sm">{emotion.name}</span>
+                    <span className="mb-1 text-3xl sm:text-4xl sm:mb-2">{emotion.emoji}</span>
+                    <span className="text-xs font-semibold text-white sm:text-sm">{emotion.name}</span>
                   </button>
                 ))}
               </div>
               
               {isLoading && (
-                <div className="text-center mt-4">
+                <div className="mt-4 text-center">
                   <div className="text-gray-600">Saving your emotion...</div>
                 </div>
               )}
@@ -259,21 +259,21 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
             <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
               {/* What's happening */}
               <div className="mb-4 sm:mb-6">
-                <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
                   What's happening Today (optional)
                 </h3>
                 <textarea
                   value={detailedForm.description}
                   onChange={(e) => setDetailedForm({ ...detailedForm, description: e.target.value })}
                   placeholder="Describe what trigger's this emotion or what's on your mind"
-                  className="w-full h-24 sm:h-32 p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm sm:text-base text-gray-600"
+                  className="w-full h-24 p-3 text-sm text-gray-600 border-2 border-gray-200 resize-none sm:h-32 sm:p-4 bg-gray-50 rounded-xl focus:border-blue-500 focus:outline-none sm:text-base"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+              <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-6">
                 {/* Emotion Selection */}
                 <div>
-                  <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                  <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
                     How are you feeling?
                   </h3>
                   <div className="grid grid-cols-3 gap-2">
@@ -287,7 +287,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                             : 'bg-gray-100 hover:bg-gray-200'
                         }`}
                       >
-                        <span className="text-2xl mb-1">{emotion.emoji}</span>
+                        <span className="mb-1 text-2xl">{emotion.emoji}</span>
                         <span className="text-xs font-semibold">{emotion.name}</span>
                       </button>
                     ))}
@@ -296,7 +296,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
 
                 {/* Intensity Slider */}
                 <div>
-                  <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                  <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
                     Intensity Level: {detailedForm.intensity}/10
                   </h3>
                   <input
@@ -307,7 +307,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                     onChange={(e) => setDetailedForm({ ...detailedForm, intensity: parseInt(e.target.value) })}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
-                  <div className="flex justify-between text-xs text-gray-600 mt-1">
+                  <div className="flex justify-between mt-1 text-xs text-gray-600">
                     <span>Low</span>
                     <span>Medium</span>
                     <span>High</span>
@@ -317,13 +317,13 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
 
               {/* Trigger Dropdown */}
               <div className="mb-4 sm:mb-6">
-                <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
                   What triggered this? (Optional)
                 </h3>
                 <select
                   value={detailedForm.trigger}
                   onChange={(e) => setDetailedForm({ ...detailedForm, trigger: e.target.value })}
-                  className="w-full p-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-gray-600"
+                  className="w-full p-3 text-gray-600 border-2 border-gray-200 bg-gray-50 rounded-xl focus:border-blue-500 focus:outline-none"
                 >
                   <option value="">Select a trigger (optional)</option>
                   {triggers.map((trigger) => (
@@ -345,19 +345,19 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
 
           {/* Today's Emotional Journey */}
           <div className="bg-[#e5f3ff] rounded-3xl p-8 shadow-2xl">
-            <h2 className="text-gray-800 font-bold text-2xl mb-6">Today's Emotional Journey</h2>
+            <h2 className="mb-6 text-2xl font-bold text-gray-800">Today's Emotional Journey</h2>
             
             {emotionalJourney.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-600 text-lg">No emotions logged yet today.</p>
-                <p className="text-gray-500 mt-2">Start tracking your emotional journey above!</p>
+              <div className="py-8 text-center">
+                <p className="text-lg text-gray-600">No emotions logged yet today.</p>
+                <p className="mt-2 text-gray-500">Start tracking your emotional journey above!</p>
               </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
                 {emotionalJourney.map((entry) => (
                   <div
                     key={entry.id}
-                    className="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                    className="p-4 transition-shadow bg-white shadow-md rounded-xl hover:shadow-lg"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -370,7 +370,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                             <p className="text-xs text-gray-500">{entry.timestamp}</p>
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">{entry.description}</p>
+                        <p className="mb-2 text-sm text-gray-600">{entry.description}</p>
                         <div className="flex gap-4 text-xs text-gray-500">
                           <span>Intensity: {entry.intensity}/10</span>
                           <span>Trigger: {entry.trigger}</span>
