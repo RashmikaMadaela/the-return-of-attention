@@ -68,15 +68,39 @@ supabase
 5. **Server Re-render**: Fresh data fetched from cache
 6. **UI Update**: User sees updated progress instantly
 
+## Understanding WebSocket "Pending" Status
+
+**IMPORTANT:** In your browser DevTools Network tab, you'll see a WebSocket request showing as "Pending" - **THIS IS NORMAL!**
+
+WebSocket connections:
+- ✅ Stay open continuously (not like HTTP requests that complete)
+- ✅ Show as "Pending" in Network tab because they never "finish"
+- ✅ Status code **101** = "Switching Protocols" (successful WebSocket upgrade)
+- ✅ Should have `wss://` URL (encrypted WebSocket)
+
+**What to look for:**
+1. Request URL: `wss://[your-project].supabase.co/realtime/v1/websocket?apikey=...`
+2. Status: **101 Switching Protocols**
+3. Type: **websocket**
+4. The request stays "Pending" forever - this means it's working!
+
 ## Testing Realtime
 
-### Test 1: Console Logs
+### Test 1: Console Logs (IMPORTANT!)
 1. Open home page
-2. Open browser DevTools console
-3. You should see:
+2. Open browser DevTools console (F12)
+3. You should see these messages:
    ```
    Setting up Supabase realtime subscriptions...
+   ✅ Session channel connected!
+   ✅ Progress channel connected!
+   ✅ Happiness channel connected!
    ```
+
+**If you see:**
+- ❌ **CHANNEL_ERROR**: Tables not added to realtime publication (run SQL below)
+- ⏱️ **TIMED_OUT**: Network or Supabase connection issue
+- Nothing after "Setting up...": Check environment variables
 
 ### Test 2: Trigger an Update
 1. Open home page in Browser A

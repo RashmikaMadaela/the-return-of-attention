@@ -51,7 +51,17 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
           handleDataRefresh()
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Session channel connected!')
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Session channel error:', err)
+        } else if (status === 'TIMED_OUT') {
+          console.error('⏱️ Session channel timed out')
+        } else {
+          console.log('Session channel status:', status)
+        }
+      })
 
     // Subscribe to stage progress changes
     const progressChannel = supabaseBrowser
@@ -69,7 +79,17 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
           handleDataRefresh()
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Progress channel connected!')
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Progress channel error:', err)
+        } else if (status === 'TIMED_OUT') {
+          console.error('⏱️ Progress channel timed out')
+        } else {
+          console.log('Progress channel status:', status)
+        }
+      })
 
     // Subscribe to happiness score changes
     const happinessChannel = supabaseBrowser
@@ -87,7 +107,17 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
           handleDataRefresh()
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Happiness channel connected!')
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('❌ Happiness channel error:', err)
+        } else if (status === 'TIMED_OUT') {
+          console.error('⏱️ Happiness channel timed out')
+        } else {
+          console.log('Happiness channel status:', status)
+        }
+      })
 
     // Cleanup
     return () => {
@@ -294,7 +324,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
             <div className="text-center md:text-left">
               <h1 className="mb-1 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-2 text-[#03478f]">The Return</h1>
               <h1 className="mb-2 text-2xl font-bold sm:text-3xl md:text-4xl lg:text-5xl sm:mb-3 md:mb-4 text-[#03478f]">Of Attention</h1>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-black">Practices for the Happiness that Stays</p>
+              <p className="text-sm text-black sm:text-base md:text-lg lg:text-xl">Practices for the Happiness that Stays</p>
             </div>
           </div>
         </div>
