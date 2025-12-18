@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { LogIn, Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff } from 'lucide-react'
 
 export default function SignInPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
@@ -14,6 +15,16 @@ export default function SignInPage() {
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({})
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [sessionExpired, setSessionExpired] = useState(false)
+
+  // Check for session expiration message
+  useEffect(() => {
+    const expired = searchParams.get('expired')
+    if (expired === 'true') {
+      setSessionExpired(true)
+      setError('Your session has expired due to inactivity. Please sign in again.')
+    }
+  }, [searchParams])
 
   const handleSignIn = async () => {
     setError('')
@@ -219,8 +230,24 @@ export default function SignInPage() {
           </div>
         </div>
 
+        {/* Session Expired Message */}
+        {sessionExpired && !error && (
+          <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-yellow-700 border border-yellow-300 bg-yellow-50 rounded-xl">
+            <span>⏱️</span>
+            <span>Your session has expired due to inactivity. Please sign in again.</span>
+          </div>
+        )}
+
         {/* Error Message */}
-        {error && (
+        {error && !sessionExpired && (
+          <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-red-600 border border-red-200 bg-red-50 rounded-xl">
+            <span>⚠️</span>
+            <span>{error}</span>
+          </div>
+        )}
+        
+        {/* Error Message with Session Expired */}
+        {error && sessionExpired && (
           <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-red-600 border border-red-200 bg-red-50 rounded-xl">
             <span>⚠️</span>
             <span>{error}</span>

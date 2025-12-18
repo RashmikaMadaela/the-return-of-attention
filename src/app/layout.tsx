@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Lexend, Arimo } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from "@/components/SessionProvider";
+import { SessionMonitor } from "@/components/SessionMonitor";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -41,7 +43,10 @@ export default function RootLayout({
         className={`${inter.variable} ${lexend.variable} ${arimo.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        {children}
+        <SessionProvider>
+          <SessionMonitor />
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );
