@@ -22,6 +22,7 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
   const lastActivityRef = useRef<number>(Date.now())
   const warningShownRef = useRef<boolean>(false)
   const checkIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const isSigningOutRef = useRef<boolean>(false) // Prevent infinite signout loop
   
   const [showWarning, setShowWarning] = useState(false)
   const [timeRemaining, setTimeRemaining] = useState<number>(INACTIVITY_TIMEOUT)
@@ -41,7 +42,8 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
 
   // Check session timeout
   const checkTimeout = useCallback(async () => {
-    if (status !== 'authenticated' || !session) {
+    // Don't check if already signing out or not authenticated
+    if (isSigningOutRef.current || status !== 'authenticated' || !session) {
       return
     }
 
@@ -53,9 +55,15 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
 
     // Session expired - force logout
     if (timeSinceLastActivity >= INACTIVITY_TIMEOUT) {
-      console.log('Session expired due to inactivity')
+      // Prevent multiple signout attempts
+      if (isSigningOutRef.current) {
+        return
+      }
       
-      // Clear interval
+      console.log('Session expired due to inactivity - initiating logout')
+      isSigningOutRef.current = true
+      
+      // Clear interval immediately to prevent further checks
       if (checkIntervalRef.current) {
         clearInterval(checkIntervalRef.current)
         checkIntervalRef.current = null
@@ -66,9 +74,15 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
         options.onExpire()
       }
 
-      // Sign out and redirect
-      await signOut({ redirect: false })
-      router.push('/signin?expired=true')
+      try {
+        // Sign out and redirect
+        await signOut({ redirect: false })
+        router.push('/signin?expired=true')
+      } catch (error) {
+        console.error('Error during signout:', error)
+        // Force redirect even if signout fails
+        router.push('/signin?expired=true')
+      }
       return
     }
 
@@ -86,7 +100,8 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
 
   // Set up activity listeners
   useEffect(() => {
-    if (status !== 'authenticated') {
+    // Don't set up if already signing out or not authenticated
+    if (isSigningOutRef.current || status !== 'authenticated') {
       return
     }
 
@@ -126,11 +141,17 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
 
   // Handle page visibility change
   useEffect(() => {
-    if (status !== 'authenticated') {
+    // Don't check if already signing out or not authenticated
+    if (isSigningOutRef.current || status !== 'authenticated') {
       return
     }
 
     const handleVisibilityChange = () => {
+      // Don't check if already signing out
+      if (isSigningOutRef.current) {
+        return
+      }
+      
       if (document.visibilityState === 'visible') {
         // User returned to the page - check if session expired while away
         checkTimeout()
@@ -143,6 +164,14 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [status, checkTimeout])
+  
+  // Clean up when component unmounts or user logs out
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      // Clear the signing out flag when logged out
+      isSigningOutRef.current = false
+    }
+  }, [status])
 
   return {
     showWarning,
