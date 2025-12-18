@@ -260,7 +260,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
               {/* What's happening */}
               <div className="mb-4 sm:mb-6">
                 <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
-                  What's happening Today (optional)
+                  What's happening now?
                 </h3>
                 <textarea
                   value={detailedForm.description}
@@ -318,14 +318,14 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
               {/* Trigger Dropdown */}
               <div className="mb-4 sm:mb-6">
                 <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
-                  What triggered this? (Optional)
+                  What triggered this? 
                 </h3>
                 <select
                   value={detailedForm.trigger}
                   onChange={(e) => setDetailedForm({ ...detailedForm, trigger: e.target.value })}
                   className="w-full p-3 text-gray-600 border-2 border-gray-200 bg-gray-50 rounded-xl focus:border-blue-500 focus:outline-none"
                 >
-                  <option value="">Select a trigger (optional)</option>
+                  <option value="">Select a trigger</option>
                   {triggers.map((trigger) => (
                     <option key={trigger} value={trigger}>{trigger}</option>
                   ))}
