@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
-import { completeSession, type CompleteSessionRequest, type SessionChallenges } from '@/lib/api/sessions'
+import { completeSessionAction } from '@/lib/actions/session-actions'
+import type { CompleteSessionRequest, SessionChallenges } from '@/lib/api/sessions'
 
 interface SessionData {
   sessionId: string
@@ -162,8 +163,8 @@ export default function ReflectionPage() {
         actualDuration: actualMinutes ?? sessionSettings?.duration,
       }
 
-      // Call API to complete session
-      const response = await completeSession(request)
+      // Call server action to complete session (faster than REST API)
+      const response = await completeSessionAction(request)
 
       if (!response.success) {
         setSaveError(response.message)

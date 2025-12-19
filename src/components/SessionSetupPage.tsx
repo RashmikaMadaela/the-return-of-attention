@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
-import { startSession, type StartSessionRequest } from '@/lib/api/sessions'
+import { startSessionAction } from '@/lib/actions/session-actions'
+import type { StartSessionRequest } from '@/lib/api/sessions'
 
 interface SessionSettings {
   posture: string
@@ -95,8 +96,8 @@ export default function SessionSetupPage() {
     }
 
     try {
-      // Call API to start session
-      const response = await startSession(request)
+      // Call server action to start session (faster than REST API)
+      const response = await startSessionAction(request)
 
       if (!response.success) {
         setStartError(response.message)
