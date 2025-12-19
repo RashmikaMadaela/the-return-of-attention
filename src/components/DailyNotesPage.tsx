@@ -204,7 +204,7 @@ export default function DailyNotesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-400 to-blue-300">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="daily-notes" />
@@ -212,14 +212,14 @@ export default function DailyNotesPage() {
       <div className="p-4 pt-24">
         <div className="max-w-6xl mx-auto">
           {/* Title Section */}
-          <div className="text-center mb-8">
-            <h1 className="text-white text-5xl font-bold mb-3">Emotional Check-ins</h1>
-            <p className="text-white text-xl">Capture how you're feeling Today</p>
+          <div className="mb-8 text-center">
+            <h1 className="text-[#03478f] text-5xl font-bold mb-3">Emotional Check-ins</h1>
+            <p className="text-xl text-black">Capture how you're feeling Now</p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 text-center">
+            <div className="px-4 py-3 mb-6 text-center text-red-700 bg-red-100 border border-red-400 rounded-lg">
               {error}
             </div>
           )}
@@ -228,20 +228,20 @@ export default function DailyNotesPage() {
           <div className="flex justify-center gap-3 mb-8">
             <button
               onClick={() => setViewMode('quick')}
-              className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
+              className={`px-8 py-3 rounded-lg font-semibold transition-all ${
                 viewMode === 'quick'
-                  ? 'bg-white text-pink-600'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-[#e5f3ff] text-[#6465e0]'
+                  : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
               }`}
             >
               Quick Log
             </button>
             <button
               onClick={() => setViewMode('detailed')}
-              className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
+              className={`px-8 py-3 rounded-lg font-semibold transition-all ${
                 viewMode === 'detailed'
-                  ? 'bg-white text-pink-600'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-[#e5f3ff] text-[#6465e0]'
+                  : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
               }`}
             >
               Detailed
@@ -250,18 +250,18 @@ export default function DailyNotesPage() {
 
           {/* Quick Log View */}
           {viewMode === 'quick' && (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-xl">
-              <h2 className="text-gray-800 font-bold text-lg sm:text-xl mb-4 sm:mb-6">How are you feeling right now?</h2>
+            <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
+              <h2 className="mb-4 text-lg font-bold text-gray-800 sm:text-xl sm:mb-6">How are you feeling right now?</h2>
               
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 sm:gap-3 md:gap-4">
                 {emotions.map((emotion) => (
                   <button
                     key={emotion.name}
                     onClick={() => handleQuickLog(emotion.name)}
                     disabled={isLoading}
-                    className="bg-cyan-200 hover:bg-cyan-300 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 flex flex-col items-center justify-center transition-all transform hover:scale-110 hover:shadow-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group"
+                    className="flex flex-col items-center justify-center p-3 transition-all transform shadow-lg bg-cyan-200 hover:bg-cyan-300 rounded-xl sm:rounded-2xl sm:p-4 md:p-6 hover:scale-110 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
-                    <div className="text-3xl sm:text-4xl md:text-5xl mb-1 sm:mb-2 md:mb-3 transition-transform group-hover:scale-110">
+                    <div className="mb-1 text-3xl transition-transform sm:text-4xl md:text-5xl sm:mb-2 md:mb-3 group-hover:scale-110">
                       {emotion.emoji}
                     </div>
                     <div className="text-gray-800 font-semibold text-[10px] sm:text-xs md:text-sm transition-colors group-hover:text-blue-600">
@@ -272,7 +272,7 @@ export default function DailyNotesPage() {
               </div>
               
               {isLoading && (
-                <div className="text-center mt-4">
+                <div className="mt-4 text-center">
                   <div className="text-gray-600">Saving your emotion...</div>
                 </div>
               )}
@@ -281,28 +281,28 @@ export default function DailyNotesPage() {
 
           {/* Detailed View */}
           {viewMode === 'detailed' && (
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-xl">
+            <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
               {/* What's happening */}
               <div className="mb-4 sm:mb-6">
-                <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
-                  What's happening Today (optional)
+                <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
+                  What's happening Now 
                 </h3>
                 <textarea
                   value={detailedForm.description}
                   onChange={(e) => setDetailedForm({ ...detailedForm, description: e.target.value })}
                   placeholder="Describe what trigger's this emotion or what's on your mind"
-                  className="w-full h-24 sm:h-32 p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-xl resize-none focus:border-blue-500 focus:outline-none text-sm sm:text-base text-gray-600"
+                  className="w-full h-24 p-3 text-sm text-gray-600 border-2 border-gray-200 resize-none sm:h-32 sm:p-4 bg-gray-50 rounded-xl focus:border-blue-500 focus:outline-none sm:text-base"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+              <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-6">
                 {/* Emotion Dropdown */}
                 <div>
-                  <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">Emotion</h3>
+                  <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">Emotion</h3>
                   <select
                     value={detailedForm.emotion}
                     onChange={(e) => setDetailedForm({ ...detailedForm, emotion: e.target.value })}
-                    className="w-full p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base text-gray-600"
+                    className="w-full p-3 text-sm text-gray-600 border-2 border-gray-200 sm:p-4 bg-gray-50 rounded-xl focus:border-blue-500 focus:outline-none sm:text-base"
                   >
                     <option value="">How are you feeling?</option>
                     {emotions.map((emotion) => (
@@ -315,7 +315,7 @@ export default function DailyNotesPage() {
 
                 {/* Intensity Slider */}
                 <div>
-                  <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
+                  <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
                     Intensity: {detailedForm.intensity}/10
                   </h3>
                   <input
@@ -326,7 +326,7 @@ export default function DailyNotesPage() {
                     onChange={(e) => setDetailedForm({ ...detailedForm, intensity: parseInt(e.target.value) })}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                   />
-                  <div className="flex justify-between text-xs sm:text-sm text-gray-600 mt-1">
+                  <div className="flex justify-between mt-1 text-xs text-gray-600 sm:text-sm">
                     <span>Mild</span>
                     <span>Intense</span>
                   </div>
@@ -335,13 +335,13 @@ export default function DailyNotesPage() {
 
               {/* Trigger Dropdown */}
               <div className="mb-4 sm:mb-6">
-                <h3 className="text-gray-800 font-bold text-base sm:text-lg mb-2 sm:mb-3">
-                  What triggered this? (Optional)
+                <h3 className="mb-2 text-base font-bold text-gray-800 sm:text-lg sm:mb-3">
+                  What triggered this? 
                 </h3>
                 <select
                   value={detailedForm.trigger}
                   onChange={(e) => setDetailedForm({ ...detailedForm, trigger: e.target.value })}
-                  className="w-full p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-sm sm:text-base text-gray-600"
+                  className="w-full p-3 text-sm text-gray-600 border-2 border-gray-200 sm:p-4 bg-gray-50 rounded-xl focus:border-blue-500 focus:outline-none sm:text-base"
                 >
                   <option value="">Select a trigger</option>
                   {triggers.map((trigger) => (
@@ -356,7 +356,7 @@ export default function DailyNotesPage() {
               <button
                 onClick={handleDetailedLog}
                 disabled={isLoading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white font-bold py-4 rounded-xl transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Saving...' : 'Log Emotion'}
               </button>
@@ -364,45 +364,45 @@ export default function DailyNotesPage() {
           )}
 
           {/* Today's Emotional Journey */}
-          <div className="bg-white rounded-3xl p-8 shadow-xl">
-            <h2 className="text-gray-800 font-bold text-2xl mb-6">Today's Emotional Journey</h2>
+          <div className="bg-[#e5f3ff] rounded-3xl p-8 shadow-2xl">
+            <h2 className="mb-6 text-2xl font-bold text-gray-800">Today's Emotional Journey</h2>
             
             {isLoading && emotionalJourney.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <div className="py-8 text-center">
+                <div className="w-12 h-12 mx-auto mb-4 border-b-2 border-blue-600 rounded-full animate-spin"></div>
                 <div className="text-gray-600">Loading your emotional journey...</div>
               </div>
             ) : emotionalJourney.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="text-6xl mb-4">🌱</div>
-                <h3 className="text-gray-800 font-semibold text-lg mb-2">Start Your Emotional Journey</h3>
+              <div className="py-8 text-center">
+                <div className="mb-4 text-6xl">🌱</div>
+                <h3 className="mb-2 text-lg font-semibold text-gray-800">Start Your Emotional Journey</h3>
                 <p className="text-gray-600">No entries yet today. Log your first emotion to begin tracking your daily emotional patterns.</p>
               </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
                 {emotionalJourney.map((entry) => (
-                  <div key={entry.id} className="bg-cyan-100 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-md hover:shadow-lg transition-shadow">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0 mb-2">
+                  <div key={entry.id} className="p-4 transition-shadow shadow-md bg-cyan-100 rounded-xl sm:rounded-2xl sm:p-5 md:p-6 hover:shadow-lg">
+                    <div className="flex flex-col gap-2 mb-2 sm:flex-row sm:justify-between sm:items-start sm:gap-0">
                       <div className="flex items-center gap-2">
                         <span className="text-xl sm:text-2xl">
                           {emotions.find(e => e.name === entry.emotion)?.emoji || '😐'}
                         </span>
-                        <span className="text-gray-800 font-bold text-base sm:text-lg">{entry.emotion}</span>
+                        <span className="text-base font-bold text-gray-800 sm:text-lg">{entry.emotion}</span>
                         <span className="bg-blue-100 text-blue-800 text-[10px] sm:text-xs px-2 py-1 rounded-full font-semibold">
                           {entry.type === 'emoji' ? 'Quick' : 'Detailed'}
                         </span>
                       </div>
                       <div className="text-left sm:text-right">
-                        <div className="text-gray-700 font-semibold text-xs sm:text-sm">
+                        <div className="text-xs font-semibold text-gray-700 sm:text-sm">
                           Intensity: {entry.intensity}/10
                         </div>
-                        <div className="text-gray-600 text-xs sm:text-sm">{entry.timestamp}</div>
+                        <div className="text-xs text-gray-600 sm:text-sm">{entry.timestamp}</div>
                       </div>
                     </div>
                     {entry.description && (
-                      <div className="text-gray-800 text-sm sm:text-base mb-2">{entry.description}</div>
+                      <div className="mb-2 text-sm text-gray-800 sm:text-base">{entry.description}</div>
                     )}
-                    <div className="text-gray-600 text-xs sm:text-sm">
+                    <div className="text-xs text-gray-600 sm:text-sm">
                       Triggered by: {entry.trigger}
                     </div>
                   </div>

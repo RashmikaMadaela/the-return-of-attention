@@ -219,6 +219,14 @@ model UserStageProgress {
   @@map("user_stage_progress")
 }
 
+// Session status tracking
+enum SessionStatus {
+  STARTED              // Timer running or session in progress
+  AWAITING_REFLECTION  // Timer finished, waiting for reflection/journal
+  COMPLETED            // Reflection saved, session fully complete
+  ABANDONED            // User quit or started new session without finishing
+}
+
 model Session {
   id              String   @id @default(cuid())
   userId          String
@@ -228,7 +236,7 @@ model Session {
   
   sessionType     String   // 'timer_only', 'pahm_matrix', 'mind_recovery'
   duration        Int      // in minutes
-  status          String   @default("not_started") // 'not_started', 'in_progress', 'completed', 'abandoned'
+  status          SessionStatus   @default(STARTED)
   
   // Session data
   startedAt       DateTime?

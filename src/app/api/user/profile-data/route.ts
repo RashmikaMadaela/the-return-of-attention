@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
           }
         },
         sessions: {
-          where: { status: 'completed' },
+          where: { status: 'COMPLETED' },
           select: {
             id: true
           }

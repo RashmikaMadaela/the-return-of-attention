@@ -17,19 +17,19 @@ export default function PrivacyPolicyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 via-indigo-600 to-blue-600">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Header with Back Button */}
       <div className="sticky top-0 z-50 border-b shadow-lg bg-white/95 backdrop-blur-sm border-purple-200">
         <div className="flex items-center justify-between px-4 py-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition-all duration-200 bg-purple-600 sm:px-4 sm:py-2 rounded-xl hover:bg-purple-700 hover:scale-105 sm:text-base"
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition-all duration-200 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] sm:px-4 sm:py-2 rounded-xl hover:from-[#5658d1] hover:to-[#6465e0] hover:scale-105 sm:text-base"
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             <span className="hidden sm:inline">Back</span>
           </button>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Lock className="w-6 h-6 text-purple-600 sm:w-8 sm:h-8" />
+            <Lock className="w-6 h-6 text-[#6465e0] sm:w-8 sm:h-8" />
             <h1 className="text-lg font-bold text-gray-800 sm:text-xl md:text-2xl">Privacy Policy</h1>
           </div>
           <div className="w-16 sm:w-24"></div>
@@ -38,11 +38,11 @@ export default function PrivacyPolicyPage() {
 
       {/* Main Content */}
       <div className="px-4 py-8 mx-auto max-w-5xl sm:px-6 lg:px-8 sm:py-12">
-        <div className="p-6 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl sm:p-8 md:p-12">
+        <div className="p-6 shadow-2xl bg-[#e5f3ff] backdrop-blur-sm rounded-3xl sm:p-8 md:p-12">
           {/* Introduction */}
           <div className="pb-6 mb-6 border-b-2 border-purple-200 sm:pb-8 sm:mb-8">
             <div className="flex items-start gap-3 mb-4 sm:gap-4">
-              <div className="flex-shrink-0 p-2 rounded-full sm:p-3 bg-gradient-to-br from-purple-500 to-indigo-600">
+              <div className="flex-shrink-0 p-2 rounded-full sm:p-3 bg-gradient-to-r from-[#6465e0] to-[#7c7de8]">
                 <Shield className="w-5 h-5 text-white sm:w-6 sm:h-6" />
               </div>
               <div>

@@ -352,7 +352,7 @@ function calculateEmotionalStabilityScore(
   score += thoughtPatternMap[questionnaire.thoughtPatterns as string] || 0
 
   // Practice Bonus (min 20, sessions × 1.5)
-  const completedSessions = sessions.filter(s => s.status === 'completed')
+  const completedSessions = sessions.filter(s => s.status === 'COMPLETED')
   const practiceBonus = Math.max(20, Math.min(50, completedSessions.length * 1.5))
   score += practiceBonus
 
@@ -372,7 +372,7 @@ function calculateEmotionalStabilityScore(
 // ============================================================================
 
 function calculateMindRecoveryScore(sessions: Session[]): number {
-  const completedSessions = sessions.filter(s => s.status === 'completed')
+  const completedSessions = sessions.filter(s => s.status === 'COMPLETED')
   
   if (completedSessions.length === 0) return 0
 
@@ -452,7 +452,7 @@ function calculateEmotionalRegulationScore(
   score += dailyMindfulnessMap[questionnaire.mindfulnessInDailyLife as string] || 0
 
   // Practice Weeks × 2 (max 15)
-  const completedSessions = sessions.filter(s => s.status === 'completed')
+  const completedSessions = sessions.filter(s => s.status === 'COMPLETED')
   if (completedSessions.length > 0) {
     const firstSession = new Date(completedSessions[completedSessions.length - 1].createdAt)
     const now = new Date()
@@ -475,7 +475,7 @@ function calculateEmotionalRegulationScore(
 // ============================================================================
 
 function calculatePracticeConsistencyScore(sessions: Session[]): number {
-  const completedSessions = sessions.filter(s => s.status === 'completed')
+  const completedSessions = sessions.filter(s => s.status === 'COMPLETED')
   
   if (completedSessions.length === 0) return 0
 
@@ -570,7 +570,7 @@ function determineUserLevel(score: number): string {
 
 function calculateStreakDays(sessions: Session[]): number {
   const sortedSessions = sessions
-    .filter(s => s.status === 'completed')
+    .filter(s => s.status === 'COMPLETED')
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
   if (sortedSessions.length === 0) return 0

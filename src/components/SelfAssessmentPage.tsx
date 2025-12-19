@@ -142,7 +142,7 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="self-assessment" />
@@ -152,12 +152,12 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
           {/* Questions */}
           <div className="space-y-4 sm:space-y-5 md:space-y-6">
             {questions.map((question) => (
-              <div key={question.id} className="bg-blue-400 bg-opacity-40 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8">
+              <div key={question.id} className="bg-[#e5f3ff] backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-lg">
                 <div className="text-center mb-4 sm:mb-5 md:mb-6">
                   <div className="text-3xl sm:text-4xl md:text-5xl mb-2 sm:mb-3">{question.emoji}</div>
-                  <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{question.title}</h2>
-                  <p className="text-white text-xs sm:text-sm mb-1">{question.subtitle}</p>
-                  <p className="text-white text-[10px] sm:text-xs opacity-80">{question.description}</p>
+                  <h2 className="text-[#03478f] text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{question.title}</h2>
+                  <p className="text-black text-xs sm:text-sm mb-1">{question.subtitle}</p>
+                  <p className="text-gray-700 text-[10px] sm:text-xs opacity-80">{question.description}</p>
                 </div>
 
                 <div className="space-y-2 sm:space-y-3">
@@ -207,7 +207,7 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
           <div className="mt-6 sm:mt-7 md:mt-8 flex justify-between items-center pb-6 sm:pb-8">
             <button
               onClick={handleBack}
-              className="bg-blue-400 hover:bg-blue-500 text-white font-bold px-5 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
+              className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white font-bold px-5 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
             >
               Back
             </button>

@@ -119,10 +119,10 @@ export default function Stage1Page() {
   const summary = data?.summary || { completedLevels: 0, totalSessions: 0, completionPercent: 0 }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-blue-700">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Background refresh indicator */}
       {isValidating && (
-        <div className="fixed z-50 px-4 py-2 text-white bg-blue-500 rounded-lg shadow-lg top-20 right-4">
+        <div className="fixed z-50 px-4 py-2 text-white bg-[#6465e0] rounded-lg shadow-lg top-20 right-4">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
             <span className="text-sm font-medium">Refreshing...</span>
@@ -136,8 +136,8 @@ export default function Stage1Page() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-8 text-center">
-            <h1 className="mb-4 text-4xl font-bold text-white">Stage 1: Physical Stillness</h1>
-            <p className="text-xl text-white">Develop physical foundation through progressive stillness training from 10 to 30 minutes.</p>
+            <h1 className="mb-4 text-4xl font-bold text-[#03478f]">Stage 1: Physical Stillness</h1>
+            <p className="text-xl text-gray-700">Develop physical foundation through progressive stillness training from 10 to 30 minutes.</p>
           </div>
 
           {/* Stages Grid */}
@@ -158,8 +158,8 @@ export default function Stage1Page() {
               }
               
               return (
-                <div key={stage.id} className="p-6 bg-white shadow-lg rounded-xl">
-                  <h3 className="mb-4 text-2xl font-bold">
+                <div key={stage.id} className="p-6 bg-[#e5f3ff] shadow-2xl rounded-xl">
+                  <h3 className="mb-4 text-2xl font-bold text-[#03478f]">
                     {stage.isPAHM ? 'PAHM Matrix Intro' : getStageTitle(stage.name)}
                   </h3>
                   {!stage.isPAHM && (
@@ -169,7 +169,7 @@ export default function Stage1Page() {
                       <div className="mb-4">
                         <div className="w-full h-2 bg-gray-200 rounded-full">
                           <div
-                            className="h-2 transition-all duration-300 bg-blue-600 rounded-full"
+                            className="h-2 transition-all duration-300 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-full"
                             style={{ width: `${Math.min(100, stage.progressPercent || 0)}%` }}
                           ></div>
                         </div>
@@ -182,7 +182,7 @@ export default function Stage1Page() {
                       <p className="mb-4 text-gray-700">Sessions: {stage.sessions}/1</p>
                       <div className="mb-4">
                         <div className="w-full h-2 bg-gray-200 rounded-full">
-                          <div className="h-2 transition-all duration-300 bg-blue-600 rounded-full" style={{ width: `${(stage.sessions / 1) * 100}%` }}></div>
+                          <div className="h-2 transition-all duration-300 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-full" style={{ width: `${(stage.sessions / 1) * 100}%` }}></div>
                         </div>
                       </div>
                     </>
@@ -203,8 +203,8 @@ export default function Stage1Page() {
           </div>
 
           {/* Progress Summary */}
-          <div className="p-6 mt-8 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl">
-            <h2 className="mb-4 text-2xl font-bold text-black">Your Progress</h2>
+          <div className="p-6 mt-8 bg-[#e5f3ff] shadow-2xl rounded-xl">
+            <h2 className="mb-4 text-2xl font-bold text-[#03478f]">Your Progress</h2>
             <div className="grid grid-cols-1 gap-4 text-black md:grid-cols-3">
               <div className="text-center">
                 <div className="text-3xl font-bold">{summary.completedLevels}</div>

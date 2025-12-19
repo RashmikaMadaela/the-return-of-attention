@@ -18,7 +18,7 @@ export default function PAHMMatrixGuidePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-700 to-pink-600">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Navigation */}
       <Navigation currentPage="learn" />
       
@@ -27,17 +27,17 @@ export default function PAHMMatrixGuidePage() {
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-6 sm:mb-8 mt-4 sm:mt-6">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#03478f] mb-3 sm:mb-4">
               The PAHM Matrix
             </h1>
-            <p className="text-white text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
+            <p className="text-black text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
               Present Attention and Happiness Matrix - The ultimate tool for achieving happiness that stays. 
               Track your attention patterns and cultivate lasting wellbeing through awareness.
             </p>
           </div>
 
           {/* PAHM Matrix Visual */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 mb-6">
+          <div className="bg-[#e5f3ff] rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 text-center mb-4">
               The PAHM Matrix
             </h2>
@@ -90,7 +90,7 @@ export default function PAHMMatrixGuidePage() {
             <div className="flex justify-center">
               <button
                 onClick={handleBack}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base"
+                className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white px-4 sm:px-6 py-2 rounded-lg font-semibold transition-all text-sm sm:text-base"
               >
                 Back
               </button>
@@ -98,7 +98,7 @@ export default function PAHMMatrixGuidePage() {
           </div>
 
           {/* Understanding the Nine Positions */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 mb-6">
+          <div className="bg-[#e5f3ff] rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-6">
               Understanding the Nine Positions
             </h2>
@@ -148,7 +148,7 @@ export default function PAHMMatrixGuidePage() {
           </div>
 
           {/* How PAHM Works */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 mb-6">
+          <div className="bg-[#e5f3ff] rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-4">
               How PAHM Practice Works
             </h2>
@@ -196,7 +196,7 @@ export default function PAHMMatrixGuidePage() {
           </div>
 
           {/* Benefits */}
-          <div className="bg-white rounded-xl p-4 sm:p-6 md:p-8 mb-6">
+          <div className="bg-[#e5f3ff] rounded-xl p-4 sm:p-6 md:p-8 mb-6 shadow-2xl">
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-4">
               Benefits of PAHM Practice
             </h2>

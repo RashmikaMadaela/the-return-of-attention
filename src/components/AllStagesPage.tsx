@@ -197,7 +197,7 @@ export default function AllStagesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-600">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Navigation */}
       <Navigation currentPage="all-stages" />
       
@@ -205,8 +205,8 @@ export default function AllStagesPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4">Your Meditation Journey</h1>
-            <p className="text-white text-xl">
+            <h1 className="text-4xl font-bold text-[#03478f] mb-4">Your Meditation Journey</h1>
+            <p className="text-black text-xl">
               Progress through 6 stages to achieve lasting happiness through attention awareness
             </p>
           </div>

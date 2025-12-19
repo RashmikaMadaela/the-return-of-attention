@@ -1,19 +1,30 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-import { LogIn, Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react'
+import { LogIn, Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff } from 'lucide-react'
 
 export default function SignInPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({})
-
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [sessionExpired, setSessionExpired] = useState(false)
+
+  // Check for session expiration message
+  useEffect(() => {
+    const expired = searchParams.get('expired')
+    if (expired === 'true') {
+      setSessionExpired(true)
+      setError('Your session has expired due to inactivity. Please sign in again.')
+    }
+  }, [searchParams])
 
   const handleSignIn = async () => {
     setError('')
@@ -177,13 +188,26 @@ export default function SignInPage() {
               <Lock className="inline w-4 h-4 mr-1" />
               Password
             </label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full p-3 pr-12 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 sm:pr-12 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute text-gray-500 transition-colors transform -translate-y-1/2 right-3 top-1/2 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            </div>
             {fieldErrors.password && (
               <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
                 <span>⚠️</span> {fieldErrors.password}
@@ -206,8 +230,24 @@ export default function SignInPage() {
           </div>
         </div>
 
+        {/* Session Expired Message */}
+        {sessionExpired && !error && (
+          <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-yellow-700 border border-yellow-300 bg-yellow-50 rounded-xl">
+            <span>⏱️</span>
+            <span>Your session has expired due to inactivity. Please sign in again.</span>
+          </div>
+        )}
+
         {/* Error Message */}
-        {error && (
+        {error && !sessionExpired && (
+          <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-red-600 border border-red-200 bg-red-50 rounded-xl">
+            <span>⚠️</span>
+            <span>{error}</span>
+          </div>
+        )}
+        
+        {/* Error Message with Session Expired */}
+        {error && sessionExpired && (
           <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-red-600 border border-red-200 bg-red-50 rounded-xl">
             <span>⚠️</span>
             <span>{error}</span>

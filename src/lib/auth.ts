@@ -35,6 +35,7 @@ declare module 'next-auth/jwt' {
     id?: string
     isActive?: boolean
     rememberMe?: boolean
+    lastActivity?: number
   }
 }
 
@@ -48,8 +49,10 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
   session: {
     strategy: 'jwt',
-    // Maximum session age (30 days) - actual expiry controlled by JWT exp claim
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    // Session expires after 1 hour of inactivity
+    maxAge: 60 * 60, // 1 hour
+    // Update session age on every request to track activity
+    updateAge: 0, // Update on every request
   },
   providers: [
     // Google OAuth Provider
@@ -130,23 +133,35 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
+      const now = Math.floor(Date.now() / 1000)
+      
       // Initial sign in
       if (account && user) {
         token.id = user.id
         token.isActive = (user as any).isActive
         token.rememberMe = (user as any).rememberMe || false
+        token.lastActivity = now
         
-        // Set token expiry based on rememberMe
-        const now = Math.floor(Date.now() / 1000)
-        if (token.rememberMe) {
-          // Remember me: 30 days
-          token.exp = now + 30 * 24 * 60 * 60
-        } else {
-          // Regular session: 1 hour
-          token.exp = now + 60 * 60
-        }
+        // Set token expiry to 1 hour from now
+        token.exp = now + 60 * 60 // 1 hour
       }
+      
+      // On subsequent requests, check if session should be expired
+      if (token.lastActivity) {
+        const timeSinceLastActivity = now - (token.lastActivity as number)
+        
+        // If more than 1 hour of inactivity, expire the session
+        if (timeSinceLastActivity > 60 * 60) {
+          return {} as any // Return empty token to invalidate session
+        }
+        
+        // Update last activity time
+        token.lastActivity = now
+        // Extend expiry time
+        token.exp = now + 60 * 60
+      }
+      
       return token
     },
     async session({ session, token }) {

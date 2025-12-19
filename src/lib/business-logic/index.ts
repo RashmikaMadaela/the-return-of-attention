@@ -104,7 +104,7 @@ export function calculateStageProgress(
 
   const stageSessions = sessions.filter(s => 
     s.stageNumber === stageNumber && 
-    s.status === 'completed' &&
+    s.status === 'COMPLETED' &&
     (!currentSubStage || s.subStage === currentSubStage)
   )
 
@@ -214,7 +214,7 @@ export function isValidStageTransition(fromStage: number, toStage: number): bool
 
 export function calculateStreakDays(sessions: Session[]): number {
   const completedSessions = sessions
-    .filter(s => s.status === 'completed')
+    .filter(s => s.status === 'COMPLETED')
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
   if (completedSessions.length === 0) return 0

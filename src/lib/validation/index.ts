@@ -142,7 +142,7 @@ export const sessionStartSchema = z.object({
 
 export const sessionUpdateSchema = z.object({
   sessionId: z.string().cuid(),
-  status: z.enum(['in_progress', 'completed', 'abandoned']).optional(),
+  status: z.enum(['STARTED', 'AWAITING_REFLECTION', 'COMPLETED', 'ABANDONED']).optional(),
   qualityRating: z.number().min(1).max(10).optional(),
   insights: z.string().max(1000).optional()
 })

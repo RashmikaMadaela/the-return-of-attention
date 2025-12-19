@@ -228,7 +228,7 @@ export async function checkActiveSession(userId: string) {
   const activeSession = await prisma.session.findFirst({
     where: {
       userId,
-      status: 'in_progress'
+      status: 'STARTED'
     },
     include: {
       stage: true

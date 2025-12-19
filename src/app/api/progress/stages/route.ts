@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
         sessions: {
           where: { 
             userId: session.user.id,
-            status: 'completed'
+            status: 'COMPLETED'
           },
           select: {
             id: true,

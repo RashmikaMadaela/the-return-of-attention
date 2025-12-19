@@ -30,11 +30,14 @@ export async function POST(request: NextRequest) {
     const validatedData = validation.data
 
     // Find existing session and verify ownership
+    // Accept sessions in STARTED or AWAITING_REFLECTION status
     const existingSession = await prisma.session.findFirst({
       where: {
         id: validatedData.sessionId,
         userId: user.id,
-        status: 'in_progress'
+        status: {
+          in: ['STARTED', 'AWAITING_REFLECTION']
+        }
       },
       include: {
         stage: true,
@@ -78,11 +81,11 @@ export async function POST(request: NextRequest) {
 
     // Use transaction to ensure data consistency
     const result = await prisma.$transaction(async (tx) => {
-      // Update session as completed
+      // Update session status to COMPLETED with reflection data
       const completedSession = await tx.session.update({
         where: { id: validatedData.sessionId },
         data: {
-          status: 'completed',
+          status: 'COMPLETED',
           completedAt: completedAt,
           qualityRating: validatedData.qualityRating,
           insights: validatedData.insights,

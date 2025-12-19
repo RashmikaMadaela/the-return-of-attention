@@ -232,7 +232,7 @@ export default function QuestionnairePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-purple-600">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="questionnaire" />
@@ -240,18 +240,18 @@ export default function QuestionnairePage() {
       <div className="p-3 pt-20 sm:p-4 sm:pt-24">
         <div className="max-w-4xl mx-auto">
           {/* Progress Bar */}
-          <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6 shadow-lg">
+          <div className="bg-[#e5f3ff] rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6 shadow-2xl">
             <div className="flex justify-between items-center mb-2">
               <span className="text-gray-700 font-semibold text-sm sm:text-base">Question {getQuestionRange()}</span>
-              <span className="text-blue-600 font-bold text-sm sm:text-base">{getProgress()}%</span>
+              <span className="text-[#03478f] font-bold text-sm sm:text-base">{getProgress()}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 mb-2">
               <div 
-                className="bg-blue-600 h-2 sm:h-3 rounded-full transition-all duration-300"
+                className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] h-2 sm:h-3 rounded-full transition-all duration-300"
                 style={{ width: `${getProgress()}%` }}
               ></div>
             </div>
-            <div className="text-xs sm:text-sm text-blue-600 font-semibold">{getPhaseTitle()}</div>
+            <div className="text-xs sm:text-sm text-[#03478f] font-semibold">{getPhaseTitle()}</div>
           </div>
 
           {/* Page 1 Content */}
@@ -273,7 +273,7 @@ export default function QuestionnairePage() {
           <div className="flex justify-between mt-4 sm:mt-5 md:mt-6 pb-6 sm:pb-8">
             <button
               onClick={handleBack}
-              className="bg-purple-400 hover:bg-purple-500 text-white font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
+              className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
             >
               Back
             </button>
@@ -281,7 +281,7 @@ export default function QuestionnairePage() {
             {currentPage < 3 ? (
               <button
                 onClick={handleNext}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
+                className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white font-bold px-6 py-3 sm:px-8 sm:py-3 md:px-10 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"
               >
                 Next
               </button>

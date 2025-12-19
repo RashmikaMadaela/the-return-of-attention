@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
 
       // Get recent session activity
       const recentSessions = stage.sessions
-        .filter(s => s.status === 'completed' && s.completedAt)
+        .filter(s => s.status === 'COMPLETED' && s.completedAt)
         .sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime())
         .slice(0, 3);
 

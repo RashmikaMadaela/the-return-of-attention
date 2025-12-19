@@ -31,16 +31,30 @@ export async function POST(request: NextRequest) {
     // Check stage access
     await checkStageAccess(user.id, stageNumber)
 
-    // Check for existing in-progress session
-    const existingSession = await prisma.session.findFirst({
+    // ZOMBIE LOCK FIX: Check for incomplete sessions (STARTED or AWAITING_REFLECTION)
+    // Instead of throwing error, automatically abandon them (lazy cleanup)
+    const incompleteSession = await prisma.session.findFirst({
       where: {
         userId: user.id,
-        status: 'in_progress'
+        status: {
+          in: ['STARTED', 'AWAITING_REFLECTION']
+        }
+      },
+      orderBy: {
+        startedAt: 'desc'
       }
     })
 
-    if (existingSession) {
-      throw CommonErrors.sessionInProgress()
+    // If incomplete session exists, mark it as ABANDONED
+    if (incompleteSession) {
+      await prisma.session.update({
+        where: { id: incompleteSession.id },
+        data: {
+          status: 'ABANDONED',
+          completedAt: new Date()
+        }
+      })
+      console.log(`Auto-abandoned session ${incompleteSession.id} for user ${user.id}`)
     }
 
     // Get stage info for the session
@@ -52,7 +66,7 @@ export async function POST(request: NextRequest) {
       throw CommonErrors.stageNotFound()
     }
 
-    // Create new session
+    // Create new session with STARTED status
     const newSession = await prisma.session.create({
       data: {
         userId: user.id,
@@ -65,7 +79,7 @@ export async function POST(request: NextRequest) {
         useRemote: sessionType === 'timer_only' ? false : (useRemote ?? false),
         meditationBells: meditationBells ?? true,
         voiceCommands: voiceCommands ?? true,
-        status: 'in_progress',
+        status: 'STARTED',
         startedAt: new Date()
       },
       include: {
