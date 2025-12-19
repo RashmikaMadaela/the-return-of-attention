@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     const sessionStats = await prisma.session.aggregate({
       where: { 
         userId: session.user.id,
-        status: 'completed'
+        status: 'COMPLETED'
       },
       _count: { id: true },
       _sum: { duration: true },
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     const recentSessions = await prisma.session.findMany({
       where: {
         userId: session.user.id,
-        status: 'completed'
+        status: 'COMPLETED'
       },
       select: {
         completedAt: true
@@ -405,9 +405,9 @@ function calculateMilestones(totalSessions: number, totalHours: number, complete
 }
 
 function calculateWeeklyGoals(recentActivity: any[]) {
-  const completedSessions = recentActivity.filter(a => a.status === 'completed').length;
+  const completedSessions = recentActivity.filter(a => a.status === 'COMPLETED').length;
   const totalMinutes = recentActivity
-    .filter(a => a.status === 'completed')
+    .filter(a => a.status === 'COMPLETED')
     .reduce((sum, a) => sum + a.duration, 0);
 
   return {

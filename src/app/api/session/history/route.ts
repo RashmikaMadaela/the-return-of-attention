@@ -10,7 +10,7 @@ const querySchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(20),
   stageNumber: z.coerce.number().int().min(1).max(6).optional(),
   sessionType: z.enum(['timer_only', 'pahm_matrix', 'mind_recovery']).optional(),
-  status: z.enum(['not_started', 'in_progress', 'completed', 'abandoned']).optional(),
+  status: z.enum(['AWAITING_REFLECTION', 'STARTED', 'COMPLETED', 'ABANDONED']).optional(),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
 });
@@ -142,7 +142,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate session statistics
     const stats = await prisma.session.aggregate({
-      where: { userId: session.user.id, status: 'completed' },
+      where: { userId: session.user.id, status: 'COMPLETED' },
       _count: { id: true },
       _sum: { duration: true },
       _avg: { qualityRating: true }

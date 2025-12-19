@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const sessions = await prisma.session.findMany({
       where: { 
         userId: user.id,
-        status: 'completed'
+        status: 'COMPLETED'
       },
       orderBy: { createdAt: 'desc' }
     })

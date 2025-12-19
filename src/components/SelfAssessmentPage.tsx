@@ -148,15 +148,15 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
       <Navigation currentPage="self-assessment" />
       
       <div className="p-3 pt-20 sm:p-4 sm:pt-24">
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto max-w-7xl">
           {/* Questions */}
           <div className="space-y-4 sm:space-y-5 md:space-y-6">
             {questions.map((question) => (
               <div key={question.id} className="bg-[#e5f3ff] backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-lg">
-                <div className="text-center mb-4 sm:mb-5 md:mb-6">
-                  <div className="text-3xl sm:text-4xl md:text-5xl mb-2 sm:mb-3">{question.emoji}</div>
+                <div className="mb-4 text-center sm:mb-5 md:mb-6">
+                  <div className="mb-2 text-3xl sm:text-4xl md:text-5xl sm:mb-3">{question.emoji}</div>
                   <h2 className="text-[#03478f] text-lg sm:text-xl md:text-2xl font-bold mb-1 sm:mb-2">{question.title}</h2>
-                  <p className="text-black text-xs sm:text-sm mb-1">{question.subtitle}</p>
+                  <p className="mb-1 text-xs text-black sm:text-sm">{question.subtitle}</p>
                   <p className="text-gray-700 text-[10px] sm:text-xs opacity-80">{question.description}</p>
                 </div>
 
@@ -204,7 +204,7 @@ export default function SelfAssessmentPage({ onComplete }: SelfAssessmentPagePro
           </div>
 
           {/* Footer Buttons */}
-          <div className="mt-6 sm:mt-7 md:mt-8 flex justify-between items-center pb-6 sm:pb-8">
+          <div className="flex items-center justify-between pb-6 mt-6 sm:mt-7 md:mt-8 sm:pb-8">
             <button
               onClick={handleBack}
               className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white font-bold px-5 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base"

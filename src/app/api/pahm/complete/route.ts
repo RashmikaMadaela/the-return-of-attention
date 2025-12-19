@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if the main session is still in progress
-    if (pahmSession.session.status !== 'in_progress') {
+    if (pahmSession.session.status !== 'STARTED') {
       return NextResponse.json(
         { 
           success: false, 

@@ -155,7 +155,7 @@ export async function GET(
     }
 
     // Calculate detailed progress statistics
-    const completedSessions = user.sessions.filter(s => s.status === 'completed');
+    const completedSessions = user.sessions.filter(s => s.status === 'COMPLETED');
     const totalHours = completedSessions.reduce((sum, session) => sum + (session.duration || 0), 0) / 60;
     
     // Calculate stage progress

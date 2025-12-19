@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
       
       // Session statistics
       prisma.session.count(),
-      prisma.session.count({ where: { status: 'completed' } }),
+      prisma.session.count({ where: { status: 'COMPLETED' } }),
       
       // Assessment statistics
       prisma.questionnaire.count({ where: { isCompleted: { not: null } } }),
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
     const sessionMetrics = await prisma.session.aggregate({
       _avg: { duration: true },
       _sum: { duration: true },
-      where: { status: 'completed' },
+      where: { status: 'COMPLETED' },
     });
 
     const totalPracticeHours = (sessionMetrics._sum.duration || 0) / 60;
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
     // Calculate stage completion rates
     const stageCompletions = await prisma.session.groupBy({
       by: ['stageNumber'],
-      where: { status: 'completed' },
+      where: { status: 'COMPLETED' },
       _count: { stageNumber: true },
     });
 

@@ -135,7 +135,7 @@ export default function MindRecoveryPage() {
         </div>
 
         {/* Training Cards Grid */}
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid max-w-5xl grid-cols-1 gap-6 mx-auto md:grid-cols-2">
           {sessions.map((session) => (
             <div
               key={session.id}
@@ -147,24 +147,24 @@ export default function MindRecoveryPage() {
                 style={getCardBackgroundImage(session.imageName)}
               >
                 {session.id === recommendedSession && (
-                  <div className="absolute top-4 left-4 bg-yellow-400 text-black px-4 py-2 rounded-full flex items-center gap-2 font-semibold shadow-lg">
+                  <div className="absolute flex items-center gap-2 px-4 py-2 font-semibold text-black bg-yellow-400 rounded-full shadow-lg top-4 left-4">
                     <Star className="w-5 h-5 fill-current" />
                     Recommended
                   </div>
                 )}
-                <h2 className="text-white text-2xl font-bold text-center px-4 drop-shadow-lg">
+                <h2 className="px-4 text-2xl font-bold text-center text-white drop-shadow-lg">
                   {session.title}
                 </h2>
               </div>
 
               {/* Card Content */}
               <div className="p-6">
-                <p className="text-gray-800 text-center text-base mb-4">
+                <p className="mb-4 text-base text-center text-gray-800">
                   {session.description}
                 </p>
                 
-                <div className="bg-gray-100 rounded-full px-6 py-2 text-center mb-4 inline-block w-full">
-                  <span className="text-gray-700 font-semibold">{session.duration} minutes</span>
+                <div className="inline-block w-full px-6 py-2 mb-4 text-center bg-gray-100 rounded-full">
+                  <span className="font-semibold text-gray-700">{session.duration} minutes</span>
                 </div>
 
                 <button

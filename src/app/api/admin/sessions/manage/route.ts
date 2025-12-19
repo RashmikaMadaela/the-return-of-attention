@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
 
         // Get current stage progress
         const currentProgress = await prisma.session.findFirst({
-          where: { userId, status: 'completed' },
+          where: { userId, status: 'COMPLETED' },
           orderBy: { stageNumber: 'desc' },
           select: { stageNumber: true }
         });
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
                   stageNumber: stage,
                   sessionType: stage === 1 ? 'timer_only' : 'pahm_matrix',
                   duration: 30, // 30 minutes
-                  status: 'completed',
+                  status: 'COMPLETED',
                   startedAt: new Date(Date.now() - (requiredSessions - i) * 24 * 60 * 60 * 1000),
                   completedAt: new Date(Date.now() - (requiredSessions - i - 1) * 24 * 60 * 60 * 1000),
                   qualityRating: Math.floor(Math.random() * 3) + 7, // Random 7-10
@@ -231,7 +231,7 @@ export async function POST(request: NextRequest) {
             stageNumber: 1,
             sessionType: 'timer_only',
             duration,
-            status: 'not_started',
+            status: 'STARTED',
             posture: 'sitting',
           }
         });

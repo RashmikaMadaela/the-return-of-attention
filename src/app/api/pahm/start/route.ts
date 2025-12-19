@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       where: {
         id: validatedData.sessionId,
         userId: session.user.id,
-        status: 'in_progress'
+        status: 'STARTED'
       },
       include: {
         stage: true,
