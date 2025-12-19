@@ -59,7 +59,7 @@ export async function autoTriggerHappinessCalculation(
     // Fetch all data required for calculation
     const [sessions, pahmSessions, stageProgress, dailyNotes] = await Promise.all([
       prisma.session.findMany({
-        where: { userId, status: 'completed' },
+        where: { userId, status: 'COMPLETED' },
         orderBy: { createdAt: 'desc' }
       }),
       prisma.pAHMSession.findMany({

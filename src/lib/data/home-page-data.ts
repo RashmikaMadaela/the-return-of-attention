@@ -60,7 +60,7 @@ export const getHomePageData = cache(async () => {
       prisma.session.aggregate({
         where: { 
           userId,
-          status: 'completed'
+          status: 'COMPLETED'
         },
         _count: { id: true },
         _sum: { duration: true }

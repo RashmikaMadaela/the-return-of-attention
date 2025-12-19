@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     const sessionStats = await prisma.session.aggregate({
       where: { 
         userId: session.user.id,
-        status: 'completed'
+        status: 'COMPLETED'
       },
       _count: { id: true },
       _sum: { duration: true },
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     const activeSession = await prisma.session.findFirst({
       where: {
         userId: session.user.id,
-        status: 'in_progress'
+        status: {in: ['STARTED', 'AWAITING_REFLECTION']}
       },
       include: {
         stage: {
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     const recentSessions = await prisma.session.findMany({
       where: {
         userId: session.user.id,
-        status: 'completed'
+        status: 'COMPLETED'
       },
       select: {
         id: true,
@@ -233,7 +233,7 @@ async function calculateStreak(userId: string): Promise<number> {
     const sessions = await prisma.session.findMany({
       where: {
         userId,
-        status: 'completed'
+        status: 'COMPLETED'
       },
       select: {
         completedAt: true

@@ -143,7 +143,7 @@ export const getAdminUsers = cache(async (params: AdminUsersParams = {}): Promis
             take: 1
           },
           sessions: {
-            where: { status: 'completed' },
+            where: { status: 'COMPLETED' },
             select: {
               createdAt: true
             },

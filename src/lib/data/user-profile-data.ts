@@ -67,7 +67,7 @@ export const getUserProfileData = cache(async (): Promise<UserProfileData | null
           }
         },
         sessions: {
-          where: { status: 'completed' },
+          where: { status: 'COMPLETED' },
           select: {
             id: true
           }

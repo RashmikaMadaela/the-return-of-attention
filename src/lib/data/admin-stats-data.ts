@@ -86,7 +86,7 @@ export const getAdminStats = cache(async (): Promise<AdminStatsData | null> => {
       prisma.session.aggregate({
         _avg: { duration: true },
         _sum: { duration: true },
-        where: { status: 'completed' }
+        where: { status: 'COMPLETED' }
       })
     ])
 
