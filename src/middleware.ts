@@ -29,6 +29,7 @@ const protectedRoutes = [
   '/pahm-reflection',
   '/user-profile',
   '/password-change',
+  '/admin',
 ]
 
 // Public routes that should redirect to home if authenticated
