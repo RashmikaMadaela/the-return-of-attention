@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { IntroLoadingSkeleton } from './LoadingUI'
 
 export default function IntroPage() {
   const router = useRouter()
@@ -28,9 +29,9 @@ export default function IntroPage() {
     checkAuth()
   }, [router])
 
-  // Show nothing while checking auth status
+  // Show loading skeleton while checking auth status
   if (isChecking) {
-    return null
+    return <IntroLoadingSkeleton />
   }
 
   const handleRegister = () => {
