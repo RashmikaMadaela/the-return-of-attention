@@ -193,7 +193,8 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
           {/* Title Section */}
           <div className="mb-8 text-center">
             <h1 className="text-[#03478f] text-5xl font-bold mb-3">Emotional Check-ins</h1>
-            <p className="text-xl text-black">Capture how you're feeling Today</p>
+            <p className="mb-2 text-xl text-black">Notice an emotion arising? Log it here whenever you can.</p>
+            <p className="text-sm text-slate-800">Tracking these moments gives us the insight needed to guide you deeper on your journey.</p>
           </div>
 
           {/* Error Message */}
