@@ -90,6 +90,7 @@ export default function PAHMTimerPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const pulseIntervalRef = useRef<NodeJS.Timeout | null>(null)
+  const clickAudioRef = useRef<HTMLAudioElement | null>(null)
 
   // Initialize meditation audio hook
   const { playBell, playVoice } = useMeditationAudio({
@@ -103,6 +104,13 @@ export default function PAHMTimerPage() {
   useEffect(() => {
     // Set session start time
     sessionStartTimeRef.current = Date.now()
+
+    // Initialize click audio
+    if (typeof window !== 'undefined' && !clickAudioRef.current) {
+      clickAudioRef.current = new Audio('/audio/click.mp3')
+      clickAudioRef.current.volume = 0.4 // Lower volume for subtle feedback
+      clickAudioRef.current.preload = 'auto'
+    }
 
     // Load session data from sessionStorage (set by PAHMSessionSetupPage)
     const activeSession = sessionStorage.getItem('activeSession')
@@ -162,6 +170,10 @@ export default function PAHMTimerPage() {
       }
       if (pulseIntervalRef.current) {
         clearInterval(pulseIntervalRef.current)
+      }
+      if (clickAudioRef.current) {
+        clickAudioRef.current.pause()
+        clickAudioRef.current = null
       }
     }
   }, [stageId, sessionId, isAdminMode, isMindRecovery, mindRecoverySession, router])
@@ -293,6 +305,17 @@ export default function PAHMTimerPage() {
 
   const handlePahmClick = (position: keyof PAHMTracking, event?: React.MouseEvent) => {
     if (timer.isRunning) {
+      // Play click sound
+      if (clickAudioRef.current) {
+        try {
+          const clickClone = clickAudioRef.current.cloneNode() as HTMLAudioElement
+          clickClone.volume = clickAudioRef.current.volume
+          clickClone.play().catch(err => console.log('Click sound not available:', err))
+        } catch (error) {
+          console.log('Click sound error:', error)
+        }
+      }
+
       // Update simple tracking (for display)
       setPahmTracking(prev => ({
         ...prev,
