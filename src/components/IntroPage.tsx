@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { IntroLoadingSkeleton } from './LoadingUI'
 
 export default function IntroPage() {
   const router = useRouter()
@@ -28,9 +30,9 @@ export default function IntroPage() {
     checkAuth()
   }, [router])
 
-  // Show nothing while checking auth status
+  // Show loading skeleton while checking auth status
   if (isChecking) {
-    return null
+    return <IntroLoadingSkeleton />
   }
 
   const handleRegister = () => {
@@ -84,16 +86,18 @@ export default function IntroPage() {
               </div>
             </div>
             <div className="flex gap-2 sm:gap-3" suppressHydrationWarning={true}>
-              <button 
-                onClick={handleLogin}
+              <Link
+                href="/signin"
+                prefetch={true}
                 className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-[#6465e0] border-2 border-[#6465e0] hover:bg-[#6465e0] hover:text-white transition-all rounded-lg">
                 Login
-              </button>
-              <button 
-                onClick={handleRegister}
+              </Link>
+              <Link
+                href="/signup"
+                prefetch={true}
                 className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-white bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] transition-all rounded-lg shadow-md">
                 Register
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -134,11 +138,12 @@ export default function IntroPage() {
           <p className="mb-8 text-base sm:text-lg md:text-xl text-gray-700 sm:mb-10 md:mb-12">
             A simple, practical guide to happiness that actually stays
           </p>
-          <button 
-            onClick={handlePracticeToday}
-            className="px-8 py-3 text-base font-semibold text-white transition-all bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-full shadow-lg sm:px-10 sm:py-4 sm:text-lg md:text-xl hover:shadow-xl transform hover:scale-105">
+          <Link
+            href="/signup"
+            prefetch={true}
+            className="inline-block px-8 py-3 text-base font-semibold text-white transition-all bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-full shadow-lg sm:px-10 sm:py-4 sm:text-lg md:text-xl hover:shadow-xl transform hover:scale-105">
             Practice Today!
-          </button>
+          </Link>
         </div>
       </section>
 
@@ -267,16 +272,18 @@ export default function IntroPage() {
               Join thousands who have discovered that lasting happiness isn't something to achieve. It's something to recognize.
             </p>
             <div className="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4 md:justify-start">
-              <button 
-                onClick={handleStartJourney}
-                className="px-6 py-3 text-sm font-bold text-white transition-all shadow-lg sm:px-8 sm:text-base bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-full">
+              <Link
+                href="/signup"
+                prefetch={true}
+                className="px-6 py-3 text-sm font-bold text-white transition-all shadow-lg sm:px-8 sm:text-base bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-full text-center">
                 Start Your Journey!
-              </button>
-              <button 
-                onClick={handleLearnMore}
-                className="px-6 py-3 text-sm font-bold transition-all shadow-lg sm:px-8 sm:text-base bg-white text-[#6465e0] border-2 border-[#6465e0] hover:bg-[#6465e0] hover:text-white rounded-full">
+              </Link>
+              <Link
+                href="/about"
+                prefetch={true}
+                className="px-6 py-3 text-sm font-bold transition-all shadow-lg sm:px-8 sm:text-base bg-white text-[#6465e0] border-2 border-[#6465e0] hover:bg-[#6465e0] hover:text-white rounded-full text-center">
                 Learn More
-              </button>
+              </Link>
             </div>
             <p className="mt-4 text-xs text-gray-600 sm:text-sm">
               No subscription required • Complete guide included • Start immediately
