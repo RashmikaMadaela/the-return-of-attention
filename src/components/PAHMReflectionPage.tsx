@@ -365,36 +365,36 @@ export default function PAHMReflectionPage() {
       {/* Navigation */}
       <Navigation currentPage="pahm-reflection" />
       
-      <div className="p-4 sm:p-6 md:p-8 pt-20 sm:pt-24">
+      <div className="p-4 pt-20 sm:p-6 md:p-8 sm:pt-24">
         <div className="max-w-5xl mx-auto">
           <h1 className="mb-4 sm:mb-6 md:mb-8 text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#03478f]">'</h1>
           
           <div className="p-4 sm:p-6 md:p-8 bg-[#e5f3ff] rounded-xl sm:rounded-2xl shadow-2xl">
             {/* Session Counting Status */}
             {!shouldCountAsSession && (
-              <div className="p-3 sm:p-4 mb-4 sm:mb-6 text-black bg-yellow-100 border-l-4 border-yellow-500 rounded">
-                <p className="text-sm sm:text-base font-semibold">Note: This session will not count towards your progress.</p>
-                <p className="text-xs sm:text-sm mt-1">You need to complete at least 30 minutes for it to count as a completed session.</p>
-                <p className="text-xs sm:text-sm mt-1">Actual time spent: {actualSessionDuration} minutes</p>
+              <div className="p-3 mb-4 text-black bg-yellow-100 border-l-4 border-yellow-500 rounded sm:p-4 sm:mb-6">
+                <p className="text-sm font-semibold sm:text-base">Note: This session will not count towards your progress.</p>
+                <p className="mt-1 text-xs sm:text-sm">You need to complete at least 30 minutes for it to count as a completed session.</p>
+                <p className="mt-1 text-xs sm:text-sm">Actual time spent: {actualSessionDuration} minutes</p>
               </div>
             )}
             
             {shouldCountAsSession && (
-              <div className="p-3 sm:p-4 mb-4 sm:mb-6 text-black bg-green-100 border-l-4 border-green-500 rounded">
-                <p className="text-sm sm:text-base font-semibold">Great job! This session will count towards your progress.</p>
-                <p className="text-xs sm:text-sm mt-1">Time completed: {actualSessionDuration} minutes</p>
+              <div className="p-3 mb-4 text-black bg-green-100 border-l-4 border-green-500 rounded sm:p-4 sm:mb-6">
+                <p className="text-sm font-semibold sm:text-base">Great job! This session will count towards your progress.</p>
+                <p className="mt-1 text-xs sm:text-sm">Time completed: {actualSessionDuration} minutes</p>
               </div>
             )}
 
             {/* Stage and Session Info */}
-            <div className="p-3 sm:p-4 mb-4 sm:mb-6 rounded-lg bg-white shadow-md">
+            <div className="p-3 mb-4 bg-white rounded-lg shadow-md sm:p-4 sm:mb-6">
               <h3 className="mb-2 sm:mb-3 text-base sm:text-lg font-bold text-[#03478f]">Session Summary</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-black">
-                <div className="p-2 bg-blue-50 rounded">• <span className="font-semibold">Stage:</span> {stageId} - {stage?.name}</div>
-                <div className="p-2 bg-blue-50 rounded">• <span className="font-semibold">Planned:</span> {sessionDuration} min</div>
-                <div className="p-2 bg-blue-50 rounded">• <span className="font-semibold">Actual:</span> {actualSessionDuration} min</div>
-                <div className="p-2 bg-blue-50 rounded">• <span className="font-semibold">Clicks:</span> {pahmStats.totals.total}</div>
-                <div className="p-2 bg-blue-50 rounded col-span-1 sm:col-span-2">• <span className="font-semibold">Completed:</span> {new Date().toLocaleDateString()}</div>
+              <div className="grid grid-cols-1 gap-2 text-xs text-black sm:grid-cols-2 sm:text-sm">
+                <div className="p-2 rounded bg-blue-50">• <span className="font-semibold">Stage:</span> {stageId} - {stage?.name}</div>
+                <div className="p-2 rounded bg-blue-50">• <span className="font-semibold">Planned:</span> {sessionDuration} min</div>
+                <div className="p-2 rounded bg-blue-50">• <span className="font-semibold">Actual:</span> {actualSessionDuration} min</div>
+                <div className="p-2 rounded bg-blue-50">• <span className="font-semibold">Clicks:</span> {pahmStats.totals.total}</div>
+                <div className="col-span-1 p-2 rounded bg-blue-50 sm:col-span-2">• <span className="font-semibold">Completed:</span> {new Date().toLocaleDateString()}</div>
               </div>
             </div>
 
@@ -409,8 +409,8 @@ export default function PAHMReflectionPage() {
             {/* Quality Rating Slider */}
             <div className="mb-6 sm:mb-8">
               <h2 className="mb-2 text-lg sm:text-xl font-bold text-[#03478f]">Session Quality Rating</h2>
-              <p className="mb-3 sm:mb-4 text-xs sm:text-sm text-gray-600">How would you rate the overall quality of this practice session?</p>
-              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+              <p className="mb-3 text-xs text-gray-600 sm:mb-4 sm:text-sm">How would you rate the overall quality of this practice session?</p>
+              <div className="flex flex-col items-center gap-2 sm:flex-row sm:gap-4">
                 <span className="text-xs sm:text-sm font-medium text-gray-700 w-full sm:w-auto text-center sm:text-left sm:min-w-[80px]">Poor (1)</span>
                 <input
                   type="range"
@@ -422,7 +422,7 @@ export default function PAHMReflectionPage() {
                 />
                 <span className="text-xs sm:text-sm font-medium text-gray-700 w-full sm:w-auto text-center sm:text-left sm:min-w-[100px]">Excellent (10)</span>
               </div>
-              <div className="mt-3 sm:mt-2 text-center">
+              <div className="mt-3 text-center sm:mt-2">
                 <span className="inline-block px-4 sm:px-6 py-2 sm:py-3 text-lg sm:text-xl font-bold text-white bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-lg">
                   {reflection.qualityRating} / 10
                 </span>
@@ -430,7 +430,7 @@ export default function PAHMReflectionPage() {
             </div>
 
             <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-[#03478f]">Challenges</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="grid grid-cols-1 gap-3 mb-6 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4 sm:mb-8">
               {challenges.map(challenge => (
                 <button
                   key={challenge}
@@ -453,50 +453,50 @@ export default function PAHMReflectionPage() {
             </div>
 
             <h2 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold text-[#03478f]">PAHM Tracking Results</h2>
-            <div className="mb-6 sm:mb-8 overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <div className="px-4 mb-6 -mx-4 overflow-x-auto sm:mb-8 sm:mx-0 sm:px-0">
               <table className="w-full border-collapse min-w-[600px] text-xs sm:text-sm">
                 <thead>
                   <tr>
-                    <th className="p-2 sm:p-3 font-bold text-center text-white bg-teal-600 border border-gray-300">Time/Emotion</th>
-                    <th className="p-2 sm:p-3 font-bold text-center text-black bg-orange-300 border border-gray-300">Attachment</th>
-                    <th className="p-2 sm:p-3 font-bold text-center text-black bg-gray-300 border border-gray-300">Neutral</th>
-                    <th className="p-2 sm:p-3 font-bold text-center text-black bg-pink-300 border border-gray-300">Aversion</th>
-                    <th className="p-2 sm:p-3 font-bold text-center text-white bg-gray-600 border border-gray-300">Total</th>
-                    <th className="p-2 sm:p-3 font-bold text-center text-white bg-teal-600 border border-gray-300">%</th>
+                    <th className="p-2 font-bold text-center text-white bg-teal-600 border border-gray-300 sm:p-3">Time/Emotion</th>
+                    <th className="p-2 font-bold text-center text-black bg-orange-300 border border-gray-300 sm:p-3">Likes</th>
+                    <th className="p-2 font-bold text-center text-black bg-gray-300 border border-gray-300 sm:p-3">Neutral</th>
+                    <th className="p-2 font-bold text-center text-black bg-pink-300 border border-gray-300 sm:p-3">Dislikes</th>
+                    <th className="p-2 font-bold text-center text-white bg-gray-600 border border-gray-300 sm:p-3">Total</th>
+                    <th className="p-2 font-bold text-center text-white bg-teal-600 border border-gray-300 sm:p-3">%</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="p-2 sm:p-3 font-bold text-center text-black bg-green-300 border border-gray-300">Present</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.present.attachment}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.present.neutral}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.present.aversion}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.present.total}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.present.percentage}%</td>
+                    <td className="p-2 font-bold text-center text-black bg-green-300 border border-gray-300 sm:p-3">Present</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.present.attachment}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.present.neutral}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.present.aversion}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.present.total}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.present.percentage}%</td>
                   </tr>
                   <tr>
-                    <td className="p-2 sm:p-3 font-bold text-center text-black bg-yellow-300 border border-gray-300">Past</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.past.attachment}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.past.neutral}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.past.aversion}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.past.total}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.past.percentage}%</td>
+                    <td className="p-2 font-bold text-center text-black bg-yellow-300 border border-gray-300 sm:p-3">Past</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.past.attachment}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.past.neutral}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.past.aversion}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.past.total}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.past.percentage}%</td>
                   </tr>
                   <tr>
-                    <td className="p-2 sm:p-3 font-bold text-center text-black bg-blue-300 border border-gray-300">Future</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.future.attachment}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.future.neutral}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.future.aversion}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.future.total}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.future.percentage}%</td>
+                    <td className="p-2 font-bold text-center text-black bg-blue-300 border border-gray-300 sm:p-3">Future</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.future.attachment}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.future.neutral}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.future.aversion}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.future.total}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.future.percentage}%</td>
                   </tr>
                   <tr>
-                    <td className="p-2 sm:p-3 font-bold text-center text-white bg-gray-600 border border-gray-300">Total</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.totals.attachment}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.totals.neutral}</td>
-                    <td className="p-2 sm:p-3 text-center text-black bg-white border border-gray-300">{pahmStats.totals.aversion}</td>
-                    <td className="p-2 sm:p-3 font-bold text-center text-white bg-teal-700 border border-gray-300">{pahmStats.totals.total}</td>
-                    <td className="p-2 sm:p-3 font-bold text-center text-white bg-teal-600 border border-gray-300">100%</td>
+                    <td className="p-2 font-bold text-center text-white bg-gray-600 border border-gray-300 sm:p-3">Total</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.totals.attachment}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.totals.neutral}</td>
+                    <td className="p-2 text-center text-black bg-white border border-gray-300 sm:p-3">{pahmStats.totals.aversion}</td>
+                    <td className="p-2 font-bold text-center text-white bg-teal-700 border border-gray-300 sm:p-3">{pahmStats.totals.total}</td>
+                    <td className="p-2 font-bold text-center text-white bg-teal-600 border border-gray-300 sm:p-3">100%</td>
                   </tr>
                 </tbody>
               </table>
@@ -505,11 +505,11 @@ export default function PAHMReflectionPage() {
             {/* Individual Matrix Clicks Detail */}
             <div className="mb-6 sm:mb-8">
               <h3 className="mb-3 sm:mb-4 text-base sm:text-lg font-bold text-[#03478f]">Detailed Matrix Clicks</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 sm:gap-3">
                 {Object.entries(pahmData).map(([key, value]) => (
-                  <div key={key} className="p-2 sm:p-3 text-center bg-gray-100 rounded-lg">
-                    <div className="text-xs sm:text-sm font-semibold text-black capitalize truncate">{key}</div>
-                    <div className="text-xl sm:text-2xl font-bold text-blue-600">{value}</div>
+                  <div key={key} className="p-2 text-center bg-gray-100 rounded-lg sm:p-3">
+                    <div className="text-xs font-semibold text-black capitalize truncate sm:text-sm">{key}</div>
+                    <div className="text-xl font-bold text-blue-600 sm:text-2xl">{value}</div>
                   </div>
                 ))}
               </div>
