@@ -12,6 +12,7 @@ interface MeditationAudioConfig {
 interface VoiceCommand {
   timeRemaining: number // in seconds
   message: string
+  suppressBell?: boolean // If true, suppress bell when this voice command plays
 }
 
 /**
@@ -40,15 +41,15 @@ export function useMeditationAudio(config: MeditationAudioConfig) {
   const lastVoiceTimeRef = useRef<number>(-1)
   const voiceInProgressRef = useRef<boolean>(false)
   
-  // Synth for bells
-  const bellSynthRef = useRef<Tone.MetalSynth | null>(null)
+  // Audio element for bells
+  const bellAudioRef = useRef<HTMLAudioElement | null>(null)
   
   // Speech synthesis
   const speechSynthRef = useRef<SpeechSynthesis | null>(null)
 
   // Define voice command intervals (in seconds remaining)
   const voiceCommands: VoiceCommand[] = [
-    { timeRemaining: initialDuration * 60, message: 'Session started' },
+    { timeRemaining: initialDuration * 60, message: 'Session started', suppressBell: true },
     { timeRemaining: 900, message: '15 minutes remaining' }, // 15 min
     { timeRemaining: 600, message: '10 minutes remaining' }, // 10 min
     { timeRemaining: 300, message: '5 minutes remaining' },  // 5 min
@@ -57,17 +58,11 @@ export function useMeditationAudio(config: MeditationAudioConfig) {
 
   // Initialize audio resources
   useEffect(() => {
-    // Initialize Tone.js synth for bells
-    if (bellsEnabled && !bellSynthRef.current) {
-      bellSynthRef.current = new Tone.MetalSynth({
-        harmonicity: 12,
-        resonance: 800,
-        modulationIndex: 20,
-        envelope: {
-          decay: 0.4,
-        },
-        volume: -12, // Slightly louder than example
-      }).toDestination()
+    // Initialize audio element for bells
+    if (bellsEnabled && !bellAudioRef.current && typeof window !== 'undefined') {
+      bellAudioRef.current = new Audio('/audio/bell.mp3')
+      bellAudioRef.current.volume = 0.7 // Comfortable listening level
+      bellAudioRef.current.preload = 'auto'
     }
 
     // Initialize speech synthesis
@@ -77,28 +72,24 @@ export function useMeditationAudio(config: MeditationAudioConfig) {
 
     // Cleanup on unmount
     return () => {
-      if (bellSynthRef.current) {
-        bellSynthRef.current.dispose()
-        bellSynthRef.current = null
+      if (bellAudioRef.current) {
+        bellAudioRef.current.pause()
+        bellAudioRef.current = null
       }
     }
   }, [bellsEnabled, voiceEnabled])
 
   /**
-   * Play a meditation bell sound using Tone.js
+   * Play a meditation bell sound from audio file
    */
   const playBell = useCallback(async () => {
-    if (!bellsEnabled || !bellSynthRef.current) return
+    if (!bellsEnabled || !bellAudioRef.current) return
     
     try {
-      // Ensure Tone.js context is started
-      if (Tone.context.state !== 'running') {
-        await Tone.start()
-      }
-
-      // Trigger the bell sound
-      const now = Tone.now()
-      bellSynthRef.current.triggerAttack(400, now, 0.7)
+      // Clone the audio to allow overlapping plays
+      const bellClone = bellAudioRef.current.cloneNode() as HTMLAudioElement
+      bellClone.volume = bellAudioRef.current.volume
+      await bellClone.play()
     } catch (error) {
       console.log('Bell audio not available:', error)
     }
@@ -170,10 +161,17 @@ export function useMeditationAudio(config: MeditationAudioConfig) {
           lastVoiceTimeRef.current !== command.timeRemaining) {
         lastVoiceTimeRef.current = command.timeRemaining
         playVoice(command.message)
+        
+        // If this command suppresses the bell, mark it to prevent bell for this minute
+        if (command.suppressBell) {
+          const currentMinute = Math.floor(((initialDuration * 60) - totalSeconds) / 60)
+          lastBellTimeRef.current = currentMinute
+        }
+        
         break // Only play one command at a time
       }
     }
-  }, [voiceEnabled, isRunning, totalSeconds, voiceCommands, playVoice])
+  }, [voiceEnabled, isRunning, totalSeconds, initialDuration, voiceCommands, playVoice])
 
   /**
    * Main effect to handle timing checks
