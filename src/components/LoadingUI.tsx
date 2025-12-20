@@ -6,24 +6,38 @@
 import React from 'react'
 
 /**
- * Base page loading skeleton with gradient background
+ * Base page loading skeleton with PAHM matrix animation
  */
 export function PageLoadingSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] pt-20 sm:pt-24">
-      <div className="flex items-center justify-center px-4 py-12">
-        <div className="w-full space-y-6 max-w-7xl sm:space-y-8 animate-pulse">
-          {/* Header skeleton */}
-          <div className="h-8 sm:h-12 bg-[#d0d1f9]/50 rounded-lg w-48 sm:w-64 mx-auto"></div>
-          
-          {/* Main content skeleton */}
-          <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl">
-            <div className="space-y-4 sm:space-y-6">
-              <div className="h-6 bg-[#d0d1f9]/50 rounded w-3/4"></div>
-              <div className="h-6 bg-[#d0d1f9]/50 rounded w-1/2"></div>
-              <div className="h-32 sm:h-48 bg-[#d0d1f9]/50 rounded-xl"></div>
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] flex items-center justify-center px-4">
+      <div className="text-center space-y-6 sm:space-y-8">
+        {/* Animated PAHM Matrix Logo */}
+        <div className="flex justify-center">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-[#03478f]/10 rounded-2xl p-2.5 sm:p-3 md:p-4 shadow-lg">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2 h-full">
+              {/* Row 1 */}
+              <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '0s', animationDuration: '2.5s'}}></div>
+              <div className="w-full rounded-md aspect-square bg-cyan-300 animate-pulse" style={{animationDelay: '0.3s', animationDuration: '2s'}}></div>
+              <div className="w-full bg-purple-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.6s', animationDuration: '3s'}}></div>
+              
+              {/* Row 2 */}
+              <div className="w-full bg-yellow-400 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.9s', animationDuration: '2.8s'}}></div>
+              <div className="w-full bg-gray-200 rounded-md aspect-square animate-pulse" style={{animationDelay: '1.2s', animationDuration: '1.8s'}}></div>
+              <div className="w-full bg-blue-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.2s', animationDuration: '2.3s'}}></div>
+              
+              {/* Row 3 */}
+              <div className="w-full bg-orange-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '1.5s', animationDuration: '2.6s'}}></div>
+              <div className="w-full bg-pink-300 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.8s', animationDuration: '2.9s'}}></div>
+              <div className="w-full bg-purple-200 rounded-md aspect-square animate-pulse" style={{animationDelay: '0.5s', animationDuration: '2.2s'}}></div>
             </div>
           </div>
+        </div>
+
+        {/* Loading text */}
+        <div className="space-y-2 animate-pulse">
+          <div className="h-6 sm:h-7 bg-[#d0d1f9]/50 rounded-lg w-40 sm:w-48 mx-auto"></div>
+          <div className="h-3 sm:h-4 bg-[#d0d1f9]/40 rounded-lg w-24 sm:w-32 mx-auto"></div>
         </div>
       </div>
     </div>
