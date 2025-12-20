@@ -27,7 +27,7 @@ export const MIND_RECOVERY_SESSIONS: Session[] = [
     description: 'Start your day with clarity and focus',
     duration: 5,
     imageName: 'Flux_Dev_A_breathtaking_sunrise_desktop_wallpaper_in_ultrahigh_2.jpg',
-    timeRange: { start: 5, end: 8 }
+    timeRange: { start: 5, end: 10 }
   },
   {
     id: 'midday',
@@ -35,7 +35,7 @@ export const MIND_RECOVERY_SESSIONS: Session[] = [
     description: 'Quick refresh to maintain focus',
     duration: 3,
     imageName: 'Flux_Dev_A_serene_midday_wallpaper_in_ultrahigh_resolution_wit_2.jpg',
-    timeRange: { start: 11, end: 13 }
+    timeRange: { start: 10, end: 14 }
   },
   {
     id: 'emotional',
@@ -59,16 +59,17 @@ export const MIND_RECOVERY_SESSIONS: Session[] = [
     description: 'Gentle preparation for restful sleep',
     duration: 8,
     imageName: 'Flux_Dev_A_hyperrealistic_nighttime_desktop_wallpaper_with_a_v_2.jpg',
-    timeRange: { start: 21, end: 26 } // 26 = 2am next day
+    timeRange: { start: 19, end: 26 } // 26 = 2am next day
   }
 ]
 
 /**
- * Calculate recommended session based on current server time
- * This runs on the server for consistent recommendations
+ * Calculate recommended session based on user's local time
+ * @param userLocalHour - Optional hour (0-23) from user's timezone. If not provided, uses server time as fallback.
+ * @returns Session ID that matches the time range
  */
-export function getRecommendedSession(): string {
-  const currentHour = new Date().getHours()
+export function getRecommendedSession(userLocalHour?: number): string {
+  const currentHour = userLocalHour ?? new Date().getHours()
   
   for (const session of MIND_RECOVERY_SESSIONS) {
     if (session.timeRange.end > 24) {
@@ -89,11 +90,12 @@ export function getRecommendedSession(): string {
 
 /**
  * Get all Mind Recovery data for the page
- * Can be called from server components
+ * @param userLocalHour - Optional hour (0-23) from user's timezone for accurate recommendations
+ * @returns Mind recovery data with sessions and recommended session ID
  */
-export function getMindRecoveryData(): MindRecoveryData {
+export function getMindRecoveryData(userLocalHour?: number): MindRecoveryData {
   return {
     sessions: MIND_RECOVERY_SESSIONS,
-    recommendedSessionId: getRecommendedSession()
+    recommendedSessionId: getRecommendedSession(userLocalHour)
   }
 }

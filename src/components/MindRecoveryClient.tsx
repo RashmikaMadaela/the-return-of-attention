@@ -1,10 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Star } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
-import { MindRecoveryData, Session } from '@/lib/data/mind-recovery-data'
+import { MindRecoveryData, Session, getRecommendedSession } from '@/lib/data/mind-recovery-data'
 
 interface MindRecoveryClientProps {
   initialData: MindRecoveryData
@@ -12,7 +12,15 @@ interface MindRecoveryClientProps {
 
 export default function MindRecoveryClient({ initialData }: MindRecoveryClientProps) {
   const router = useRouter()
-  const { sessions, recommendedSessionId } = initialData
+  const { sessions } = initialData
+  const [recommendedSessionId, setRecommendedSessionId] = useState(initialData.recommendedSessionId)
+
+  // Recalculate recommendation based on user's local time on mount
+  useEffect(() => {
+    const userLocalHour = new Date().getHours()
+    const localRecommendation = getRecommendedSession(userLocalHour)
+    setRecommendedSessionId(localRecommendation)
+  }, [])
 
   const getButtonColor = (sessionId: string) => {
     if (sessionId === recommendedSessionId) {
