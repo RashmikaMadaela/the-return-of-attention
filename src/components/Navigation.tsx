@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { getStageProgress } from '@/lib/api/sessions'
@@ -144,10 +145,19 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
 
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
-      <div className="flex items-center justify-between mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b shadow-sm bg-white/80 backdrop-blur-md border-gray-200/50">
+      <div className="flex items-center justify-between h-16 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Logo with Animated PAHM Grid */}
-        <div className="flex items-center space-x-3">
+        <Link 
+          href="/home" 
+          prefetch={true}
+          className="flex items-center space-x-3 transition-opacity hover:opacity-80"
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('previousPage', window.location.pathname || '/home')
+            }
+          }}
+        >
           {/* Animated PAHM Grid Logo */}
           <div className="relative flex-shrink-0 w-10 h-10 grid grid-cols-3 gap-0.5" suppressHydrationWarning={true}>
             {/* Row 1 */}
@@ -167,14 +177,14 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
           </div>
           
           {/* Text Logo */}
-          <div className="text-xs font-bold text-gray-800 sm:text-sm leading-tight">
+          <div className="text-xs font-bold leading-tight text-gray-800 sm:text-sm">
             <div>RETURN OF</div>
             <div>ATTENTION</div>
           </div>
-        </div>
+        </Link>
         
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-1">
+        <nav className="items-center hidden space-x-1 lg:flex">
           {navItems.map((item) => {
             // Gate Mind Recovery until Stage 1 is completed
             if (item.key === 'mind-recovery' && !hasCompletedStage1) {
@@ -184,17 +194,36 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
                   onClick={() => { /* locked - no-op */ }}
                   title="Locked — complete Stage 1 to unlock"
                   aria-disabled={true}
-                  className="text-gray-400 px-4 py-2 rounded-lg font-medium transition text-sm opacity-60 cursor-not-allowed hover:text-gray-500"
+                  className="px-4 py-2 text-sm font-medium text-gray-400 transition rounded-lg cursor-not-allowed opacity-60 hover:text-gray-500"
                 >
                   {item.label} 🔒
                 </button>
               )
             }
 
+            // Skip creating Link for disabled nav items
+            if (item.key === 'my-analytics' || item.key === 'wisdom-guide') {
+              return (
+                <button
+                  key={item.key}
+                  className="px-4 py-2 text-sm font-medium text-gray-400 transition rounded-lg cursor-not-allowed opacity-60"
+                  disabled
+                >
+                  {item.label}
+                </button>
+              )
+            }
+
             return (
-              <button
+              <Link
                 key={item.key}
-                onClick={() => handleNavigation(item.path, item.key)}
+                href={item.path}
+                prefetch={true}
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    sessionStorage.setItem('previousPage', window.location.pathname || '/home')
+                  }
+                }}
                 className={`px-4 py-2 rounded-lg font-medium transition text-sm ${
                   currentPage === item.key
                     ? 'text-blue-600'
@@ -202,7 +231,7 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
                 }`}
               >
                 {item.label}
-              </button>
+              </Link>
             )
           })}
         </nav>
@@ -210,31 +239,43 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
         {/* Right Side Actions */}
         <div className="flex items-center space-x-3">
           {/* Profile Icon - Desktop */}
-          <button 
-            onClick={handleProfile}
-            className="hidden lg:flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 border-2 border-gray-300 hover:border-gray-400 rounded-full transition"
+          <Link
+            href="/user-profile"
+            prefetch={true}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                sessionStorage.setItem('previousPage', window.location.pathname || '/home')
+              }
+            }}
+            className="items-center justify-center hidden w-10 h-10 text-gray-600 transition border-2 border-gray-300 rounded-full lg:flex hover:text-gray-900 hover:border-gray-400"
             title="Profile"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-          </button>
+          </Link>
 
           {/* Profile Icon - Mobile/Tablet */}
-          <button 
-            onClick={handleProfile}
-            className="lg:hidden flex items-center justify-center w-10 h-10 text-gray-600 hover:text-gray-900 border-2 border-gray-300 hover:border-gray-400 rounded-full transition"
+          <Link
+            href="/user-profile"
+            prefetch={true}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                sessionStorage.setItem('previousPage', window.location.pathname || '/home')
+              }
+            }}
+            className="flex items-center justify-center w-10 h-10 text-gray-600 transition border-2 border-gray-300 rounded-full lg:hidden hover:text-gray-900 hover:border-gray-400"
             title="Profile"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-          </button>
+          </Link>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-gray-600 hover:text-gray-900 transition rounded-lg"
+            className="p-2 text-gray-600 transition rounded-lg lg:hidden hover:text-gray-900"
             title="Menu"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -250,7 +291,7 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-gray-200/50 bg-white/95 backdrop-blur-md">
+        <div className="border-t lg:hidden border-gray-200/50 bg-white/95 backdrop-blur-md">
           <nav className="px-4 py-4 mx-auto max-w-7xl">
             <div className="flex flex-col space-y-2">
               {navItems.map((item) => {
@@ -261,17 +302,37 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
                       onClick={() => {}}
                       title="Locked — complete Stage 1 to unlock"
                       aria-disabled={true}
-                      className="text-gray-400 px-4 py-3 rounded-lg font-medium transition text-left opacity-60 cursor-not-allowed"
+                      className="px-4 py-3 font-medium text-left text-gray-400 transition rounded-lg cursor-not-allowed opacity-60"
                     >
                       {item.label} 🔒
                     </button>
                   )
                 }
 
+                // Skip creating Link for disabled nav items
+                if (item.key === 'my-analytics' || item.key === 'wisdom-guide') {
+                  return (
+                    <button
+                      key={item.key}
+                      className="px-4 py-3 font-medium text-left text-gray-400 transition rounded-lg cursor-not-allowed opacity-60"
+                      disabled
+                    >
+                      {item.label}
+                    </button>
+                  )
+                }
+
                 return (
-                  <button
+                  <Link
                     key={item.key}
-                    onClick={() => handleNavigation(item.path, item.key)}
+                    href={item.path}
+                    prefetch={true}
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        sessionStorage.setItem('previousPage', window.location.pathname || '/home')
+                      }
+                      setIsMobileMenuOpen(false)
+                    }}
                     className={`px-4 py-3 rounded-lg font-medium transition text-left ${
                       currentPage === item.key
                         ? 'text-blue-600 bg-blue-50'
@@ -279,7 +340,7 @@ export default function Navigation({ currentPage = 'home' }: NavigationProps) {
                     }`}
                   >
                     {item.label}
-                  </button>
+                  </Link>
                 )
               })}
             </div>
