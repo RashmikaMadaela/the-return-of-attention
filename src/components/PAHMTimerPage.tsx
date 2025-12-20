@@ -87,7 +87,6 @@ export default function PAHMTimerPage() {
   // Confirmation dialog state
   const [showSkipConfirm, setShowSkipConfirm] = useState(false)
   const [pulsingButtons, setPulsingButtons] = useState<string[]>([])
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const pulseIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const clickAudioRef = useRef<HTMLAudioElement | null>(null)
@@ -434,6 +433,9 @@ export default function PAHMTimerPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
+      {/* Navigation */}
+      <Navigation currentPage="pahm-timer" />
+      
       {/* Confirmation Dialog */}
       <ConfirmDialog
         isOpen={showSkipConfirm}
@@ -476,163 +478,7 @@ export default function PAHMTimerPage() {
         .btn-worry:hover:not(:disabled) { background-color: #e9d5ff; }
       `}</style>
       
-      {/* Static Navigation with Mobile Menu - Only for PAHM Timer */}
-      <header className="p-4 bg-white/80 backdrop-blur-sm shadow-md">
-        <div className="flex items-center justify-between mx-auto max-w-7xl">
-          {/* Logo */}
-          <div className="flex items-center space-x-4">
-            <div className="text-xs font-bold text-[#03478f] sm:text-sm">
-              <div>RETURN</div>
-              <div>OF</div>
-              <div>ATTENTION</div>
-            </div>
-          </div>
-          
-          {/* Desktop Navigation - Hidden on mobile */}
-          <nav className="hidden space-x-2 md:flex">
-            <button
-              onClick={() => {
-                sessionStorage.setItem('previousPage', window.location.pathname)
-                router.push('/home')
-              }}
-              className="px-3 py-2 text-sm font-semibold text-white transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg xl:px-6 xl:text-base"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => {
-                sessionStorage.setItem('previousPage', window.location.pathname)
-                router.push('/mind-recovery')
-              }}
-              className="px-3 py-2 text-sm font-semibold text-white transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg xl:px-6 xl:text-base"
-            >
-              Mind Recovery
-            </button>
-            <button
-              onClick={() => {
-                sessionStorage.setItem('previousPage', window.location.pathname)
-                router.push('/daily-notes')
-              }}
-              className="px-3 py-2 text-sm font-semibold text-white transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg xl:px-6 xl:text-base"
-            >
-              Daily Notes
-            </button>
-            <button
-              className="px-3 py-2 text-sm font-semibold text-white transition bg-gray-400 rounded-lg opacity-50 cursor-not-allowed xl:px-6 xl:text-base"
-            >
-              My Analytics
-            </button>
-            <button
-              onClick={() => {
-                sessionStorage.setItem('previousPage', window.location.pathname)
-                router.push('/learn')
-              }}
-              className="px-3 py-2 text-sm font-semibold text-white transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg xl:px-6 xl:text-base"
-            >
-              Learn
-            </button>
-            <button
-              className="px-3 py-2 text-sm font-semibold text-white transition bg-gray-400 rounded-lg opacity-50 cursor-not-allowed xl:px-6 xl:text-base"
-            >
-              Wisdom Guide
-            </button>
-          </nav>
-
-          {/* Mobile/Tablet Navigation Button & Profile */}
-          <div className="flex items-center space-x-2">
-            {/* Profile Button */}
-            <button 
-              onClick={() => {
-                sessionStorage.setItem('previousPage', window.location.pathname)
-                router.push('/user-profile')
-              }}
-              className="p-2 transition bg-[#6465e0] hover:bg-[#5658d1] rounded-lg sm:p-3"
-              title="Profile"
-            >
-              <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-              </svg>
-            </button>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg md:hidden sm:p-3"
-              title="Menu"
-            >
-              <svg className="w-5 h-5 text-white sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="absolute left-0 right-0 z-50 border-t md:hidden top-full bg-white/95 backdrop-blur-sm shadow-lg">
-            <nav className="px-4 py-4 mx-auto max-w-7xl">
-              <div className="grid grid-cols-1 gap-3">
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false)
-                    sessionStorage.setItem('previousPage', window.location.pathname)
-                    router.push('/home')
-                  }}
-                  className="px-4 py-3 font-semibold text-center text-white transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg"
-                >
-                  Home
-                </button>
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false)
-                    sessionStorage.setItem('previousPage', window.location.pathname)
-                    router.push('/mind-recovery')
-                  }}
-                  className="px-4 py-3 font-semibold text-center text-white transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg"
-                >
-                  Mind Recovery
-                </button>
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false)
-                    sessionStorage.setItem('previousPage', window.location.pathname)
-                    router.push('/daily-notes')
-                  }}
-                  className="px-4 py-3 font-semibold text-center text-white transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg"
-                >
-                  Daily Notes
-                </button>
-                <button
-                  className="px-4 py-3 font-semibold text-center text-white transition bg-gray-400 rounded-lg opacity-50 cursor-not-allowed"
-                >
-                  My Analytics
-                </button>
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false)
-                    sessionStorage.setItem('previousPage', window.location.pathname)
-                    router.push('/learn')
-                  }}
-                  className="px-4 py-3 font-semibold text-center text-white transition bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] rounded-lg"
-                >
-                  Learn
-                </button>
-                <button
-                  className="px-4 py-3 font-semibold text-center text-white transition bg-gray-400 rounded-lg opacity-50 cursor-not-allowed"
-                >
-                  Wisdom Guide
-                </button>
-              </div>
-            </nav>
-          </div>
-        )}
-      </header>
-      
-      <div className="flex items-center justify-center flex-1 p-4 sm:p-6 lg:p-8">
+      <div className="flex items-center justify-center flex-1 p-4 pt-20 sm:p-6 sm:pt-24 lg:p-8">
         <div className="w-full max-w-3xl p-4 bg-[#e5f3ff] rounded-2xl sm:p-6 lg:p-12 shadow-2xl">
           <div className="text-center">
             <h1 className="px-2 mb-4 text-2xl font-bold text-[#03478f] sm:text-3xl lg:text-4xl sm:mb-6">
