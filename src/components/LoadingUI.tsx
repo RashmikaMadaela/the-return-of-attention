@@ -11,7 +11,7 @@ import React from 'react'
 export function PageLoadingSkeleton() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] flex items-center justify-center px-4">
-      <div className="text-center space-y-6 sm:space-y-8">
+      <div className="space-y-6 text-center sm:space-y-8">
         {/* Animated PAHM Matrix Logo */}
         <div className="flex justify-center">
           <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-[#03478f]/10 rounded-2xl p-2.5 sm:p-3 md:p-4 shadow-lg">
