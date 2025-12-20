@@ -6,6 +6,7 @@ import Navigation from './Navigation'
 import SessionTimeControls from './SessionTimeControls'
 import { type PAHMClick, type PAHMPosition } from '@/lib/api/sessions'
 import ConfirmDialog from './ui/ConfirmDialog'
+import { useMeditationAudio } from '@/hooks/useMeditationAudio'
 
 interface TimerState {
   minutes: number
@@ -48,7 +49,6 @@ export default function PAHMTimerPage() {
   const sessionId = searchParams.get('sessionId') // Get sessionId from URL
   const mindRecoverySession = searchParams.get('session')
   const isAdminMode = searchParams.get('admin') === 'true'
-  const audioContextRef = useRef<AudioContext | null>(null)
   
   const isMindRecovery = stageId === 'mind-recovery'
 
@@ -90,6 +90,15 @@ export default function PAHMTimerPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const pulseIntervalRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Initialize meditation audio hook
+  const { playBell, playVoice } = useMeditationAudio({
+    bellsEnabled: sessionSettings?.bells ?? false,
+    voiceEnabled: sessionSettings?.voiceCommands ?? false,
+    isRunning: timer.isRunning,
+    totalSeconds: timer.totalSeconds,
+    initialDuration: sessionSettings?.duration || 30
+  })
 
   useEffect(() => {
     // Set session start time
@@ -193,29 +202,7 @@ export default function PAHMTimerPage() {
     pulseIntervalRef.current = setInterval(randomPulse, 1500)
   }
 
-  const playBell = async () => {
-    try {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
-      }
-      
-      const audioContext = audioContextRef.current
-      const oscillator = audioContext.createOscillator()
-      const gainNode = audioContext.createGain()
-      
-      oscillator.connect(gainNode)
-      gainNode.connect(audioContext.destination)
-      
-      oscillator.frequency.setValueAtTime(800, audioContext.currentTime)
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2)
-      
-      oscillator.start()
-      oscillator.stop(audioContext.currentTime + 2)
-    } catch (error) {
-      console.log('Audio not available')
-    }
-  }
+  // playBell and playVoice are now provided by useMeditationAudio hook
 
   const formatTime = (totalSeconds: number) => {
     const mins = Math.floor(totalSeconds / 60)
@@ -225,7 +212,7 @@ export default function PAHMTimerPage() {
 
   const startTimer = async () => {
     if (sessionSettings?.bells) {
-      await playBell()
+      playBell()
     }
     
     setTimer(prev => ({
@@ -271,7 +258,7 @@ export default function PAHMTimerPage() {
 
   const handleTimerComplete = async () => {
     if (sessionSettings?.bells) {
-      await playBell()
+      playBell()
       setTimeout(() => playBell(), 1000)
       setTimeout(() => playBell(), 2000)
     }
