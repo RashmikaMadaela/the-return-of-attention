@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Stage1Client from '@/components/Stage1Client'
 import { getStage1Progress } from '@/lib/data/stage1-data'
-import { Stage1PageSkeleton } from '@/components/LoadingSkeletons'
+import { CardGridLoadingSkeleton } from '@/components/LoadingUI'
 import { Suspense } from 'react'
 
 // Force dynamic rendering to always fetch fresh data
@@ -18,7 +18,7 @@ export default async function Stage1Page() {
   }
 
   return (
-    <Suspense fallback={<Stage1PageSkeleton />}>
+    <Suspense fallback={<CardGridLoadingSkeleton />}>
       <Stage1Client initialData={stage1Data} />
     </Suspense>
   )
