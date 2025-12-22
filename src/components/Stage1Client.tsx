@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Lock } from 'lucide-react'
 import Navigation from './Navigation'
 import { Stage1Data } from '@/lib/data/stage1-data'
-import { Stage1PageSkeleton } from './LoadingSkeletons'
 
 interface Stage1ClientProps {
   initialData: Stage1Data
