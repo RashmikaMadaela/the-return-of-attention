@@ -6,6 +6,7 @@ import Navigation from './Navigation'
 import SessionTimeControls from './SessionTimeControls'
 import ConfirmDialog from './ui/ConfirmDialog'
 import { useMeditationAudio } from '@/hooks/useMeditationAudio'
+import { useWakeLock } from '@/hooks/useWakeLock'
 
 interface TimerState {
   minutes: number
@@ -60,6 +61,11 @@ export default function TimerPage() {
     isRunning: timer.isRunning,
     totalSeconds: timer.totalSeconds,
     initialDuration: sessionSettings?.duration || 10
+  })
+
+  // Initialize wake lock to prevent screen timeout
+  const { isSupported: wakeLockSupported, isLocked: screenLocked } = useWakeLock({
+    isActive: timer.isRunning
   })
 
   useEffect(() => {
