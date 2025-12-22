@@ -7,6 +7,7 @@ import SessionTimeControls from './SessionTimeControls'
 import { type PAHMClick, type PAHMPosition } from '@/lib/api/sessions'
 import ConfirmDialog from './ui/ConfirmDialog'
 import { useMeditationAudio } from '@/hooks/useMeditationAudio'
+import { useWakeLock } from '@/hooks/useWakeLock'
 
 interface TimerState {
   minutes: number
@@ -98,6 +99,11 @@ export default function PAHMTimerPage() {
     isRunning: timer.isRunning,
     totalSeconds: timer.totalSeconds,
     initialDuration: sessionSettings?.duration || 30
+  })
+
+  // Initialize wake lock to prevent screen timeout
+  const { isSupported: wakeLockSupported, isLocked: screenLocked } = useWakeLock({
+    isActive: timer.isRunning
   })
 
   useEffect(() => {
