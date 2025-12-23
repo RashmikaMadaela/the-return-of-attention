@@ -605,16 +605,18 @@ export default function PAHMTimerPage() {
               {!timer.isRunning ? (
                 <button
                   onClick={startTimer}
-                  className="flex-1 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors shadow-md"
+                  className="flex-1 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors shadow-md flex items-center justify-center gap-2"
                 >
-                  ▶️ Start Meditation
+                  <span className="emoji" role="img" aria-label="play">▶️</span>
+                  <span>Start Meditation</span>
                 </button>
               ) : (
                 <button
                   onClick={pauseTimer}
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors shadow-md"
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors shadow-md flex items-center justify-center gap-2"
                 >
-                  ⏸️ Pause
+                  <span className="emoji" role="img" aria-label="pause">⏸️</span>
+                  <span>Pause</span>
                 </button>
               )}
               

@@ -367,7 +367,7 @@ export default function TimerPage() {
                     onClick={resumeTimer}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                   >
-                    <span>▶️</span>
+                    <span className="emoji" role="img" aria-label="play">▶️</span>
                     <span>Resume</span>
                   </button>
                 ) : (
@@ -375,7 +375,7 @@ export default function TimerPage() {
                     onClick={startTimer}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                   >
-                    <span>▶️</span>
+                    <span className="emoji" role="img" aria-label="play">▶️</span>
                     <span className="hidden sm:inline">Start Meditation</span>
                     <span className="sm:hidden">Start</span>
                   </button>
@@ -385,7 +385,7 @@ export default function TimerPage() {
                   onClick={pauseTimer}
                   className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
                 >
-                  <span>⏸️</span>
+                  <span className="emoji" role="img" aria-label="pause">⏸️</span>
                   <span>Pause</span>
                 </button>
               )}
