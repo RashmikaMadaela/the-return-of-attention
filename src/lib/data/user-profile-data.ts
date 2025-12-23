@@ -91,10 +91,34 @@ export const getUserProfileData = cache(async (): Promise<UserProfileData | null
       return sum + parseFloat(progress.hoursCompleted.toString())
     }, 0)
 
-    // Get latest happiness score and user level
+    // Get latest happiness score and calculate user level based on max unlocked stage
     const latestHappinessScore = user.happinessScores[0]
     const happiness = latestHappinessScore ? parseFloat(latestHappinessScore.finalScore.toString()) : 0
-    const userLevel = latestHappinessScore?.userLevel || 'Seeker'
+    
+    // Determine user level based on maximum unlocked stage (has user progress)
+    const stages = await prisma.stage.findMany({
+      include: {
+        userProgress: {
+          where: { userId: user.id },
+          select: {
+            stageNumber: true,
+            isCompleted: true
+          }
+        }
+      },
+      orderBy: { stageNumber: 'asc' }
+    })
+    
+    let maxUnlockedStage = 1
+    for (const stage of stages) {
+      // A stage is unlocked if it has userProgress
+      if (stage.userProgress.length > 0) {
+        maxUnlockedStage = stage.stageNumber
+      }
+    }
+    
+    const currentStage = stages.find(s => s.stageNumber === maxUnlockedStage)
+    const userLevel = currentStage?.name || 'Seeker'
 
     // Check assessment completion status
     const questionnaireCompleted = !!user.questionnaire?.isCompleted

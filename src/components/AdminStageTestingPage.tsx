@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Navigation from './Navigation'
 import { useToast } from '@/hooks/useToast'
@@ -12,6 +12,7 @@ interface Stage {
   title: string
   description: string
   gradient: string
+  isUnlocked?: boolean
 }
 
 export default function AdminStageTestingPage() {
@@ -19,6 +20,10 @@ export default function AdminStageTestingPage() {
   const { showSuccess, showError, ToastContainer } = useToast()
   
   const [mobileAdminMenuOpen, setMobileAdminMenuOpen] = useState(false)
+  const [stageStatus, setStageStatus] = useState<Record<number, { isUnlocked: boolean }>>({
+    1: { isUnlocked: true } // Stage 1 is always unlocked by default
+  })  
+  const [isLoading, setIsLoading] = useState(true)
   
   const [stages] = useState<Stage[]>([
     {
@@ -71,6 +76,27 @@ export default function AdminStageTestingPage() {
     }
   ])
 
+  // Fetch stage status on mount
+  useEffect(() => {
+    fetchStageStatus()
+  }, [])
+
+  const fetchStageStatus = async () => {
+    try {
+      const response = await fetch('/api/admin/stage-status')
+      if (response.ok) {
+        const data = await response.json()
+        // Ensure Stage 1 is always marked as unlocked
+        const updatedStages = { ...data.stages, 1: { isUnlocked: true } }
+        setStageStatus(updatedStages)
+      }
+    } catch (error) {
+      console.error('Error fetching stage status:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const handleNavigation = (page: string) => {
     switch(page) {
       case 'user-progress':
@@ -89,7 +115,7 @@ export default function AdminStageTestingPage() {
     console.log(`${action} action for stage ${stageId}`)
     
     // Show loading state
-    const actionText = action === 'reset' ? 'Resetting' : 'Completing'
+    const actionText = action === 'reset' ? 'Resetting' : action === 'unlock' ? 'Unlocking' : 'Completing'
     const loadingMessage = `${actionText} stage ${stageId}...`
     
     try {
@@ -114,8 +140,11 @@ export default function AdminStageTestingPage() {
       // Show success message
       showSuccess(data.message)
       
+      // Refresh stage status
+      await fetchStageStatus()
+      
       // Reload the page to reflect changes (with slight delay to show toast)
-      if (action === 'complete') {
+      if (action === 'complete' || action === 'unlock') {
         setTimeout(() => {
           window.location.reload()
         }, 1500)
@@ -232,15 +261,27 @@ export default function AdminStageTestingPage() {
                 </div>
                 
                 <div className="flex flex-col gap-2">
-                  <button 
-                    onClick={() => handleStageAction(stage.id, 'complete')}
-                    className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-blue-500 text-white hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/30 min-h-[40px] active:bg-blue-700"
-                  >
-                    Complete
-                  </button>
+                  {stageStatus[stage.id]?.isUnlocked ? (
+                    <button 
+                      onClick={() => handleStageAction(stage.id, 'complete')}
+                      className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-blue-500 text-white hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/30 min-h-[40px] active:bg-blue-700"
+                      disabled={isLoading}
+                    >
+                      Complete
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => handleStageAction(stage.id, 'unlock')}
+                      className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-green-500 text-white hover:bg-green-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-green-500/30 min-h-[40px] active:bg-green-700"
+                      disabled={isLoading}
+                    >
+                      Unlock
+                    </button>
+                  )}
                   <button 
                     onClick={() => handleStageAction(stage.id, 'reset')}
                     className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-orange-500 text-white hover:bg-orange-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-orange-500/30 min-h-[40px] active:bg-orange-700"
+                    disabled={isLoading}
                   >
                     Reset
                   </button>
@@ -259,16 +300,23 @@ export default function AdminStageTestingPage() {
           <div className="space-y-3 sm:space-y-4">
             
             <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-blue-50">
+              <span className="text-sm font-bold text-blue-600 sm:text-base min-w-fit sm:min-w-24">Unlock:</span>
+              <span className="text-xs leading-relaxed text-gray-700 sm:text-sm lg:text-base">
+                Unlock a locked stage and complete all previous stages. Example: Unlock Stage 5 → Stages 1-4 completed, Stage 5 unlocked.
+              </span>
+            </div>
+            
+            <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-blue-50">
               <span className="text-sm font-bold text-blue-600 sm:text-base min-w-fit sm:min-w-24">Complete:</span>
               <span className="text-xs leading-relaxed text-gray-700 sm:text-sm lg:text-base">
-                Mark the stage as fully completed in the database. This sets all required sessions/hours to the minimum requirement and unlocks the next stage.
+                Mark the stage as fully completed with all requirements met, and unlock the next stage. For Stage 1, marks all sub-stages as completed.
               </span>
             </div>
             
             <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-blue-50">
               <span className="text-sm font-bold text-blue-600 sm:text-base min-w-fit sm:min-w-24">Reset:</span>
               <span className="text-xs leading-relaxed text-gray-700 sm:text-sm lg:text-base">
-                Reset the stage to its initial state in the database. All progress, saved data, and completions for this stage will be cleared.
+                Reset only this specific stage back to its initial progress (0 sessions/hours). The stage remains at its current lock status.
               </span>
             </div>
           </div>
