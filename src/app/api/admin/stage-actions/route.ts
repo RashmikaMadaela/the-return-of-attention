@@ -493,7 +493,7 @@ async function handleResetAll(userId: string) {
     // Reset questionnaire
     await prisma.questionnaire.updateMany({
       where: { userId },
-      data: { isCompleted: false }
+      data: { isCompleted: null }
     })
 
     // Delete self assessments
