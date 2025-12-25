@@ -246,14 +246,14 @@ export default function SessionSetupPage() {
                   <button
                     onClick={handleBack}
                     disabled={isStarting}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-base min-h-[48px]"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleStart}
                     disabled={isStarting}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base sm:text-base min-h-[48px]"
                   >
                     {isStarting ? (
                       <>

@@ -330,42 +330,42 @@ export default function TimerPage() {
       {/* Navigation */}
       <Navigation currentPage="stage-1" />
       
-      <div className="flex-1 flex items-center justify-center p-8 pt-24">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 pt-20 sm:pt-24">
         <div className="max-w-4xl mx-auto w-full">
-          <h1 className="text-4xl font-bold text-[#03478f] text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#03478f] text-center mb-6 sm:mb-8 px-2">
             {stage?.name}: Physical Stillness Training
           </h1>
           
-          <div className="bg-[#e5f3ff] rounded-2xl p-8 shadow-2xl">
+          <div className="bg-[#e5f3ff] rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-2xl">
             {/* Timer Display */}
-            <div className="text-center mb-8">
-              <div className="text-8xl font-mono font-bold text-[#03478f] mb-4">
+            <div className="text-center mb-6 sm:mb-8">
+              <div className="text-6xl sm:text-7xl lg:text-8xl font-mono font-bold text-[#03478f] mb-4 sm:mb-6">
                 {formatTime(timer.totalSeconds)}
               </div>
               
               {/* Progress Bar */}
-              <div className="w-full bg-blue-800 rounded-full h-4 mb-6">
+              <div className="w-full bg-blue-800 rounded-full h-3 sm:h-4 mb-4 sm:mb-6">
                 <div 
-                  className="bg-cyan-400 h-4 rounded-full transition-all duration-1000"
+                  className="bg-cyan-400 h-3 sm:h-4 rounded-full transition-all duration-1000"
                   style={{ width: `${progress}%` }}
                 />
               </div>
               
-              <p className="text-[#03478f] text-lg mb-2">
+              <p className="text-[#03478f] text-base sm:text-lg mb-2">
                 Posture: {sessionSettings?.posture?.replace('-', ' ') || 'Not set'}
               </p>
-              <p className="text-black">
+              <p className="text-black text-sm sm:text-base">
                 Focus on maintaining complete physical stillness
               </p>
             </div>
 
             {/* Timer Controls */}
-            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 px-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 px-2">
               {!timer.isRunning ? (
                 timer.startedAt ? (
                   <button
                     onClick={resumeTimer}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2 min-h-[48px]"
                   >
                     <span className="emoji" role="img" aria-label="play">▶️</span>
                     <span>Resume</span>
@@ -373,17 +373,16 @@ export default function TimerPage() {
                 ) : (
                   <button
                     onClick={startTimer}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2 min-h-[48px]"
                   >
                     <span className="emoji" role="img" aria-label="play">▶️</span>
-                    <span className="hidden sm:inline">Start Meditation</span>
-                    <span className="sm:hidden">Start</span>
+                    <span>Start Meditation</span>
                   </button>
                 )
               ) : (
                 <button
                   onClick={pauseTimer}
-                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   <span className="emoji" role="img" aria-label="pause">⏸️</span>
                   <span>Pause</span>
@@ -404,7 +403,7 @@ export default function TimerPage() {
                       router.push(`/stage-1/reflection?stage=${stageId}`)
                     }
                   }}
-                  className="bg-pink-600 hover:bg-pink-700 text-white px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2"
+                  className="bg-pink-600 hover:bg-pink-700 text-white px-6 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl text-base sm:text-lg md:text-xl font-semibold flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   <span>✓</span>
                   <span>Complete</span>

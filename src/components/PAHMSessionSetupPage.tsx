@@ -236,14 +236,14 @@ export default function PAHMSessionSetupPage() {
                     <button
                       key={posture.id}
                       onClick={() => setSessionSettings(prev => ({ ...prev, posture: posture.id }))}
-                      className={`aspect-square p-2 sm:p-3 md:p-4 rounded-lg border-2 flex flex-col items-center justify-center gap-1 sm:gap-2 transition-all ${
+                      className={`aspect-square p-3 sm:p-3 md:p-4 rounded-lg border-2 flex flex-col items-center justify-center gap-1 sm:gap-2 transition-all min-h-[90px] sm:min-h-[100px] ${
                         sessionSettings.posture === posture.id 
                           ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] border-[#6465e0] text-white' 
                           : 'bg-white border-gray-300 hover:border-[#6465e0]'
                       }`}
                     >
-                      <span className="text-2xl sm:text-3xl md:text-4xl">{posture.icon}</span>
-                      <span className="text-[10px] sm:text-xs md:text-sm font-semibold text-center leading-tight">{posture.label}</span>
+                      <span className="text-3xl sm:text-3xl md:text-4xl">{posture.icon}</span>
+                      <span className="text-[11px] sm:text-xs md:text-sm font-semibold text-center leading-tight">{posture.label}</span>
                     </button>
                   ))}
                 </div>
@@ -255,8 +255,8 @@ export default function PAHMSessionSetupPage() {
                   <h2 className="mb-3 text-lg font-bold text-center text-[#03478f] sm:text-xl md:text-2xl sm:mb-4 md:mb-6">
                     {stage.isMindRecovery ? 'Fixed Duration' : 'Select Duration'}
                   </h2>
-                  <div className="flex items-center justify-center gap-3 sm:gap-4">
-                    <div className={`text-4xl sm:text-5xl md:text-6xl font-bold text-center px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg ${
+                  <div className="flex items-center justify-center gap-4 sm:gap-4">
+                    <div className={`text-5xl sm:text-5xl md:text-6xl font-bold text-center px-6 py-4 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg ${
                       stage.isMindRecovery ? 'bg-gray-300 text-gray-600' : 'bg-gray-100'
                     }`}>
                       {String(sessionSettings.duration).padStart(2, '0')}
@@ -268,7 +268,7 @@ export default function PAHMSessionSetupPage() {
                             ...prev, 
                             duration: Math.min(prev.duration + 1, stage.maxTime || 120) 
                           }))}
-                          className="bg-gray-200 hover:bg-gray-300 p-1.5 sm:p-2 rounded text-sm sm:text-base"
+                          className="bg-gray-200 hover:bg-gray-300 p-2 sm:p-2 rounded text-base sm:text-base min-w-[40px] min-h-[40px] flex items-center justify-center"
                         >
                           ▲
                         </button>
@@ -277,7 +277,7 @@ export default function PAHMSessionSetupPage() {
                             ...prev, 
                             duration: Math.max(prev.duration - 1, stage.minTime) 
                           }))}
-                          className="bg-gray-200 hover:bg-gray-300 p-1.5 sm:p-2 rounded text-sm sm:text-base"
+                          className="bg-gray-200 hover:bg-gray-300 p-2 sm:p-2 rounded text-base sm:text-base min-w-[40px] min-h-[40px] flex items-center justify-center"
                         >
                           ▼
                         </button>
@@ -294,43 +294,43 @@ export default function PAHMSessionSetupPage() {
                 <div className="p-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6 shadow-md">
                     <h2 className="mb-3 text-lg font-bold text-[#03478f] sm:text-xl md:text-2xl sm:mb-4 md:mb-6">Settings</h2>
                   <div className="space-y-3 sm:space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold sm:text-base">Meditation Bells</span>
+                    <div className="flex items-center justify-between py-1">
+                      <span className="text-base font-semibold sm:text-base">Meditation Bells</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, bells: !prev.bells }))}
-                        className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
+                        className={`w-14 h-8 sm:w-14 sm:h-8 rounded-full transition-colors ${
                           sessionSettings.bells ? 'bg-[#6465e0]' : 'bg-gray-300'
                         }`}
                       >
-                        <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
-                          sessionSettings.bells ? 'translate-x-6 sm:translate-x-7' : 'translate-x-1'
+                        <div className={`w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
+                          sessionSettings.bells ? 'translate-x-7 sm:translate-x-7' : 'translate-x-1'
                         }`} />
                       </button>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold sm:text-base">Voice Commands</span>
+                    <div className="flex items-center justify-between py-1">
+                      <span className="text-base font-semibold sm:text-base">Voice Commands</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, voiceCommands: !prev.voiceCommands }))}
-                        className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
+                        className={`w-14 h-8 sm:w-14 sm:h-8 rounded-full transition-colors ${
                           sessionSettings.voiceCommands ? 'bg-[#6465e0]' : 'bg-gray-300'
                         }`}
                       >
-                        <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
-                          sessionSettings.voiceCommands ? 'translate-x-6 sm:translate-x-7' : 'translate-x-1'
+                        <div className={`w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
+                          sessionSettings.voiceCommands ? 'translate-x-7 sm:translate-x-7' : 'translate-x-1'
                         }`} />
                       </button>
                     </div>
                       {/* Remote toggle only relevant for PAHM sessions (this setup page) */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold sm:text-base">Use Remote</span>
+                      <div className="flex items-center justify-between py-1">
+                        <span className="text-base font-semibold sm:text-base">Use Remote</span>
                         <button
                           onClick={() => setSessionSettings(prev => ({ ...prev, useRemote: !prev.useRemote }))}
-                          className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
+                          className={`w-14 h-8 sm:w-14 sm:h-8 rounded-full transition-colors ${
                             sessionSettings.useRemote ? 'bg-[#6465e0]' : 'bg-gray-300'
                           }`}
                         >
-                          <div className={`w-5 h-5 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
-                            sessionSettings.useRemote ? 'translate-x-6 sm:translate-x-7' : 'translate-x-1'
+                          <div className={`w-6 h-6 sm:w-6 sm:h-6 bg-white rounded-full transition-transform ${
+                            sessionSettings.useRemote ? 'translate-x-7 sm:translate-x-7' : 'translate-x-1'
                           }`} />
                         </button>
                       </div>
@@ -355,18 +355,18 @@ export default function PAHMSessionSetupPage() {
                   <button
                     onClick={handleBack}
                     disabled={isStarting}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-base min-h-[48px]"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleStart}
                     disabled={isStarting}
-                    className="flex-1 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+                    className="flex-1 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white py-3 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base sm:text-base min-h-[48px]"
                   >
                     {isStarting ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-white rounded-full animate-spin sm:h-5 sm:w-5 border-t-transparent" />
+                        <div className="w-5 h-5 border-2 border-white rounded-full animate-spin sm:h-5 sm:w-5 border-t-transparent" />
                         <span>Starting...</span>
                       </>
                     ) : (
