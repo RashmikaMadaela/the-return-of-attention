@@ -70,6 +70,9 @@ export async function POST(request: NextRequest) {
       case 'complete':
         return await handleComplete(targetUserId, stage.id, stageNumber)
       
+      case 'reset-all':
+        return await handleResetAll(targetUserId)
+      
       default:
         return NextResponse.json(
           { error: `Unknown action: ${action}` },
@@ -86,11 +89,111 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Unlock a stage for a user
+ * Unlock a stage for a user (and complete all previous stages)
  */
 async function handleUnlock(userId: string, stageId: string, stageNumber: number) {
   try {
-    // For Stage 1, create sub-stage progress entries
+    // First, complete all previous stages (1 to stageNumber-1)
+    for (let i = 1; i < stageNumber; i++) {
+      const prevStage = await prisma.stage.findUnique({
+        where: { stageNumber: i }
+      })
+      
+      if (prevStage) {
+        // For Stage 1, complete all sub-stages
+        if (i === 1) {
+          const subStages = [
+            { name: 'T1', sessions: 4 },
+            { name: 'T2', sessions: 6 },
+            { name: 'T3', sessions: 6 },
+            { name: 'T4', sessions: 6 },
+            { name: 'T5', sessions: 10 }
+          ]
+          
+          for (const subStage of subStages) {
+            await prisma.userStageProgress.upsert({
+              where: {
+                userId_stageId_subStage: {
+                  userId,
+                  stageId: prevStage.id,
+                  subStage: subStage.name
+                }
+              },
+              create: {
+                userId,
+                stageId: prevStage.id,
+                stageNumber: i,
+                subStage: subStage.name,
+                sessionsCompleted: subStage.sessions,
+                hoursCompleted: prevStage.minHours,
+                isCompleted: true,
+                completedAt: new Date()
+              },
+              update: {
+                sessionsCompleted: subStage.sessions,
+                hoursCompleted: prevStage.minHours,
+                isCompleted: true,
+                completedAt: new Date()
+              }
+            })
+          }
+          
+          // Also mark PAHM intro as completed for Stage 1
+          await prisma.userStageProgress.upsert({
+            where: {
+              userId_stageId_subStage: {
+                userId,
+                stageId: prevStage.id,
+                subStage: 'PAHM'
+              }
+            },
+            create: {
+              userId,
+              stageId: prevStage.id,
+              stageNumber: i,
+              subStage: 'PAHM',
+              sessionsCompleted: 1,
+              hoursCompleted: 0,
+              isCompleted: true,
+              completedAt: new Date()
+            },
+            update: {
+              sessionsCompleted: 1,
+              isCompleted: true,
+              completedAt: new Date()
+            }
+          })
+        } else {
+          // For other stages, complete normally
+          await prisma.userStageProgress.upsert({
+            where: {
+              userId_stageId_subStage: {
+                userId,
+                stageId: prevStage.id,
+                subStage: ''
+              }
+            },
+            create: {
+              userId,
+              stageId: prevStage.id,
+              stageNumber: i,
+              sessionsCompleted: Math.ceil(prevStage.minSessions),
+              hoursCompleted: prevStage.minHours,
+              isCompleted: true,
+              completedAt: new Date()
+            },
+            update: {
+              sessionsCompleted: Math.ceil(prevStage.minSessions),
+              hoursCompleted: prevStage.minHours,
+              isCompleted: true,
+              completedAt: new Date()
+            }
+          })
+        }
+      }
+    }
+
+    // Now unlock the target stage
     if (stageNumber === 1) {
       const subStages = ['T1', 'T2', 'T3', 'T4', 'T5']
       
@@ -113,7 +216,8 @@ async function handleUnlock(userId: string, stageId: string, stageNumber: number
             isCompleted: false
           },
           update: {
-            // If already exists, don't change completion status
+            // If already exists, keep current progress
+            isCompleted: false
           }
         })
       }
@@ -124,7 +228,7 @@ async function handleUnlock(userId: string, stageId: string, stageNumber: number
           userId_stageId_subStage: {
             userId,
             stageId,
-            subStage: '' // Empty string for PAHM stages without sub-stages
+            subStage: ''
           }
         },
         create: {
@@ -136,15 +240,18 @@ async function handleUnlock(userId: string, stageId: string, stageNumber: number
           isCompleted: false
         },
         update: {
-          // If already exists, don't change completion status
+          // If already exists, keep current progress
+          isCompleted: false
         }
       })
     }
 
+    const completedStages = stageNumber > 1 ? ` (stages 1-${stageNumber-1} completed)` : ''
     return NextResponse.json({
       success: true,
-      message: `Stage ${stageNumber} unlocked successfully`,
-      stageNumber
+      message: `Stage ${stageNumber} unlocked successfully${completedStages}`,
+      stageNumber,
+      previousStagesCompleted: stageNumber - 1
     })
   } catch (error) {
     console.error('Unlock error:', error)
@@ -157,25 +264,25 @@ async function handleUnlock(userId: string, stageId: string, stageNumber: number
  */
 async function handleReset(userId: string, stageId: string, stageNumber: number) {
   try {
-    // Delete all progress for this stage
+    // Delete progress for only this specific stage
     await prisma.userStageProgress.deleteMany({
       where: {
         userId,
-        stageId
+        stageNumber: stageNumber
       }
     })
 
-    // Delete all sessions for this stage
+    // Delete sessions for only this stage
     await prisma.session.deleteMany({
       where: {
         userId,
-        stageNumber
+        stageNumber: stageNumber
       }
     })
 
     return NextResponse.json({
       success: true,
-      message: `Stage ${stageNumber} reset successfully`,
+      message: `Stage ${stageNumber} reset to initial progress`,
       stageNumber
     })
   } catch (error) {
@@ -202,7 +309,13 @@ async function handleComplete(userId: string, stageId: string, stageNumber: numb
 
     // For Stage 1, mark all sub-stages as completed
     if (stageNumber === 1) {
-      const subStages = ['T1', 'T2', 'T3', 'T4', 'T5']
+      const subStages = [
+        { name: 'T1', sessions: 4 },
+        { name: 'T2', sessions: 6 },
+        { name: 'T3', sessions: 6 },
+        { name: 'T4', sessions: 6 },
+        { name: 'T5', sessions: 10 }
+      ]
       
       for (const subStage of subStages) {
         await prisma.userStageProgress.upsert({
@@ -210,27 +323,53 @@ async function handleComplete(userId: string, stageId: string, stageNumber: numb
             userId_stageId_subStage: {
               userId,
               stageId,
-              subStage
+              subStage: subStage.name
             }
           },
           create: {
             userId,
             stageId,
             stageNumber,
-            subStage,
-            sessionsCompleted: 15, // Meet minimum requirement
+            subStage: subStage.name,
+            sessionsCompleted: subStage.sessions,
             hoursCompleted: stage.minHours,
             isCompleted: true,
             completedAt: new Date()
           },
           update: {
-            sessionsCompleted: 15,
+            sessionsCompleted: subStage.sessions,
             hoursCompleted: stage.minHours,
             isCompleted: true,
             completedAt: new Date()
           }
         })
       }
+
+      // Also mark PAHM intro as completed
+      await prisma.userStageProgress.upsert({
+        where: {
+          userId_stageId_subStage: {
+            userId,
+            stageId,
+            subStage: 'PAHM'
+          }
+        },
+        create: {
+          userId,
+          stageId,
+          stageNumber,
+          subStage: 'PAHM',
+          sessionsCompleted: 1,
+          hoursCompleted: 0,
+          isCompleted: true,
+          completedAt: new Date()
+        },
+        update: {
+          sessionsCompleted: 1,
+          isCompleted: true,
+          completedAt: new Date()
+        }
+      })
 
       // Unlock Stage 2
       const stage2 = await prisma.stage.findUnique({
@@ -322,6 +461,52 @@ async function handleComplete(userId: string, stageId: string, stageNumber: numb
     })
   } catch (error) {
     console.error('Complete error:', error)
+    throw error
+  }
+}
+
+/**
+ * Reset all progress for a user (back to new user state)
+ */
+async function handleResetAll(userId: string) {
+  try {
+    // Delete all user stage progress
+    await prisma.userStageProgress.deleteMany({
+      where: { userId }
+    })
+
+    // Delete all sessions
+    await prisma.session.deleteMany({
+      where: { userId }
+    })
+
+    // Delete all happiness scores
+    await prisma.happinessScore.deleteMany({
+      where: { userId }
+    })
+
+    // Delete daily notes
+    await prisma.dailyNote.deleteMany({
+      where: { userId }
+    })
+
+    // Reset questionnaire
+    await prisma.questionnaire.updateMany({
+      where: { userId },
+      data: { isCompleted: null }
+    })
+
+    // Delete self assessments
+    await prisma.selfAssessment.deleteMany({
+      where: { userId }
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'All progress reset successfully. User returned to initial state (only Stage 1 unlocked).',
+    })
+  } catch (error) {
+    console.error('Reset all error:', error)
     throw error
   }
 }

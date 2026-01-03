@@ -138,7 +138,7 @@ export default function SessionSetupPage() {
       
       <div className="p-3 pt-20 sm:p-6 sm:pt-24 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#03478f] text-center mb-4 sm:mb-6 md:mb-8">'</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#03478f] text-center mb-4 sm:mb-6 md:mb-8 invisible">'</h1>
           
           <div className="bg-[#e5f3ff] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
@@ -246,14 +246,14 @@ export default function SessionSetupPage() {
                   <button
                     onClick={handleBack}
                     disabled={isStarting}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-base min-h-[48px]"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleStart}
                     disabled={isStarting}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 sm:py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base sm:text-base min-h-[48px]"
                   >
                     {isStarting ? (
                       <>

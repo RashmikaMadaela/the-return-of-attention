@@ -367,7 +367,7 @@ export default function PAHMReflectionPage() {
       
       <div className="p-4 pt-20 sm:p-6 md:p-8 sm:pt-24">
         <div className="max-w-5xl mx-auto">
-          <h1 className="mb-4 sm:mb-6 md:mb-8 text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#03478f]">'</h1>
+          <h1 className="mb-4 sm:mb-6 md:mb-8 text-2xl sm:text-3xl md:text-4xl font-bold text-center text-[#03478f] invisible">'</h1>
           
           <div className="p-4 sm:p-6 md:p-8 bg-[#e5f3ff] rounded-xl sm:rounded-2xl shadow-2xl">
             {/* Session Counting Status */}
