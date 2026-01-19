@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP8266 NodeMCU V3 - Button Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+         
+            
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .status-container {
+            margin: 30px 0;
+        }
+        
+        .button-display {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 8px solid #e2e8f0;
+            background: #f7fafc;
+            color: #4a5568;
+        }
+        
+        .button-display.pressed {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            transform: scale(1.1);
+            border-color: #ff4757;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+        }
+        
+        .button-display.released {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+            border-color: #37b24d;
+            box-shadow: 0 10px 30px rgba(81, 207, 102, 0.4);
+        }
+        
+        .status-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 40px;
+        }
+        
+        .timestamp {
+            color: #718096;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 1000;
+        }
+        
+        .connected {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+        }
+        
+        .disconnected-indicator {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        }
+        
+        .connecting {
+            background: linear-gradient(135deg, #ffd43b, #fab005);
+        }
+        
+        .info-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+            border-left: 5px solid #667eea;
+        }
+        
+        .info-panel h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        .info-panel p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Control Buttons Styles */
+        .control-panel {
+            margin: 30px 0;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .control-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .start-btn {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+        }
+        
+        .start-btn:hover {
+            background: linear-gradient(135deg, #40c057, #37b24d);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(81, 207, 102, 0.4);
+        }
+        
+        .stop-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+        
+        .stop-btn:hover {
+            background: linear-gradient(135deg, #ee5a52, #ff4757);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .control-btn:active {
+            transform: translateY(0);
+        }
+        
+        .led-status {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+        
+        .led-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #dee2e6;
+        }
+        
+        .led-indicator.on {
+            background: #51cf66;
+            box-shadow: 0 0 10px rgba(81, 207, 102, 0.6);
+        }
+        
+        /* 9-Button Grid Styles */
+        .button-grid-container {
+            margin: 30px 0;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .grid-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 3px solid #e2e8f0;
+            background: #ffffff;
+            color: #4a5568;
+            cursor: default;
+        }
+        
+        .grid-button.pressed {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            transform: scale(1.1);
+            border-color: #ff4757;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .grid-button.released {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+            border-color: #37b24d;
+            box-shadow: 0 5px 15px rgba(81, 207, 102, 0.4);
+            animation: releaseFlash 0.5s ease;
+        }
+        
+        .grid-button .pin-number {
+            font-size: 10px;
+            color: #718096;
+            margin-top: 2px;
+        }
+        
+        .grid-button.pressed .pin-number,
+        .grid-button.released .pin-number {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        @keyframes releaseFlash {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .grid-info {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 10px;
+        }
+        
+        .last-action {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status" id="connectionStatus">Connecting...</div>
+    
+    <div class="container">
+        <h1>🎮 ESP8266 NodeMCU V3 - 9-Button Grid Monitor</h1>
+        
+        <!-- 3x3 Button Grid Display -->
+        <div class="button-grid-container">
+            <h3>🔘 Button Grid Status</h3>
+            <div class="button-grid" id="buttonGrid">
+                <!-- 3x3 Grid will be generated by JavaScript -->
+            </div>
+            <div class="grid-info">
+                <p><strong>Grid Layout:</strong> [D1] [D2] [D3] / [D5] [D6] [D7] / [RX] [TX] [D4]</p>
+                <p><strong>LEDs:</strong> D3=START, D8=STOP</p>
+            </div>
+        </div>
+        
+        <div class="status-container">
+            <div class="status-text" id="statusText">Waiting for ESP8266 9-button grid data...</div>
+            <div class="timestamp" id="timestamp"></div>
+        </div>
+        
+        <!-- LED Control Panel -->
+        <div class="control-panel">
+            <button class="control-btn start-btn" id="startBtn">🟢 START</button>
+            <button class="control-btn stop-btn" id="stopBtn">🔴 STOP</button>
+        </div>
+        
+        <div class="led-status">
+            <h3>💡 LED Status</h3>
+            <p><span class="led-indicator" id="led23"></span><strong>D0 (Start LED):</strong> <span id="led23Status">OFF</span></p>
+            <p><span class="led-indicator" id="led22"></span><strong>D8 (Stop LED):</strong> <span id="led22Status">OFF</span></p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="pressCount">0</div>
+                <div class="stat-label">Button Presses</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="releaseCount">0</div>
+                <div class="stat-label">Button Releases</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalMessages">0</div>
+                <div class="stat-label">Total Messages</div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h3>📡 Connection Info</h3>
+            <p><strong>MQTT Topics:</strong> esp32/buttons, esp32/button/[row]/[col]</p>
+            <p><strong>Grid Layout:</strong> 3x3 (9 buttons total)</p>
+            <p><strong>Broker:</strong> broker.hivemq.com</p>
+            <p><strong>Status:</strong> <span id="mqttStatus">Connecting...</span></p>
+        </div>
+        
+        <div class="info-panel">
+            <h3>📋 Recent Messages</h3>
+            <div id="messageLog" style="max-height: 200px; overflow-y: auto; text-align: left;"></div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        
+        // DOM Elements
+        const statusText = document.getElementById('statusText');
+        const timestamp = document.getElementById('timestamp');
+        const buttonGrid = document.getElementById('buttonGrid');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const mqttStatus = document.getElementById('mqttStatus');
+        const pressCount = document.getElementById('pressCount');
+        const releaseCount = document.getElementById('releaseCount');
+        const totalMessages = document.getElementById('totalMessages');
+        const messageLog = document.getElementById('messageLog');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const led23 = document.getElementById('led23');
+        const led22 = document.getElementById('led22');
+        const led23Status = document.getElementById('led23Status');
+        const led22Status = document.getElementById('led22Status');
+        
+        // Grid data - ESP8266 NodeMCU V3 pins (no conflicts with LEDs)
+        const gridPins = [
+            ['D1', 'D2', 'D3'],    // Row 0 (GPIO5, GPIO4, GPIO0)
+            ['D5', 'D6', 'D7'],    // Row 1 (GPIO14, GPIO12, GPIO13)
+            ['RX', 'TX', 'D4']     // Row 2 (GPIO3, GPIO1, GPIO2)
+        ];
+        
+        // Create 3x3 button grid
+        function createButtonGrid() {
+            buttonGrid.innerHTML = '';
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    const button = document.createElement('div');
+                    button.className = 'grid-button';
+                    button.id = `btn-${row}-${col}`;
+                    button.innerHTML = `
+                        <div>[${row}][${col}]</div>
+                        <div class="pin-number">Pin ${gridPins[row][col]}</div>
+                    `;
+                    buttonGrid.appendChild(button);
+                }
+            }
+        }
+        
+        // Initialize grid on page load
+        createButtonGrid();
+        
+        // Counters
+        let presses = 0;
+        let releases = 0;
+        let total = 0;
+        
+        // Control button event listeners
+        startBtn.addEventListener('click', () => {
+            console.log('Start button clicked');
+            socket.emit('start');
+            
+            // Visual feedback
+            led23.classList.add('on');
+            led23Status.textContent = 'ON';
+            led22.classList.remove('on');
+            led22Status.textContent = 'OFF';
+            
+            // Button feedback
+            startBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                startBtn.style.transform = '';
+            }, 150);
+            
+            addToMessageLog('🟢 START command sent to ESP8266 (LED D0)', new Date().toLocaleString());
+        });
+        
+        stopBtn.addEventListener('click', () => {
+            console.log('Stop button clicked');
+            socket.emit('stop');
+            
+            // Visual feedback
+            led22.classList.add('on');
+            led22Status.textContent = 'ON';
+            led23.classList.remove('on');
+            led23Status.textContent = 'OFF';
+            
+            // Button feedback
+            stopBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                stopBtn.style.transform = '';
+            }, 150);
+            
+            addToMessageLog('🔴 STOP command sent to ESP8266 (LED D8)', new Date().toLocaleString());
+        });
+        
+        // Connection status handling
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            connectionStatus.textContent = '🟢 Connected';
+            connectionStatus.className = 'connection-status connected';
+            mqttStatus.textContent = 'Connected to server';
+            mqttStatus.style.color = '#51cf66';
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            connectionStatus.textContent = '🔴 Disconnected';
+            connectionStatus.className = 'connection-status disconnected-indicator';
+            mqttStatus.textContent = 'Disconnected from server';
+            mqttStatus.style.color = '#ff6b6b';
+        });
+
+        // ESP32 9-button grid data handling
+        socket.on('buttonGrid', (data) => {
+            console.log('Received button grid data:', data);
+            
+            // Update status text
+            statusText.textContent = data.message;
+            statusText.className = 'status-text fade-in';
+            
+            // Update timestamp
+            timestamp.textContent = `Last updated: ${data.displayTime}`;
+            
+            // Update specific button if row/col info is available
+            if (data.row !== undefined && data.col !== undefined) {
+                const buttonElement = document.getElementById(`btn-${data.row}-${data.col}`);
+                if (buttonElement) {
+                    // Clear previous states
+                    buttonElement.classList.remove('pressed', 'released');
+                    
+                    if (data.isPressed) {
+                        buttonElement.classList.add('pressed');
+                        presses++;
+                        pressCount.textContent = presses;
+                    } else if (data.isReleased) {
+                        buttonElement.classList.add('released');
+                        releases++;
+                        releaseCount.textContent = releases;
+                        
+                        // Remove released state after animation
+                        setTimeout(() => {
+                            buttonElement.classList.remove('released');
+                        }, 1000);
+                    }
+                }
+            }
+            
+            // Update total counter
+            total++;
+            totalMessages.textContent = total;
+            
+            // Add to message log
+            addToMessageLog(data.message, data.displayTime);
+        });
+        
+        // ESP32 individual button data handling
+        socket.on('buttonIndividual', (data) => {
+            console.log('Received individual button data:', data);
+            
+            const buttonElement = document.getElementById(`btn-${data.row}-${data.col}`);
+            if (buttonElement) {
+                // Clear previous states
+                buttonElement.classList.remove('pressed', 'released');
+                
+                if (data.isPressed) {
+                    buttonElement.classList.add('pressed');
+                    statusText.textContent = `Button [${data.row}][${data.col}] PRESSED (Pin ${gridPins[data.row][data.col]})`;
+                    presses++;
+                    pressCount.textContent = presses;
+                } else if (data.isReleased) {
+                    buttonElement.classList.add('released');
+                    statusText.textContent = `Button [${data.row}][${data.col}] RELEASED (Pin ${gridPins[data.row][data.col]})`;
+                    releases++;
+                    releaseCount.textContent = releases;
+                    
+                    // Remove released state after animation
+                    setTimeout(() => {
+                        buttonElement.classList.remove('released');
+                    }, 1000);
+                }
+                
+                // Update timestamp
+                timestamp.textContent = `Last updated: ${data.displayTime}`;
+                
+                // Update total counter
+                total++;
+                totalMessages.textContent = total;
+                
+                // Add to message log
+                addToMessageLog(data.message, data.displayTime);
+            }
+        });
+        
+        // ESP32 control acknowledgment handling
+        socket.on('controlAck', (data) => {
+            console.log('Received control acknowledgment:', data);
+            addToMessageLog(`✅ ESP32 ACK: ${data.message}`, data.displayTime);
+        });
+        
+        // Session summary handling
+        socket.on('sessionSummary', (summary) => {
+            console.log('Session Summary:', summary);
+            displaySessionSummary(summary);
+        });
+        
+        function displaySessionSummary(summary) {
+            // Create modal overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+            
+            // Create summary modal
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                background: white;
+                border-radius: 15px;
+                padding: 30px;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            `;
+            
+            let summaryHTML = `
+                <h2 style="color: #4a5568; margin-bottom: 20px; text-align: center;">📊 Session Summary</h2>
+                <div style="background: #f7fafc; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <p style="margin: 10px 0;"><strong>⏱️ Start Time:</strong> ${summary.startTime}</p>
+                    <p style="margin: 10px 0;"><strong>⏱️ End Time:</strong> ${summary.endTime}</p>
+                    <p style="margin: 10px 0;"><strong>⌛ Duration:</strong> ${summary.duration}</p>
+                    <p style="margin: 10px 0; font-size: 1.2em; color: #667eea;"><strong>🔢 Total Clicks:</strong> ${summary.totalClicks}</p>
+                </div>
+            `;
+            
+            if (summary.buttonDetails && summary.buttonDetails.length > 0) {
+                summaryHTML += '<h3 style="color: #4a5568; margin: 20px 0 10px 0;">🎯 Button Details:</h3>';
+                
+                summary.buttonDetails.forEach(btn => {
+                    const pinName = gridPins[btn.row] && gridPins[btn.row][btn.col] ? gridPins[btn.row][btn.col] : 'Unknown';
+                    summaryHTML += `
+                        <div style="background: #e6f2ff; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #667eea;">
+                            <p style="margin: 5px 0; font-size: 1.1em;"><strong>Button ${btn.button} (Pin ${pinName}):</strong> ${btn.count} clicks</p>
+                            <div style="margin-top: 10px; padding-left: 15px;">
+                    `;
+                    
+                    btn.times.forEach((time, index) => {
+                        summaryHTML += `<p style="margin: 3px 0; font-size: 0.9em; color: #555;">${index + 1}. ${time}</p>`;
+                    });
+                    
+                    summaryHTML += '</div></div>';
+                });
+            } else {
+                summaryHTML += '<p style="text-align: center; color: #718096; margin: 20px 0;">No buttons clicked during this session</p>';
+            }
+            
+            summaryHTML += `
+                <button onclick="this.closest('.overlay-session').remove()" style="
+                    width: 100%;
+                    padding: 12px;
+                    margin-top: 20px;
+                    background: linear-gradient(135deg, #667eea, #764ba2);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    cursor: pointer;
+                ">Close</button>
+            `;
+            
+            modal.innerHTML = summaryHTML;
+            overlay.className = 'overlay-session';
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            // Also log to message area
+            addToMessageLog(`📊 Session ended: ${summary.totalClicks} total clicks in ${summary.duration}`, summary.endTime);
+        }
+        
+        function addToMessageLog(message, time) {
+            const logEntry = document.createElement('div');
+            logEntry.style.cssText = 'padding: 8px; margin: 5px 0; background: #e9ecef; border-radius: 5px; font-size: 14px;';
+            logEntry.innerHTML = `<strong>${time}:</strong> ${message}`;
+            
+            messageLog.insertBefore(logEntry, messageLog.firstChild);
+            
+            // Keep only last 10 messages
+            while (messageLog.children.length > 10) {
+                messageLog.removeChild(messageLog.lastChild);
+            }
+        }
+        
+        // Initialize display
+        setTimeout(() => {
+            if (total === 0) {
+                statusText.textContent = 'Press any button on your ESP32 9-button grid!';
+                statusText.style.color = '#667eea';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

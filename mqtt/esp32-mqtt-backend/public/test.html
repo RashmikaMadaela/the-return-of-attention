@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 START/STOP Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .btn { padding: 10px 20px; margin: 10px; border: none; border-radius: 5px; cursor: pointer; }
+        .start { background: green; color: white; }
+        .stop { background: red; color: white; }
+        .status { margin: 20px 0; padding: 10px; border-radius: 5px; }
+        .enabled { background: lightgreen; }
+        .disabled { background: lightcoral; }
+        #log { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>ESP32 START/STOP Test</h1>
+    
+    <button class="btn start" onclick="sendStart()">🟢 START</button>
+    <button class="btn stop" onclick="sendStop()">🔴 STOP</button>
+    
+    <div class="status disabled" id="status">
+        Status: DISABLED - Click START to enable button reading
+    </div>
+    
+    <h3>Message Log:</h3>
+    <div id="log"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const status = document.getElementById('status');
+        const log = document.getElementById('log');
+        
+        function addLog(message) {
+            const entry = document.createElement('div');
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function sendStart() {
+            addLog('🟢 Sending START command...');
+            socket.emit('start');
+            status.textContent = 'Status: ENABLING... - Waiting for ESP32 confirmation';
+            status.className = 'status enabled';
+        }
+        
+        function sendStop() {
+            addLog('🔴 Sending STOP command...');
+            socket.emit('stop');
+            status.textContent = 'Status: DISABLING... - Waiting for ESP32 confirmation';
+            status.className = 'status disabled';
+        }
+        
+        // Listen for responses
+        socket.on('connect', () => {
+            addLog('✅ Connected to server');
+        });
+        
+        socket.on('disconnect', () => {
+            addLog('❌ Disconnected from server');
+        });
+        
+        socket.on('commandSent', (data) => {
+            addLog(`📤 Command sent: ${data.message}`);
+        });
+        
+        socket.on('controlAck', (data) => {
+            addLog(`✅ ESP32 ACK: ${data.message}`);
+            
+            if (data.buttonReadingEnabled === true) {
+                status.textContent = 'Status: ENABLED - Button reading active';
+                status.className = 'status enabled';
+            } else if (data.buttonReadingEnabled === false) {
+                status.textContent = 'Status: DISABLED - Button reading stopped';
+                status.className = 'status disabled';
+            }
+        });
+        
+        socket.on('buttonGrid', (data) => {
+            addLog(`🎮 Button: ${data.message}`);
+        });
+        
+        socket.on('buttonIndividual', (data) => {
+            addLog(`🔘 Individual: [${data.row}][${data.col}] ${data.isPressed ? 'PRESSED' : 'RELEASED'}`);
+        });
+    </script>
+</body>
+</html>
