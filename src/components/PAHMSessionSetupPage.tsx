@@ -168,7 +168,6 @@ export default function PAHMSessionSetupPage() {
       useRemote: sessionSettings.useRemote,
     }
 
-    // Add exercise type for mind recovery sessions
     if (isMindRecoverySession && mindRecoverySession) {
       request.exerciseType = exerciseTypeMap[mindRecoverySession]
     }
@@ -198,6 +197,7 @@ export default function PAHMSessionSetupPage() {
         title: stage.name
       }
       
+
       sessionStorage.setItem('activeSession', JSON.stringify(sessionData))
       sessionStorage.setItem('currentStage', stageId || '2')
       
@@ -324,7 +324,10 @@ export default function PAHMSessionSetupPage() {
                       <div className="flex items-center justify-between py-1">
                         <span className="text-base font-semibold sm:text-base">Use Remote</span>
                         <button
-                          onClick={() => setSessionSettings(prev => ({ ...prev, useRemote: !prev.useRemote }))}
+                          onClick={() => {
+                            const newValue = !sessionSettings.useRemote
+                            setSessionSettings(prev => ({ ...prev, useRemote: newValue }))
+                          }}
                           className={`w-14 h-8 sm:w-14 sm:h-8 rounded-full transition-colors ${
                             sessionSettings.useRemote ? 'bg-[#6465e0]' : 'bg-gray-300'
                           }`}

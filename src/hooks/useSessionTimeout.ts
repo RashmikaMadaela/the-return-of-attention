@@ -40,9 +40,7 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
     resetActivity()
   }, [resetActivity])
 
-  // Check session timeout
   const checkTimeout = useCallback(async () => {
-    // Don't check if already signing out or not authenticated
     if (isSigningOutRef.current || status !== 'authenticated' || !session) {
       return
     }
@@ -53,17 +51,13 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
 
     setTimeRemaining(remaining)
 
-    // Session expired - force logout
     if (timeSinceLastActivity >= INACTIVITY_TIMEOUT) {
-      // Prevent multiple signout attempts
       if (isSigningOutRef.current) {
         return
       }
       
-      console.log('Session expired due to inactivity - initiating logout')
       isSigningOutRef.current = true
       
-      // Clear interval immediately to prevent further checks
       if (checkIntervalRef.current) {
         clearInterval(checkIntervalRef.current)
         checkIntervalRef.current = null
@@ -120,13 +114,10 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
       document.addEventListener(event, handleActivity, true)
     })
 
-    // Start interval to check timeout
     checkIntervalRef.current = setInterval(checkTimeout, CHECK_INTERVAL)
 
-    // Initial check
     checkTimeout()
 
-    // Cleanup
     return () => {
       activityEvents.forEach(event => {
         document.removeEventListener(event, handleActivity, true)
@@ -137,7 +128,7 @@ export function useSessionTimeout(options: UseSessionTimeoutOptions = {}) {
         checkIntervalRef.current = null
       }
     }
-  }, [status, handleActivity, checkTimeout])
+  }, [status, session, handleActivity, checkTimeout])
 
   // Handle page visibility change
   useEffect(() => {

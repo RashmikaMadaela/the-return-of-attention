@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
 import SessionTimeControls from './SessionTimeControls'
@@ -91,6 +91,14 @@ export default function PAHMTimerPage() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const pulseIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const clickAudioRef = useRef<HTMLAudioElement | null>(null)
+  
+  // Remote connection state
+  const [remoteConnected, setRemoteConnected] = useState(false)
+  const [remoteEnabled, setRemoteEnabled] = useState(false)
+  const [remoteStatus, setRemoteStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking')
+  const eventSourceRef = useRef<EventSource | null>(null)
+  const [useRemote, setUseRemote] = useState(false) // From session settings
+  const handlePahmClickRef = useRef<((position: keyof PAHMTracking, event?: React.MouseEvent) => Promise<void>) | null>(null)
 
   // Initialize meditation audio hook
   const { playBell, playVoice } = useMeditationAudio({
@@ -105,8 +113,67 @@ export default function PAHMTimerPage() {
   const { isSupported: wakeLockSupported, isLocked: screenLocked } = useWakeLock({
     isActive: timer.isRunning
   })
+  
+  // Setup remote connection via Server-Sent Events
+  useEffect(() => {
+    if (!useRemote) return
+    
+    const eventSource = new EventSource('/api/mqtt/websocket')
+    eventSourceRef.current = eventSource
+    
+    eventSource.onopen = () => {
+      setRemoteStatus('connected')
+      setRemoteConnected(true)
+    }
+    
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        
+        if (data.type === 'connected') {
+          setRemoteConnected(true)
+          setRemoteStatus('connected')
+        } else if ((data.type === 'button-press' || data.type === 'individual') && data.isPressed) {
+          if (handlePahmClickRef.current) {
+            handlePahmClickRef.current(data.position as keyof PAHMTracking)
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing SSE message:', error)
+      }
+    }
+    
+    eventSource.onerror = () => {
+      setRemoteConnected(false)
+      setRemoteStatus('disconnected')
+    }
+    
+    return () => {
+      if (process.env.NODE_ENV === 'production' || !useRemote) {
+        eventSource.close()
+      }
+    }
+  }, [useRemote])
+  
+  // Function to check remote connection status
+  const checkRemoteConnection = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/remote/status')
+      const data = await response.json()
+      setRemoteConnected(data.connected && data.mqtt_connected)
+      setRemoteStatus(data.connected && data.mqtt_connected ? 'connected' : 'disconnected')
+    } catch (error) {
+      console.error('Failed to check remote status:', error)
+      setRemoteStatus('disconnected')
+    }
+  }
 
   useEffect(() => {
+    console.log('\n=== PAHM TIMER PAGE MOUNTED ===')
+    console.log('Initial useRemote state:', useRemote)
+    console.log('Initial remoteEnabled state:', remoteEnabled)
+    console.log('==================\n')
+    
     // Set session start time
     sessionStartTimeRef.current = Date.now()
 
@@ -123,6 +190,24 @@ export default function PAHMTimerPage() {
       const parsedSession: SessionData = JSON.parse(activeSession)
       setSessionData(parsedSession)
       setSessionSettings(parsedSession.settings)
+      
+      // Check if remote is enabled in settings
+      console.log('\n=== LOADING SESSION SETTINGS ===')
+      console.log('Full settings object:', parsedSession.settings)
+      console.log('useRemote value:', parsedSession.settings?.useRemote)
+      console.log('useRemote type:', typeof parsedSession.settings?.useRemote)
+      
+      if (parsedSession.settings?.useRemote === true) {
+        console.log('✅✅✅ REMOTE IS ENABLED - calling setUseRemote(true)')
+        setUseRemote(true)
+        console.log('   After setUseRemote, checking connection...')
+        checkRemoteConnection()
+      } else {
+        console.log('❌❌❌ REMOTE IS DISABLED')
+        console.log('   settings.useRemote =', parsedSession.settings?.useRemote)
+        console.log('   Go back to session setup and turn ON "Use Remote" toggle!')
+      }
+      console.log('==============================\n')
       
       // Set timer duration from session data
       const duration = parsedSession.duration
@@ -232,6 +317,23 @@ export default function PAHMTimerPage() {
       playBell()
     }
     
+    // Enable remote button tracking if remote is being used
+    if (useRemote) {
+      try {
+        const response = await fetch('http://localhost:4000/api/remote/enable', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        if (response.ok) {
+          setRemoteEnabled(true)
+        } else {
+          setRemoteStatus('disconnected')
+        }
+      } catch (error) {
+        setRemoteStatus('disconnected')
+      }
+    }
+    
     setTimer(prev => ({
       ...prev,
       isRunning: true,
@@ -263,10 +365,35 @@ export default function PAHMTimerPage() {
     }, 1000)
   }
 
-  const pauseTimer = () => {
+  const pauseTimer = async () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
     }
+    
+    // Disable remote when pausing (only if remote is being used)
+    if (timer.isRunning && useRemote) {
+      try {
+        await fetch('http://localhost:4000/api/remote/disable', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        setRemoteEnabled(false)
+      } catch (error) {
+        console.error('Failed to disable remote:', error)
+      }
+    } else if (!timer.isRunning && useRemote) {
+      // Re-enable remote when resuming
+      try {
+        await fetch('http://localhost:4000/api/remote/enable', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        setRemoteEnabled(true)
+      } catch (error) {
+        console.error('Failed to enable remote:', error)
+      }
+    }
+    
     setTimer(prev => ({
       ...prev,
       isRunning: !prev.isRunning
@@ -280,11 +407,38 @@ export default function PAHMTimerPage() {
       setTimeout(() => playBell(), 2000)
     }
     
+    // Disable remote button tracking (only if remote is being used)
+    if (useRemote) {
+      try {
+        await fetch('http://localhost:4000/api/remote/disable', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        setRemoteEnabled(false)
+        console.log('🛑 Remote disabled after session')
+      } catch (error) {
+        console.error('Failed to disable remote:', error)
+      }
+    }
+    
     // Store PAHM click data for reflection page (full data for API)
+    console.log('💾 Saving PAHM data to sessionStorage...')
+    console.log('📊 PAHM Session Complete - Full Click Array:')
+    console.log('   Total clicks:', pahmClicks.length)
+    console.log('   pahmClicks:', JSON.stringify(pahmClicks, null, 2))
+    console.log('   pahmTracking:', JSON.stringify(pahmTracking, null, 2))
+    
+    // Log individual button counts
+    console.log('\n📈 Click Summary by Position:')
+    Object.entries(pahmTracking).forEach(([position, count]) => {
+      console.log(`   ${position}: ${count} clicks`)
+    })
+    
     sessionStorage.setItem('pahmClickData', JSON.stringify(pahmClicks))
     sessionStorage.setItem('pahmTracking', JSON.stringify(pahmTracking)) // Simple counts for display
     sessionStorage.setItem('sessionDuration', (sessionSettings?.duration || 30).toString())
     sessionStorage.setItem('actualSessionDuration', (sessionSettings?.duration || 30).toString())
+    console.log('\n✅ Data saved to sessionStorage')
     
     // Navigate to reflection page with sessionId after a brief pause
     setTimeout(() => {
@@ -308,28 +462,26 @@ export default function PAHMTimerPage() {
 
 
 
-  const handlePahmClick = (position: keyof PAHMTracking, event?: React.MouseEvent) => {
+  const handlePahmClick = useCallback(async (position: keyof PAHMTracking, event?: React.MouseEvent) => {
     if (timer.isRunning) {
-      // Play click sound
+      setClickedButton(position)
+      setTimeout(() => setClickedButton(null), 300)
+      
       if (clickAudioRef.current) {
         try {
           const clickClone = clickAudioRef.current.cloneNode() as HTMLAudioElement
           clickClone.volume = clickAudioRef.current.volume
-          clickClone.play().catch(err => console.log('Click sound not available:', err))
-        } catch (error) {
-          console.log('Click sound error:', error)
-        }
+          clickClone.play().catch(() => {})
+        } catch {}
       }
 
-      // Update simple tracking (for display)
       setPahmTracking(prev => ({
         ...prev,
         [position]: prev[position] + 1
       }))
       
-      // Track full click data with timestamp and coordinates for API
       const now = Date.now()
-      const timeFromStart = Math.floor((now - sessionStartTimeRef.current) / 1000) // seconds
+      const timeFromStart = Math.floor((now - sessionStartTimeRef.current) / 1000)
       
       let coordinates = { x: 0, y: 0 }
       if (event) {
@@ -342,18 +494,33 @@ export default function PAHMTimerPage() {
 
       const click: PAHMClick = {
         position: position as PAHMPosition,
-        timestamp: new Date(now).toISOString(), // Convert to ISO string
+        timestamp: new Date(now).toISOString(),
         timeFromStart: timeFromStart,
         coordinates: coordinates
       }
 
       setPahmClicks(prev => [...prev, click])
       
-      // Visual feedback
-      setClickedButton(position)
-      setTimeout(() => setClickedButton(null), 300)
+      if (sessionData?.pahmSessionId) {
+        fetch('/api/pahm/click', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pahmSessionId: sessionData.pahmSessionId,
+            position: position,
+            timestamp: click.timestamp,
+            timeFromStart: timeFromStart,
+            coordinates: coordinates
+          })
+        }).catch(() => {})
+      }
     }
-  }
+  }, [timer.isRunning, sessionData?.pahmSessionId])
+
+  // Update ref whenever handlePahmClick changes
+  useEffect(() => {
+    handlePahmClickRef.current = handlePahmClick
+  }, [handlePahmClick])
 
   const handleTimeSkip = () => {
     setShowSkipConfirm(true)
@@ -490,6 +657,34 @@ export default function PAHMTimerPage() {
             <h1 className="px-2 mb-4 text-xl font-bold text-[#03478f] sm:text-2xl lg:text-3xl sm:mb-6">
               {isMindRecovery ? stage?.name : `Stage ${stageId}: ${stage?.name}`}
             </h1>
+            
+            {/* Remote Connection Status - Only show if remote is enabled */}
+            {useRemote && (
+              <div className="flex items-center justify-end gap-2 mb-4 pr-4">
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold shadow-md transition-all duration-300 ${
+                  remoteStatus === 'connected' 
+                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' 
+                    : remoteStatus === 'disconnected'
+                    ? 'bg-gradient-to-r from-red-500 to-red-600 text-white'
+                    : 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${
+                    remoteStatus === 'connected' ? 'bg-white animate-pulse' : 'bg-white/70'
+                  }`} />
+                  <span className="flex items-center gap-1">
+                    <span className="text-sm">🎮</span>
+                    {remoteStatus === 'connected' && 'Remote Connected'}
+                    {remoteStatus === 'disconnected' && 'Remote Disconnected'}
+                    {remoteStatus === 'checking' && 'Checking Remote...'}
+                  </span>
+                </div>
+                {remoteEnabled && (
+                  <div className="px-3 py-2 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 shadow-md animate-pulse">
+                    ✓ Tracking Active
+                  </div>
+                )}
+              </div>
+            )}
             
             <div className="inline-block px-4 py-2 mx-2 mb-4 text-xs text-center text-white bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-lg sm:px-6 sm:py-3 sm:mb-6 sm:text-sm shadow-md">
               Notice where your attention goes, tap when you recognize thoughts

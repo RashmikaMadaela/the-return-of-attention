@@ -110,17 +110,16 @@ export default function PAHMReflectionPage() {
       setActualSessionDuration(parsedSession.duration)
     }
 
-    // Load PAHM click data (full data for API)
     const pahmClickDataStr = sessionStorage.getItem('pahmClickData')
     if (pahmClickDataStr) {
       const clickData: PAHMClick[] = JSON.parse(pahmClickDataStr)
       setPahmClicks(clickData)
     }
 
-    // Load PAHM tracking (simple counts for display)
     const pahmTrackingStr = sessionStorage.getItem('pahmTracking')
     if (pahmTrackingStr) {
-      setPahmData(JSON.parse(pahmTrackingStr))
+      const tracking = JSON.parse(pahmTrackingStr)
+      setPahmData(tracking)
     }
 
     // Determine whether this PAHM session should count towards progress.
