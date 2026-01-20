@@ -223,7 +223,8 @@ model UserStageProgress {
 enum SessionStatus {
   STARTED              // Timer running or session in progress
   AWAITING_REFLECTION  // Timer finished, waiting for reflection/journal
-  COMPLETED            // Reflection saved, session fully complete
+  COMPLETED            // Reflection saved, session fully complete (meets minimum duration)
+  NOT_COMPLETED        // Reflection saved but did not meet minimum duration requirement
   ABANDONED            // User quit or started new session without finishing
 }
 

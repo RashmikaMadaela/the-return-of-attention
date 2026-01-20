@@ -161,6 +161,7 @@ export default function ReflectionPage() {
         // include both planned duration and actual measured duration when available
         duration: sessionSettings?.duration,
         actualDuration: actualMinutes ?? sessionSettings?.duration,
+        shouldCountAsSession: reflection.shouldCountAsSession
       }
 
       // Call server action to complete session (faster than REST API)

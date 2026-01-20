@@ -269,7 +269,8 @@ export default function PAHMReflectionPage() {
         pahmData: pahmDataForAPI,
         challenges,
         duration: sessionDuration,
-        actualDuration: actualSessionDuration
+        actualDuration: actualSessionDuration,
+        shouldCountAsSession: shouldCountAsSession
       }
 
       // Call server action to complete session (faster than REST API)
