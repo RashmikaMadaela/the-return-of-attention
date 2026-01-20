@@ -142,7 +142,7 @@ export const sessionStartSchema = z.object({
 
 export const sessionUpdateSchema = z.object({
   sessionId: z.string().cuid(),
-  status: z.enum(['STARTED', 'AWAITING_REFLECTION', 'COMPLETED', 'ABANDONED']).optional(),
+  status: z.enum(['STARTED', 'AWAITING_REFLECTION', 'COMPLETED', 'NOT_COMPLETED', 'ABANDONED']).optional(),
   qualityRating: z.number().min(1).max(10).optional(),
   insights: z.string().max(1000).optional()
 })
@@ -152,6 +152,7 @@ export const sessionCompleteSchema = z.object({
   // Optional duration fields: clients may send the planned duration or the actual practiced duration
   duration: z.number().min(0).optional(),
   actualDuration: z.number().min(0).optional(),
+  shouldCountAsSession: z.boolean().optional(), // Whether session meets minimum duration requirement
   qualityRating: z.number().int().min(1).max(10).optional(),
   insights: z.string().max(1000).optional(),
   pahmData: z.object({

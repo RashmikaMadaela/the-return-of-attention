@@ -485,10 +485,10 @@ export default function PAHMTimerPage() {
       `}</style>
       
       <div className="flex items-center justify-center flex-1 p-4 pt-20 sm:p-6 sm:pt-24 lg:p-8">
-        <div className="w-full max-w-3xl p-4 bg-[#e5f3ff] rounded-2xl sm:p-6 lg:p-12 shadow-2xl">
+        <div className="w-full max-w-3xl p-5 bg-[#e5f3ff] rounded-xl sm:p-6 lg:p-12 shadow-2xl">
           <div className="text-center">
-            <h1 className="px-2 mb-4 text-2xl font-bold text-[#03478f] sm:text-3xl lg:text-4xl sm:mb-6">
-              Stage {stageId}: {stage?.name}
+            <h1 className="px-2 mb-4 text-xl font-bold text-[#03478f] sm:text-2xl lg:text-3xl sm:mb-6">
+              {isMindRecovery ? stage?.name : `Stage ${stageId}: ${stage?.name}`}
             </h1>
             
             <div className="inline-block px-4 py-2 mx-2 mb-4 text-xs text-center text-white bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-lg sm:px-6 sm:py-3 sm:mb-6 sm:text-sm shadow-md">
@@ -496,19 +496,19 @@ export default function PAHMTimerPage() {
             </div>
 
             <div className="flex items-center justify-center gap-2 mb-6 sm:gap-3 sm:mb-8">
-              <div className="px-3 py-4 text-4xl font-bold text-gray-900 bg-white sm:text-5xl lg:text-6xl sm:px-4 lg:px-5 sm:py-5 lg:py-6 rounded-xl">
+              <div className="px-4 py-4 text-5xl font-bold text-gray-900 bg-white sm:text-6xl lg:text-7xl sm:px-5 lg:px-6 sm:py-5 lg:py-6 rounded-xl">
                 {formatTime(timer.totalSeconds).split(':')[0]}
               </div>
-              <div className="text-4xl font-bold text-white sm:text-5xl lg:text-6xl">:</div>
-              <div className="px-3 py-4 text-4xl font-bold text-gray-900 bg-white sm:text-5xl lg:text-6xl sm:px-4 lg:px-5 sm:py-5 lg:py-6 rounded-xl">
+              <div className="text-5xl font-bold text-[#03478f] sm:text-6xl lg:text-7xl">:</div>
+              <div className="px-4 py-4 text-5xl font-bold text-gray-900 bg-white sm:text-6xl lg:text-7xl sm:px-5 lg:px-6 sm:py-5 lg:py-6 rounded-xl">
                 {formatTime(timer.totalSeconds).split(':')[1]}
               </div>
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full h-4 mb-8 bg-gray-200 rounded-full">
+            <div className="w-full h-3 mb-6 bg-gray-200 rounded-full sm:h-4 sm:mb-8">
               <div 
-                className="h-4 transition-all duration-1000 rounded-full bg-gradient-to-r from-[#6465e0] to-[#7c7de8]"
+                className="h-3 sm:h-4 transition-all duration-1000 rounded-full bg-gradient-to-r from-[#6465e0] to-[#7c7de8]"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -518,7 +518,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('nostalgia', e)}
                 disabled={!timer.isRunning}
-                className={`btn-nostalgia bg-orange-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
+                className={`btn-nostalgia bg-orange-300 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 ${
                   clickedButton === 'nostalgia' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('nostalgia') ? 'pulse-animation' : ''}`}
               >
@@ -527,7 +527,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('likes', e)}
                 disabled={!timer.isRunning}
-                className={`btn-likes bg-teal-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
+                className={`btn-likes bg-teal-300 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 ${
                   clickedButton === 'likes' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('likes') ? 'pulse-animation' : ''}`}
               >
@@ -536,7 +536,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('anticipation', e)}
                 disabled={!timer.isRunning}
-                className={`btn-anticipation bg-purple-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
+                className={`btn-anticipation bg-purple-300 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 ${
                   clickedButton === 'anticipation' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('anticipation') ? 'pulse-animation' : ''}`}
               >
@@ -546,7 +546,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('past', e)}
                 disabled={!timer.isRunning}
-                className={`btn-past bg-yellow-400 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
+                className={`btn-past bg-yellow-400 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 ${
                   clickedButton === 'past' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('past') ? 'pulse-animation' : ''}`}
               >
@@ -555,7 +555,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('present', e)}
                 disabled={!timer.isRunning}
-                className={`btn-present bg-gray-200 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 leading-tight ${
+                className={`btn-present bg-gray-200 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 leading-tight ${
                   clickedButton === 'present' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('present') ? 'pulse-animation' : ''}`}
               >
@@ -564,7 +564,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('future', e)}
                 disabled={!timer.isRunning}
-                className={`btn-future bg-blue-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
+                className={`btn-future bg-blue-300 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 ${
                   clickedButton === 'future' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('future') ? 'pulse-animation' : ''}`}
               >
@@ -574,7 +574,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('regret', e)}
                 disabled={!timer.isRunning}
-                className={`btn-regret bg-orange-400 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
+                className={`btn-regret bg-orange-400 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 ${
                   clickedButton === 'regret' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('regret') ? 'pulse-animation' : ''}`}
               >
@@ -583,7 +583,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('dislikes', e)}
                 disabled={!timer.isRunning}
-                className={`btn-dislikes bg-pink-300 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
+                className={`btn-dislikes bg-pink-300 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 ${
                   clickedButton === 'dislikes' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('dislikes') ? 'pulse-animation' : ''}`}
               >
@@ -592,7 +592,7 @@ export default function PAHMTimerPage() {
               <button
                 onClick={(e) => handlePahmClick('worry', e)}
                 disabled={!timer.isRunning}
-                className={`btn-worry bg-purple-200 text-black font-semibold aspect-square rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[60px] sm:min-h-[80px] lg:min-h-[100px] flex items-center justify-center p-1 sm:p-2 ${
+                className={`btn-worry bg-purple-200 text-black font-semibold aspect-square rounded-xl sm:rounded-2xl transition-all disabled:opacity-50 text-xs sm:text-sm lg:text-base min-h-[70px] sm:min-h-[85px] lg:min-h-[100px] flex items-center justify-center p-2 ${
                   clickedButton === 'worry' ? 'click-animation' : ''
                 } ${pulsingButtons.includes('worry') ? 'pulse-animation' : ''}`}
               >
@@ -601,20 +601,22 @@ export default function PAHMTimerPage() {
             </div>
 
             {/* Control Buttons */}
-            <div className="flex flex-col gap-3 px-4 mb-6 sm:flex-row sm:gap-4">
+            <div className="flex flex-col gap-3 px-2 mb-6 sm:flex-row sm:gap-4">
               {!timer.isRunning ? (
                 <button
                   onClick={startTimer}
-                  className="flex-1 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors shadow-md"
+                  className="flex-1 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white px-6 sm:px-8 py-4 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[56px] transition-colors shadow-md flex items-center justify-center gap-2"
                 >
-                  ▶️ Start Meditation
+                  <span className="emoji" role="img" aria-label="play">▶️</span>
+                  <span>Start</span>
                 </button>
               ) : (
                 <button
                   onClick={pauseTimer}
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-colors shadow-md"
+                  className="flex-1 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-6 sm:px-8 py-4 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[56px] transition-colors shadow-md flex items-center justify-center gap-2"
                 >
-                  ⏸️ Pause
+                  <span className="emoji" role="img" aria-label="pause">⏸️</span>
+                  <span>Pause</span>
                 </button>
               )}
               
@@ -646,7 +648,7 @@ export default function PAHMTimerPage() {
                       }
                     }
                   }}
-                  className="w-full sm:w-auto bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[48px] transition-all shadow-md"
+                  className="w-full sm:w-auto bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white px-6 sm:px-8 py-4 sm:py-4 rounded-xl text-base sm:text-lg lg:text-xl font-semibold min-h-[56px] transition-all shadow-md"
                 >
                   ✓ Complete
                 </button>

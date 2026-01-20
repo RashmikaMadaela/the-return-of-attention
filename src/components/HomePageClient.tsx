@@ -374,12 +374,12 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
           {!assessmentsCompleted && (
             <div className="bg-white border-2 border-blue-300 rounded-[25px] p-4 sm:p-6 text-center sm:text-left max-w-md shadow-lg">
               <p className="mb-3 text-sm font-semibold text-blue-900 font-lexend sm:text-base">
-                ⚠️ Assessment Progress
+                <span className="emoji" role="img" aria-label="warning">⚠️</span> Assessment Progress
               </p>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${questionnaireCompleted ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'}`}>
-                    {questionnaireCompleted ? '✓' : '1'}
+                    {questionnaireCompleted ? <span className="emoji">✓</span> : '1'}
                   </div>
                   <p className={`font-lexend text-xs sm:text-sm ${questionnaireCompleted ? 'text-green-700 font-semibold' : 'text-gray-700'}`}>
                     Questionnaire {questionnaireCompleted ? '(Completed ✓)' : '(Pending)'}
@@ -387,7 +387,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${selfAssessmentCompleted ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'}`}>
-                    {selfAssessmentCompleted ? '✓' : '2'}
+                    {selfAssessmentCompleted ? <span className="emoji">✓</span> : '2'}
                   </div>
                   <p className={`font-lexend text-xs sm:text-sm ${selfAssessmentCompleted ? 'text-green-700 font-semibold' : 'text-gray-700'}`}>
                     Self-Assessment {selfAssessmentCompleted ? '(Completed ✓)' : '(Pending)'}
@@ -424,7 +424,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                   }`}
                   disabled={questionnaireCompleted}
                 >
-                  {questionnaireCompleted ? '✓ Questionnaire Complete' : '📋 Start Questionnaire'}
+                  {questionnaireCompleted ? <><span className="emoji">✓</span> Questionnaire Complete</> : <><span className="emoji" role="img" aria-label="clipboard">📋</span> Start Questionnaire</>}
                 </button>
                 <button
                   onClick={() => {
@@ -481,7 +481,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                   </div>
                   {stage.completed && (
                     <div className="absolute flex items-center justify-center text-sm text-white bg-green-500 rounded-full top-3 sm:top-4 right-3 sm:right-4 w-7 h-7 sm:w-8 sm:h-8">
-                      ✓
+                      <span className="emoji">✓</span>
                     </div>
                   )}
                 </div>

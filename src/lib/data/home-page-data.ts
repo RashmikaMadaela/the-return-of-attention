@@ -113,10 +113,31 @@ export const getHomePageData = cache(async () => {
 
     // Map stages for frontend consumption
     const stages = stagesWithProgress.map(stage => {
-      const progress = stage.userProgress[0] || null
       const isCompleted = isStageCompleted(stage)
-      const isUnlocked = stage.stageNumber === 1 || 
-        stagesWithProgress.find(s => s.stageNumber === stage.stageNumber - 1)?.userProgress.some(p => p.isCompleted)
+      // A stage is unlocked if it has user progress entry OR it's Stage 1 (always unlocked)
+      const isUnlocked = stage.userProgress.length > 0 || stage.stageNumber === 1
+
+      // For Stage 1 with substages, aggregate session counts
+      let sessionsCompleted = 0
+      let hoursCompleted = 0
+      
+      if (stage.hasSubStages && stage.stageNumber === 1) {
+        // Sum up sessions from all substages (T1-T5, excluding PAHM)
+        const subStages = ['T1', 'T2', 'T3', 'T4', 'T5']
+        sessionsCompleted = stage.userProgress
+          .filter((p: any) => subStages.includes(p.subStage))
+          .reduce((sum: number, p: any) => sum + p.sessionsCompleted, 0)
+        
+        // Get max hours from any substage
+        hoursCompleted = Math.max(...stage.userProgress
+          .filter((p: any) => subStages.includes(p.subStage))
+          .map((p: any) => p.hoursCompleted?.toNumber() || 0))
+      } else {
+        // For other stages, use first progress entry
+        const progress = stage.userProgress[0]
+        sessionsCompleted = progress?.sessionsCompleted || 0
+        hoursCompleted = progress?.hoursCompleted?.toNumber() || 0
+      }
 
       return {
         stageNumber: stage.stageNumber,
@@ -124,8 +145,8 @@ export const getHomePageData = cache(async () => {
         description: stage.description,
         minSessions: stage.minSessions,
         minHours: stage.minHours.toNumber(),
-        sessionsCompleted: progress?.sessionsCompleted || 0,
-        hoursCompleted: progress?.hoursCompleted?.toNumber() || 0,
+        sessionsCompleted,
+        hoursCompleted,
         isCompleted,
         isUnlocked,
         hasSubStages: stage.hasSubStages,
@@ -174,46 +195,51 @@ export const getHomePageData = cache(async () => {
   }
 })
 
-// Helper: Determine current stage
+// Helper: Determine current stage (maximum unlocked stage)
 function determineCurrentStage(stages: any[]) {
-  // Find first incomplete stage
+  let maxUnlockedStage = 1
+  
+  // Find the highest unlocked stage (has user progress entry)
   for (const stage of stages) {
-    if (!isStageCompleted(stage)) {
-      return {
-        number: stage.stageNumber,
-        name: stage.name
-      }
+    // A stage is unlocked if it has userProgress
+    if (stage.userProgress.length > 0) {
+      maxUnlockedStage = stage.stageNumber
     }
   }
   
-  // All stages completed
+  const currentStage = stages.find(s => s.stageNumber === maxUnlockedStage)
+  
   return {
-    number: stages.length,
-    name: stages[stages.length - 1]?.name || 'Complete'
+    number: maxUnlockedStage,
+    name: currentStage?.name || 'Seeker'
   }
 }
 
 // Helper: Check if stage is completed
 function isStageCompleted(stage: any) {
-  const progress = stage.userProgress[0]
-  
-  if (!progress) {
+  if (!stage.userProgress || stage.userProgress.length === 0) {
     return false
   }
 
   // For Stage 1 with substages
   if (stage.hasSubStages && stage.stageNumber === 1) {
-    // Check if all requirements are met
-    const sessionsRequirementMet = progress.sessionsCompleted >= stage.minSessions
-    const hoursRequirementMet = progress.hoursCompleted 
-      ? progress.hoursCompleted.toNumber() >= stage.minHours.toNumber()
-      : false
+    // Check if all substages (T1-T5) are completed
+    const requiredSubStages = ['T1', 'T2', 'T3', 'T4', 'T5']
+    const allSubStagesCompleted = requiredSubStages.every(subStage => {
+      const progress = stage.userProgress.find((p: any) => p.subStage === subStage)
+      return progress && progress.isCompleted
+    })
     
-    return progress.isCompleted && sessionsRequirementMet && hoursRequirementMet
+    // Check if PAHM intro is completed
+    const pahmProgress = stage.userProgress.find((p: any) => p.subStage === 'PAHM')
+    const pahmCompleted = pahmProgress && pahmProgress.isCompleted
+    
+    return allSubStagesCompleted && pahmCompleted
   }
 
-  // For other stages
-  return progress.isCompleted
+  // For other stages, check the single progress entry
+  const progress = stage.userProgress[0]
+  return progress && progress.isCompleted
 }
 
 // Export type for type safety

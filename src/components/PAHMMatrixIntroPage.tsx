@@ -148,7 +148,7 @@ export default function PAHMMatrixIntroPage() {
                 'Deeper connection with your present experience'
               ].map((benefit, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1 flex-shrink-0">✓</span>
+                  <span className="emoji text-green-600 mt-1 flex-shrink-0">✓</span>
                   <span className="text-sm sm:text-base">{benefit}</span>
                 </li>
               ))}

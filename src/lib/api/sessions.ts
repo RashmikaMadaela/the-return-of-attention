@@ -73,6 +73,7 @@ export interface CompleteSessionRequest {
   challenges?: SessionChallenges
   duration?: number // planned duration in minutes (optional)
   actualDuration?: number // actual practiced duration in minutes (optional)
+  shouldCountAsSession?: boolean // whether session meets minimum duration requirement
 }
 
 export interface CompleteSessionResponse {

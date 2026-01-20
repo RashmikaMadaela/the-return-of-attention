@@ -228,8 +228,8 @@ export default function AllStagesPage() {
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-xl font-bold text-gray-800">Stage {stage.id}</h3>
                       {stage.completed && (
-                        <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                          ✓ COMPLETE
+                        <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                          <span className="emoji">✓</span> COMPLETE
                         </div>
                       )}
                     </div>
