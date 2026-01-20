@@ -117,6 +117,8 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
       if (result.success) {
         // Refresh server data
         router.refresh()
+        // Signal other pages to refresh when navigated to
+        sessionStorage.setItem('needsDataRefresh', 'true')
         setError('')
         showSuccess('Quick emotion logged!')
       } else {
@@ -159,6 +161,8 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
       if (result.success) {
         // Refresh server data
         router.refresh()
+        // Signal other pages to refresh when navigated to
+        sessionStorage.setItem('needsDataRefresh', 'true')
         setError('')
         showSuccess('Emotional note saved successfully!')
         

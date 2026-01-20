@@ -29,6 +29,13 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
       // Trigger a refresh to get updated data
       router.refresh()
     }
+    
+    // Check if other pages signaled that data needs refresh (e.g., after daily notes)
+    const needsRefresh = sessionStorage.getItem('needsDataRefresh')
+    if (needsRefresh === 'true') {
+      sessionStorage.removeItem('needsDataRefresh')
+      router.refresh()
+    }
   }, [])
 
   // Matrix animation effect
