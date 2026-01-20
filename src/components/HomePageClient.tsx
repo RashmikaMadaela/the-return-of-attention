@@ -20,6 +20,17 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
   const [activeCellIndex, setActiveCellIndex] = useState(0)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  // Handle refresh query parameter (from questionnaire/assessment completion)
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.get('refresh') === 'true') {
+      // Remove the query parameter
+      window.history.replaceState({}, '', '/home')
+      // Trigger a refresh to get updated data
+      router.refresh()
+    }
+  }, [])
+
   // Matrix animation effect
   useEffect(() => {
     const interval = setInterval(() => {
@@ -416,15 +427,23 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                   {questionnaireCompleted ? <><span className="emoji">✓</span> Questionnaire Complete</> : <><span className="emoji" role="img" aria-label="clipboard">📋</span> Start Questionnaire</>}
                 </button>
                 <button
-                  onClick={() => router.push('/self-assessment')}
+                  onClick={() => {
+                    if (questionnaireCompleted && !selfAssessmentCompleted) {
+                      router.push('/self-assessment')
+                    }
+                  }}
+                  title={!questionnaireCompleted ? "Locked — complete questionnaire first" : undefined}
+                  aria-disabled={!questionnaireCompleted}
                   className={`px-8 py-4 rounded-[15px] font-bold font-lexend transition-colors text-lg shadow-lg flex-1 sm:flex-none ${
                     selfAssessmentCompleted 
                       ? 'bg-green-500 text-white cursor-default' 
+                      : !questionnaireCompleted
+                      ? 'bg-gray-400 text-gray-300 cursor-not-allowed opacity-60'
                       : 'bg-purple-700 text-white hover:bg-purple-800'
                   }`}
-                  disabled={selfAssessmentCompleted}
+                  disabled={selfAssessmentCompleted || !questionnaireCompleted}
                 >
-                  {selfAssessmentCompleted ? <><span className="emoji">✓</span> Self-Assessment Complete</> : <><span className="emoji" role="img" aria-label="writing">✍️</span> Self Assessment</>}
+                  {selfAssessmentCompleted ? '✓ Self-Assessment Complete' : !questionnaireCompleted ? '✍️ Self Assessment 🔒' : '✍️ Self Assessment'}
                 </button>
               </div>
             </div>

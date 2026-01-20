@@ -191,7 +191,7 @@ export default function QuestionnairePage() {
           localStorage.setItem('questionnaireCompleted', 'true')
           localStorage.setItem('questionnaireAnswers', JSON.stringify(answers))
           showSuccess('Questionnaire completed successfully!')
-          setTimeout(() => router.push('/home'), 1500)
+          setTimeout(() => router.push('/home?refresh=true'), 1500)
         } else {
           const body = await res.json().catch(() => ({}))
           console.error('Questionnaire submit failed', res.status, body)
