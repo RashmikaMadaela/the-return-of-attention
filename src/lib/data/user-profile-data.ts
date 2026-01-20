@@ -79,12 +79,10 @@ export const getUserProfileData = cache(async (): Promise<UserProfileData | null
       return null
     }
 
-    // Calculate total completed sessions
-    const sessionTableCount = user.sessions.length
-    const stageProgressSessions = user.stageProgress.reduce((sum, progress) => {
+    // Calculate total completed sessions from stage progress (authoritative source)
+    const totalSessions = user.stageProgress.reduce((sum, progress) => {
       return sum + (progress.sessionsCompleted || 0)
     }, 0)
-    const totalSessions = Math.max(sessionTableCount, stageProgressSessions)
 
     // Calculate total hours
     const totalHours = user.stageProgress.reduce((sum, progress) => {

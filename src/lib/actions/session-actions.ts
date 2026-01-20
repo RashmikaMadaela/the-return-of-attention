@@ -264,11 +264,16 @@ export async function completeSessionAction(
 
     // Use transaction for data consistency
     const result = await prisma.$transaction(async (tx) => {
+      // Determine session status based on duration requirement
+      const shouldCountAsCompleted = validatedData.shouldCountAsSession ?? 
+                                    (actualDurationMinutes === existingSession.duration)
+      const sessionStatus = shouldCountAsCompleted ? 'COMPLETED' : 'NOT_COMPLETED'
+      
       // Update session
       const completedSession = await tx.session.update({
         where: { id: validatedData.sessionId },
         data: {
-          status: 'COMPLETED',
+          status: sessionStatus as any,
           completedAt: completedAt,
           qualityRating: validatedData.qualityRating,
           insights: validatedData.insights,
@@ -355,9 +360,7 @@ export async function completeSessionAction(
         })
       }
 
-      // Update progress
-      const shouldCountAsCompleted = actualDurationMinutes === existingSession.duration
-
+      // Update progress (shouldCountAsCompleted already calculated above)
       const updateData: any = { updatedAt: completedAt }
       const createData: any = {
         userId: user.id,
