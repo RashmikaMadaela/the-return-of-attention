@@ -45,7 +45,14 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
         currentCountry: initialData.profile?.country || ''
       })
     }
-  }, [initialData])
+    
+    // Check if other pages signaled that data needs refresh
+    const needsRefresh = sessionStorage.getItem('needsDataRefresh')
+    if (needsRefresh === 'true') {
+      sessionStorage.removeItem('needsDataRefresh')
+      router.refresh()
+    }
+  }, [initialData, router])
 
   if (!initialData) {
     return (
