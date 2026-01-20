@@ -20,6 +20,17 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
   const [activeCellIndex, setActiveCellIndex] = useState(0)
   const [isRefreshing, setIsRefreshing] = useState(false)
 
+  // Handle refresh query parameter (from questionnaire/assessment completion)
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.get('refresh') === 'true') {
+      // Remove the query parameter
+      window.history.replaceState({}, '', '/home')
+      // Trigger a refresh to get updated data
+      router.refresh()
+    }
+  }, [])
+
   // Matrix animation effect
   useEffect(() => {
     const interval = setInterval(() => {
