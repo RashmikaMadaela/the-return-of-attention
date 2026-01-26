@@ -158,7 +158,7 @@ export default function PAHMTimerPage() {
   // Function to check remote connection status
   const checkRemoteConnection = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/remote/status')
+      const response = await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/status')
       const data = await response.json()
       setRemoteConnected(data.connected && data.mqtt_connected)
       setRemoteStatus(data.connected && data.mqtt_connected ? 'connected' : 'disconnected')
@@ -320,7 +320,7 @@ export default function PAHMTimerPage() {
     // Enable remote button tracking if remote is being used
     if (useRemote) {
       try {
-        const response = await fetch('http://localhost:4000/api/remote/enable', {
+        const response = await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/enable', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         })
@@ -373,7 +373,7 @@ export default function PAHMTimerPage() {
     // Disable remote when pausing (only if remote is being used)
     if (timer.isRunning && useRemote) {
       try {
-        await fetch('http://localhost:4000/api/remote/disable', {
+        await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/disable', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         })
@@ -384,7 +384,7 @@ export default function PAHMTimerPage() {
     } else if (!timer.isRunning && useRemote) {
       // Re-enable remote when resuming
       try {
-        await fetch('http://localhost:4000/api/remote/enable', {
+        await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/enable', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         })
@@ -410,7 +410,7 @@ export default function PAHMTimerPage() {
     // Disable remote button tracking (only if remote is being used)
     if (useRemote) {
       try {
-        await fetch('http://localhost:4000/api/remote/disable', {
+        await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/disable', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         })
@@ -660,7 +660,7 @@ export default function PAHMTimerPage() {
             
             {/* Remote Connection Status - Only show if remote is enabled */}
             {useRemote && (
-              <div className="flex items-center justify-end gap-2 mb-4 pr-4">
+              <div className="flex items-center justify-end gap-2 pr-4 mb-4">
                 <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold shadow-md transition-all duration-300 ${
                   remoteStatus === 'connected' 
                     ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' 
@@ -679,7 +679,7 @@ export default function PAHMTimerPage() {
                   </span>
                 </div>
                 {remoteEnabled && (
-                  <div className="px-3 py-2 text-xs font-semibold text-white rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 shadow-md animate-pulse">
+                  <div className="px-3 py-2 text-xs font-semibold text-white rounded-lg shadow-md bg-gradient-to-r from-blue-500 to-blue-600 animate-pulse">
                     ✓ Tracking Active
                   </div>
                 )}
