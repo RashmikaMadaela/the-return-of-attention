@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "express": "^5.1.0",
-    "mqtt": "^5.14.1",
-    "socket.io": "^4.8.1"
-  }
-}
