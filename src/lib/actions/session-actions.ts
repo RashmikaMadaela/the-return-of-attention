@@ -78,22 +78,26 @@ export async function startSessionAction(
 
     const { stageNumber, subStage, sessionType, duration, posture, exerciseType, meditationBells, voiceCommands, useRemote } = validation.data
 
-    // Check stage access
-    await checkStageAccess(user.id, stageNumber)
+    // Run independent lookups in parallel for speed
+    const [ , incompleteSession, stage ] = await Promise.all([
+      checkStageAccess(user.id, stageNumber),
+      prisma.session.findFirst({
+        where: {
+          userId: user.id,
+          status: {
+            in: ['STARTED', 'AWAITING_REFLECTION']
+          }
+        },
+        orderBy: {
+          startedAt: 'desc'
+        }
+      }),
+      prisma.stage.findFirst({
+        where: { stageNumber }
+      })
+    ])
 
     // ZOMBIE LOCK FIX: Auto-abandon incomplete sessions
-    const incompleteSession = await prisma.session.findFirst({
-      where: {
-        userId: user.id,
-        status: {
-          in: ['STARTED', 'AWAITING_REFLECTION']
-        }
-      },
-      orderBy: {
-        startedAt: 'desc'
-      }
-    })
-
     if (incompleteSession) {
       await prisma.session.update({
         where: { id: incompleteSession.id },
@@ -104,11 +108,6 @@ export async function startSessionAction(
       })
       console.log(`Auto-abandoned session ${incompleteSession.id} for user ${user.id}`)
     }
-
-    // Get stage info
-    const stage = await prisma.stage.findFirst({
-      where: { stageNumber }
-    })
 
     if (!stage) {
       throw CommonErrors.stageNotFound()
@@ -132,39 +131,38 @@ export async function startSessionAction(
       }
     })
 
-    // Create PAHM session if required
-    let pahmSession = null
-    if (sessionType === 'pahm_matrix' || sessionType === 'mind_recovery') {
-      pahmSession = await prisma.pAHMSession.create({
-        data: {
-          sessionId: newSession.id,
-          userId: user.id,
-          stageNumber,
-          exerciseType,
-          clickTimestamps: []
-        }
-      })
-    }
-
-    // Update user stage progress
-    await prisma.userStageProgress.upsert({
-      where: {
-        userId_stageId_subStage: {
+    // Create PAHM session (if needed) and update stage progress in parallel
+    const [pahmSession] = await Promise.all([
+      (sessionType === 'pahm_matrix' || sessionType === 'mind_recovery')
+        ? prisma.pAHMSession.create({
+            data: {
+              sessionId: newSession.id,
+              userId: user.id,
+              stageNumber,
+              exerciseType,
+              clickTimestamps: []
+            }
+          })
+        : Promise.resolve(null),
+      prisma.userStageProgress.upsert({
+        where: {
+          userId_stageId_subStage: {
+            userId: user.id,
+            stageId: stage.id,
+            subStage: subStage || ''
+          }
+        },
+        update: {
+          updatedAt: new Date()
+        },
+        create: {
           userId: user.id,
           stageId: stage.id,
-          subStage: subStage || ''
+          stageNumber,
+          subStage
         }
-      },
-      update: {
-        updatedAt: new Date()
-      },
-      create: {
-        userId: user.id,
-        stageId: stage.id,
-        stageNumber,
-        subStage
-      }
-    })
+      })
+    ])
 
     return {
       success: true,
@@ -295,35 +293,34 @@ export async function completeSessionAction(
         }
       })
 
-      // Save challenges
-      if (validatedData.challenges) {
-        await tx.sessionChallenge.upsert({
-          where: { sessionId: validatedData.sessionId },
-          update: {
-            mindWandering: validatedData.challenges.mindWandering ?? false,
-            physicalDiscomfort: validatedData.challenges.physicalDiscomfort ?? false,
-            sleepiness: validatedData.challenges.sleepiness ?? false,
-            restlessness: validatedData.challenges.restlessness ?? false,
-            strongEmotions: validatedData.challenges.strongEmotions ?? false,
-            externalDistractions: validatedData.challenges.externalDistractions ?? false,
-            notes: validatedData.challenges.notes,
-            updatedAt: completedAt
-          },
-          create: {
-            sessionId: validatedData.sessionId,
-            mindWandering: validatedData.challenges.mindWandering ?? false,
-            physicalDiscomfort: validatedData.challenges.physicalDiscomfort ?? false,
-            sleepiness: validatedData.challenges.sleepiness ?? false,
-            restlessness: validatedData.challenges.restlessness ?? false,
-            strongEmotions: validatedData.challenges.strongEmotions ?? false,
-            externalDistractions: validatedData.challenges.externalDistractions ?? false,
-            notes: validatedData.challenges.notes
-          }
-        })
-      }
+      // Save challenges and PAHM data in parallel when present
+      const challengePromise = validatedData.challenges
+        ? tx.sessionChallenge.upsert({
+            where: { sessionId: validatedData.sessionId },
+            update: {
+              mindWandering: validatedData.challenges.mindWandering ?? false,
+              physicalDiscomfort: validatedData.challenges.physicalDiscomfort ?? false,
+              sleepiness: validatedData.challenges.sleepiness ?? false,
+              restlessness: validatedData.challenges.restlessness ?? false,
+              strongEmotions: validatedData.challenges.strongEmotions ?? false,
+              externalDistractions: validatedData.challenges.externalDistractions ?? false,
+              notes: validatedData.challenges.notes,
+              updatedAt: completedAt
+            },
+            create: {
+              sessionId: validatedData.sessionId,
+              mindWandering: validatedData.challenges.mindWandering ?? false,
+              physicalDiscomfort: validatedData.challenges.physicalDiscomfort ?? false,
+              sleepiness: validatedData.challenges.sleepiness ?? false,
+              restlessness: validatedData.challenges.restlessness ?? false,
+              strongEmotions: validatedData.challenges.strongEmotions ?? false,
+              externalDistractions: validatedData.challenges.externalDistractions ?? false,
+              notes: validatedData.challenges.notes
+            }
+          })
+        : Promise.resolve(null)
 
-      // Update PAHM session
-      let updatedPahmSession = null
+      let pahmPromise: Promise<any> = Promise.resolve(null)
       if (existingSession.pahmSession && validatedData.pahmData) {
         const clickCounts = {
           regretClicks: 0,
@@ -347,7 +344,7 @@ export async function completeSessionAction(
           })
         }
 
-        updatedPahmSession = await tx.pAHMSession.update({
+        pahmPromise = tx.pAHMSession.update({
           where: { sessionId: validatedData.sessionId },
           data: {
             ...clickCounts,
@@ -423,6 +420,9 @@ export async function completeSessionAction(
         })
       }
 
+      // Ensure side-effect updates complete before returning transaction result
+      const [ , updatedPahmSession ] = await Promise.all([challengePromise, pahmPromise])
+
       return {
         completedSession,
         progressUpdate,
@@ -431,15 +431,15 @@ export async function completeSessionAction(
       }
     })
 
-    // Trigger happiness calculation
-    await autoTriggerHappinessCalculation(user.id, 'session').catch(err => 
-      console.error('Auto-trigger happiness calculation failed:', err)
-    )
-
-    // Revalidate relevant paths
-    revalidatePath('/home')
-    revalidatePath('/stage-1')
-    revalidatePath(`/stage-${request.sessionId}`)
+    // Trigger happiness calculation and revalidations in parallel
+    await Promise.all([
+      autoTriggerHappinessCalculation(user.id, 'session').catch(err => 
+        console.error('Auto-trigger happiness calculation failed:', err)
+      ),
+      revalidatePath('/home'),
+      revalidatePath('/stage-1'),
+      revalidatePath(`/stage-${request.sessionId}`)
+    ])
 
     return {
       success: true,
