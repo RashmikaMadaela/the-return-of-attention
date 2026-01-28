@@ -88,6 +88,7 @@ export async function startSessionAction(
             in: ['STARTED', 'AWAITING_REFLECTION']
           }
         },
+        select: { id: true },
         orderBy: {
           startedAt: 'desc'
         }
@@ -438,7 +439,7 @@ export async function completeSessionAction(
       ),
       revalidatePath('/home'),
       revalidatePath('/stage-1'),
-      revalidatePath(`/stage-${request.sessionId}`)
+      revalidatePath(`/stage-${result.completedSession.stageNumber}`)
     ])
 
     return {
