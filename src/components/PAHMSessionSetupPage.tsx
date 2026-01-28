@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
 import { startSessionAction } from '@/lib/actions/session-actions'
@@ -12,6 +12,51 @@ interface SessionSettings {
   bells: boolean
   voiceCommands: boolean
   useRemote: boolean
+}
+
+// Static constants - extracted outside component to prevent recreation on every render
+const POSTURES = [
+  { id: 'sitting', icon: '🪑', label: 'Sitting' },
+  { id: 'cushion', icon: '🧘', label: 'Cushion Sitting' },
+  { id: 'half-lotus', icon: '🧘', label: 'Half Lotus' },
+  { id: 'lying', icon: '🛏️', label: 'Lying Down' },
+  { id: 'standing', icon: '🧍', label: 'Standing' },
+  { id: 'full-lotus', icon: '🧘', label: 'Full Lotus' },
+  { id: 'burmese', icon: '🕉️', label: 'Burmese' },
+  { id: 'seiza', icon: '🙏', label: 'Seiza Position' },
+  { id: 'other', icon: '❓', label: 'Other' }
+] as const
+
+const MIND_RECOVERY_DURATIONS: Record<string, number> = {
+  'morning': 5,
+  'midday': 3,
+  'emotional': 5,
+  'transition': 5,
+  'bedtime': 8
+}
+
+const MIND_RECOVERY_TITLES: Record<string, string> = {
+  'morning': 'Morning Recharge',
+  'midday': 'Mid Day Reset',
+  'emotional': 'Emotional Reset',
+  'transition': 'Work-Home Transition',
+  'bedtime': 'Bedtime Wind Down'
+}
+
+const STAGE_NAMES: Record<number, string> = {
+  2: 'PAHM Trainee',
+  3: 'PAHM Beginner',
+  4: 'PAHM Practitioner',
+  5: 'PAHM Master',
+  6: 'PAHM Illuminator'
+}
+
+const EXERCISE_TYPE_MAP: Record<string, ExerciseType> = {
+  'morning': 'morning_recharge',
+  'midday': 'midday_reset',
+  'emotional': 'emotional_reset',
+  'transition': 'work_home_transition',
+  'bedtime': 'bedtime_wind_down'
 }
 
 export default function PAHMSessionSetupPage() {
@@ -35,31 +80,15 @@ export default function PAHMSessionSetupPage() {
   const [isStarting, setIsStarting] = useState(false)
   const [startError, setStartError] = useState<string | null>(null)
 
-  // Get stage info for PAHM stages and mind recovery
-  const getStageInfo = () => {
+  // Memoize stage info to prevent recalculation on every render
+  const stage = useMemo(() => {
     // Handle mind recovery sessions
     if (sessionType === 'mind-recovery' && mindRecoverySession) {
-      const mindRecoveryDurations: { [key: string]: number } = {
-        'morning': 5,
-        'midday': 3,
-        'emotional': 5,
-        'transition': 5,
-        'bedtime': 8
-      }
-      
-      const mindRecoveryTitles: { [key: string]: string } = {
-        'morning': 'Morning Recharge',
-        'midday': 'Mid Day Reset',
-        'emotional': 'Emotional Reset',
-        'transition': 'Work-Home Transition',
-        'bedtime': 'Bedtime Wind Down'
-      }
-      
       return {
         id: 'mind-recovery',
-        name: mindRecoveryTitles[mindRecoverySession] || 'Mind Recovery',
-        minTime: mindRecoveryDurations[mindRecoverySession] || 5,
-        maxTime: mindRecoveryDurations[mindRecoverySession] || 5,
+        name: MIND_RECOVERY_TITLES[mindRecoverySession] || 'Mind Recovery',
+        minTime: MIND_RECOVERY_DURATIONS[mindRecoverySession] || 5,
+        maxTime: MIND_RECOVERY_DURATIONS[mindRecoverySession] || 5,
         isPAHM: true,
         isFixedDuration: true,
         isMindRecovery: true
@@ -68,24 +97,14 @@ export default function PAHMSessionSetupPage() {
     
     // PAHM stages 2-6 with 30-120 minute duration range
     const stageNum = parseInt(stageId || '2')
-    const stageNames = {
-      2: 'PAHM Trainee',
-      3: 'PAHM Beginner', 
-      4: 'PAHM Practitioner',
-      5: 'PAHM Master',
-      6: 'PAHM Illuminator'
-    }
-    
     return {
       id: stageNum,
-      name: stageNames[stageNum as keyof typeof stageNames] || 'PAHM Trainee',
+      name: STAGE_NAMES[stageNum] || 'PAHM Trainee',
       minTime: 30,
       maxTime: 120,
       isPAHM: true
     }
-  }
-
-  const stage = getStageInfo()
+  }, [stageId, sessionType, mindRecoverySession])
 
   useEffect(() => {
     // Set mind recovery state based on session type
@@ -112,19 +131,16 @@ export default function PAHMSessionSetupPage() {
         }
       }
     }
-  }, [stage.minTime, sessionType, mindRecoverySession])
+  }, [stage.minTime, sessionType, mindRecoverySession, stage.isMindRecovery])
 
-  const postures = [
-    { id: 'sitting', icon: '🪑', label: 'Sitting' },
-    { id: 'cushion', icon: '🧘', label: 'Cushion Sitting' },
-    { id: 'half-lotus', icon: '🧘', label: 'Half Lotus' },
-    { id: 'lying', icon: '🛏️', label: 'Lying Down' },
-    { id: 'standing', icon: '🧍', label: 'Standing' },
-    { id: 'full-lotus', icon: '🧘', label: 'Full Lotus' },
-    { id: 'burmese', icon: '🕉️', label: 'Burmese' },
-    { id: 'seiza', icon: '🙏', label: 'Seiza Position' },
-    { id: 'other', icon: '❓', label: 'Other' }
-  ]
+  // Prefetch timer page for instant navigation
+  useEffect(() => {
+    if (stage.isMindRecovery && mindRecoverySession) {
+      router.prefetch(`/pahm-timer?stage=mind-recovery&session=${mindRecoverySession}`)
+    } else if (stageId) {
+      router.prefetch(`/pahm-timer?stage=${stageId}`)
+    }
+  }, [router, stage.isMindRecovery, mindRecoverySession, stageId])
 
   const handleBack = () => {
     if (stage.isMindRecovery) {
@@ -144,22 +160,13 @@ export default function PAHMSessionSetupPage() {
     setIsStarting(true)
     setStartError(null)
 
-    // Map mind recovery session names to API exercise types
-    const exerciseTypeMap: { [key: string]: ExerciseType } = {
-      'morning': 'morning_recharge',
-      'midday': 'midday_reset',
-      'emotional': 'emotional_reset',
-      'transition': 'work_home_transition',
-      'bedtime': 'bedtime_wind_down'
-    }
-
     // Determine session type and prepare request
     const isMindRecoverySession = stage.isMindRecovery
     const sessionTypeValue = isMindRecoverySession ? 'mind_recovery' : 'pahm_matrix'
     
     // Prepare session start request
     const request: StartSessionRequest = {
-      stageNumber: isMindRecoverySession ? parseInt(stageId || '2') : parseInt(stageId || '2'),
+      stageNumber: parseInt(stageId || '2'),
       sessionType: sessionTypeValue as any,
       duration: sessionSettings.duration,
       posture: sessionSettings.posture as any,
@@ -169,7 +176,7 @@ export default function PAHMSessionSetupPage() {
     }
 
     if (isMindRecoverySession && mindRecoverySession) {
-      request.exerciseType = exerciseTypeMap[mindRecoverySession]
+      request.exerciseType = EXERCISE_TYPE_MAP[mindRecoverySession]
     }
 
     try {
@@ -232,7 +239,7 @@ export default function PAHMSessionSetupPage() {
               <div className="p-4 bg-white rounded-lg sm:rounded-xl sm:p-5 md:p-6 shadow-md">
                 <h2 className="mb-3 text-lg font-bold text-[#03478f] sm:text-xl md:text-2xl sm:mb-4 md:mb-6">Select Your Posture</h2>
                 <div className="grid grid-cols-3 gap-2 mb-4 sm:gap-3 md:gap-4 sm:mb-5 md:mb-6">
-                  {postures.map(posture => (
+                  {POSTURES.map(posture => (
                     <button
                       key={posture.id}
                       onClick={() => setSessionSettings(prev => ({ ...prev, posture: posture.id }))}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Navigation from './Navigation'
 import { startSessionAction } from '@/lib/actions/session-actions'
@@ -11,6 +11,27 @@ interface SessionSettings {
   duration: number
   bells: boolean
   voiceCommands: boolean
+}
+
+// Static constants - extracted outside component to prevent recreation on every render
+const POSTURES = [
+  { id: 'sitting', icon: '🪑', label: 'Sitting' },
+  { id: 'cushion', icon: '🧘', label: 'Cushion Sitting' },
+  { id: 'half-lotus', icon: '🧘', label: 'Half Lotus' },
+  { id: 'lying', icon: '🛏️', label: 'Lying Down' },
+  { id: 'standing', icon: '🧍', label: 'Standing' },
+  { id: 'full-lotus', icon: '🧘', label: 'Full Lotus' },
+  { id: 'burmese', icon: '🕉️', label: 'Burmese' },
+  { id: 'seiza', icon: '🙏', label: 'Seiza Position' },
+  { id: 'other', icon: '❓', label: 'Other' }
+] as const
+
+const STAGE_DURATIONS: Record<string, { name: string; minTime: number; maxTime: number }> = {
+  'T1': { name: 'T1', minTime: 10, maxTime: 30 },
+  'T2': { name: 'T2', minTime: 15, maxTime: 30 },
+  'T3': { name: 'T3', minTime: 20, maxTime: 30 },
+  'T4': { name: 'T4', minTime: 25, maxTime: 30 },
+  'T5': { name: 'T5', minTime: 30, maxTime: 30 }
 }
 
 export default function SessionSetupPage() {
@@ -28,18 +49,9 @@ export default function SessionSetupPage() {
   const [isStarting, setIsStarting] = useState(false)
   const [startError, setStartError] = useState<string | null>(null)
 
-  // Get stage info - Only handles Stage 1 T1-T5
-  const getStageInfo = () => {
-    // Stage 1 T1-T5 with fixed durations
-    const stageDurations: Record<string, { name: string; minTime: number; maxTime: number }> = {
-      'T1': { name: 'T1', minTime: 10, maxTime: 30 },
-      'T2': { name: 'T2', minTime: 15, maxTime: 30 },
-      'T3': { name: 'T3', minTime: 20, maxTime: 30 },
-      'T4': { name: 'T4', minTime: 25, maxTime: 30 },
-      'T5': { name: 'T5', minTime: 30, maxTime: 30 }
-    }
-    
-    const stageInfo = stageDurations[stageId || 'T1'] || stageDurations['T1']
+  // Memoize stage info to prevent recalculation on every render
+  const stage = useMemo(() => {
+    const stageInfo = STAGE_DURATIONS[stageId || 'T1'] || STAGE_DURATIONS['T1']
     return {
       id: stageId || 'T1',
       name: stageInfo.name,
@@ -47,9 +59,7 @@ export default function SessionSetupPage() {
       maxTime: stageInfo.maxTime,
       isPAHM: false
     }
-  }
-
-  const stage = getStageInfo()
+  }, [stageId])
 
   useEffect(() => {
     // Set default duration based on stage
@@ -59,17 +69,12 @@ export default function SessionSetupPage() {
     }))
   }, [stage.minTime])
 
-  const postures = [
-    { id: 'sitting', icon: '🪑', label: 'Sitting' },
-    { id: 'cushion', icon: '🧘', label: 'Cushion Sitting' },
-    { id: 'half-lotus', icon: '🧘', label: 'Half Lotus' },
-    { id: 'lying', icon: '🛏️', label: 'Lying Down' },
-    { id: 'standing', icon: '🧍', label: 'Standing' },
-    { id: 'full-lotus', icon: '🧘', label: 'Full Lotus' },
-    { id: 'burmese', icon: '🕉️', label: 'Burmese' },
-    { id: 'seiza', icon: '🙏', label: 'Seiza Position' },
-    { id: 'other', icon: '❓', label: 'Other' }
-  ]
+  // Prefetch timer page for instant navigation
+  useEffect(() => {
+    if (stageId) {
+      router.prefetch(`/timer?stage=${stageId}`)
+    }
+  }, [router, stageId])
 
   const handleBack = () => {
     const previousPage = sessionStorage.getItem('previousPage')
@@ -146,7 +151,7 @@ export default function SessionSetupPage() {
               <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-md">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-[#03478f]">Select Your Posture</h2>
                 <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
-                  {postures.map(posture => (
+                  {POSTURES.map(posture => (
                     <button
                       key={posture.id}
                       onClick={() => setSessionSettings(prev => ({ ...prev, posture: posture.id }))}
