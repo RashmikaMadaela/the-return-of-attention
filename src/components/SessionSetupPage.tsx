@@ -146,11 +146,11 @@ export default function SessionSetupPage() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#03478f] text-center mb-4 sm:mb-6 md:mb-8 invisible">'</h1>
           
           <div className="bg-[#e5f3ff] rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 sm:gap-6 md:gap-8">
               {/* Posture Selection */}
-              <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-md">
+              <div className="p-4 bg-white rounded-lg shadow-md sm:rounded-xl sm:p-5 md:p-6">
                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-[#03478f]">Select Your Posture</h2>
-                <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
+                <div className="grid grid-cols-3 gap-2 mb-3 sm:gap-3 md:gap-4 sm:mb-4 md:mb-6">
                   {POSTURES.map(posture => (
                     <button
                       key={posture.id}
@@ -170,12 +170,12 @@ export default function SessionSetupPage() {
 
               {/* Duration and Audio Settings */}
               <div>
-                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 mb-4 sm:mb-5 md:mb-6 shadow-md">
+                <div className="p-4 mb-4 bg-white rounded-lg shadow-md sm:rounded-xl sm:p-5 md:p-6 sm:mb-5 md:mb-6">
                   <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-center text-[#03478f]">
                     Select Duration
                   </h2>
                   <div className="flex items-center justify-center gap-3 sm:gap-4">
-                    <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-center px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-lg bg-gray-100">
+                    <div className="px-4 py-3 text-4xl font-bold text-center bg-gray-100 rounded-lg sm:text-5xl md:text-6xl sm:px-6 sm:py-3 md:px-8 md:py-4">
                       {String(sessionSettings.duration).padStart(2, '0')}
                     </div>
                     <div className="flex flex-col gap-2">
@@ -201,11 +201,11 @@ export default function SessionSetupPage() {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-md">
+                <div className="p-4 bg-white rounded-lg shadow-md sm:rounded-xl sm:p-5 md:p-6">
                   <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 md:mb-6 text-[#03478f]">Audio Settings</h2>
                   <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-sm sm:text-base">Meditation Bells</span>
+                      <span className="text-sm font-semibold sm:text-base">Meditation Bells</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, bells: !prev.bells }))}
                         className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
@@ -218,7 +218,7 @@ export default function SessionSetupPage() {
                       </button>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-sm sm:text-base">Voice Commands</span>
+                      <span className="text-sm font-semibold sm:text-base">Voice Commands</span>
                       <button
                         onClick={() => setSessionSettings(prev => ({ ...prev, voiceCommands: !prev.voiceCommands }))}
                         className={`w-12 h-7 sm:w-14 sm:h-8 rounded-full transition-colors ${
@@ -235,19 +235,19 @@ export default function SessionSetupPage() {
 
                 {/* Error Display */}
                 {startError && (
-                  <div className="bg-red-50 border border-red-200 text-red-800 px-3 py-2 sm:px-4 sm:py-3 rounded-lg mb-3 sm:mb-4 text-sm sm:text-base">
+                  <div className="px-3 py-2 mb-3 text-sm text-red-800 border border-red-200 rounded-lg bg-red-50 sm:px-4 sm:py-3 sm:mb-4 sm:text-base">
                     <p className="font-semibold">⚠️ Error</p>
                     <p className="text-xs sm:text-sm">{startError}</p>
                     <button 
                       onClick={() => setStartError(null)}
-                      className="mt-2 text-xs sm:text-sm underline hover:no-underline"
+                      className="mt-2 text-xs underline sm:text-sm hover:no-underline"
                     >
                       Dismiss
                     </button>
                   </div>
                 )}
 
-                <div className="flex gap-3 sm:gap-4 mt-4 sm:mt-5 md:mt-6">
+                <div className="flex gap-3 mt-4 sm:gap-4 sm:mt-5 md:mt-6">
                   <button
                     onClick={handleBack}
                     disabled={isStarting}
@@ -262,7 +262,7 @@ export default function SessionSetupPage() {
                   >
                     {isStarting ? (
                       <>
-                        <div className="animate-spin h-4 w-4 sm:h-5 sm:w-5 border-2 border-white border-t-transparent rounded-full" />
+                        <div className="w-4 h-4 border-2 border-white rounded-full animate-spin sm:h-5 sm:w-5 border-t-transparent" />
                         <span>Starting...</span>
                       </>
                     ) : (
@@ -274,9 +274,9 @@ export default function SessionSetupPage() {
             </div>
 
             {/* Stage Info */}
-            <div className="mt-4 sm:mt-5 md:mt-6 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4">
-              <div className="text-black text-center">
-                <h3 className="text-base sm:text-lg md:text-xl font-bold mb-1 sm:mb-2">
+            <div className="p-3 mt-4 bg-white rounded-lg sm:mt-5 md:mt-6 bg-opacity-20 backdrop-blur-sm sm:rounded-xl sm:p-4">
+              <div className="text-center text-black">
+                <h3 className="mb-1 text-base font-bold sm:text-lg md:text-xl sm:mb-2">
                   {stage.name}: Physical Stillness
                 </h3>
                 <p className="text-xs sm:text-sm">
