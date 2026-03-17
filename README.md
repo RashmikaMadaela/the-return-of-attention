@@ -48,12 +48,42 @@ copy .env.example .env.local
 Required for basic app startup:
 
 - `NEXTAUTH_URL`
+	- Local dev value: `http://localhost:3000`
+	- Production value: your deployed app URL (for example `https://your-app.vercel.app`)
+
 - `NEXTAUTH_SECRET`
-- `DATABASE_URL`
-- `DIRECT_URL`
+	- Generate a strong random secret (32+ chars).
+	- Quick way (PowerShell):
+
+```powershell
+[Convert]::ToBase64String((1..48 | ForEach-Object { Get-Random -Maximum 256 }))
+```
+
+	- Paste the output as `NEXTAUTH_SECRET`.
+
+- `DATABASE_URL` and `DIRECT_URL`
+	- In Supabase Dashboard, open your project.
+	- Click `Connect` (top bar).
+	- Open the `ORMs` tab.
+	- Select `Prisma`.
+	- Copy the provided connection URLs into:
+		- `DATABASE_URL`
+		- `DIRECT_URL`
+
 - `NEXT_PUBLIC_SUPABASE_URL`
+	- In Supabase Dashboard, open your project.
+	- Click `Connect` (top bar).
+	- Go to the `API keys` tab.
+	- Copy the `Project URL`.
+
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+	- Supabase Dashboard -> `Project Settings` -> `API keys`.
+	- Under Legacy keys, copy `anon` key.
+
 - `SUPABASE_SERVICE_ROLE_KEY`
+	- Supabase Dashboard -> `Project Settings` -> `API keys`.
+	- Under Legacy keys, copy `service_role` key.
+	- Keep this server-only and never expose it in client code.
 
 Optional integrations:
 
@@ -174,25 +204,6 @@ public/
 	audio/            Audio assets
 	images/           Static assets
 ```
-
-## Handover Verification Checklist
-
-Run this before client delivery:
-
-1. `npm install`
-2. `npm run db:generate`
-3. `npm run db:deploy`
-4. `npm run db:seed`
-5. `npm run lint`
-6. `npm run build`
-7. Manually verify sign up, sign in, stage progression, PAHM session flow, daily notes, and admin access
-
-## Current Operational Notes
-
-- Prisma CLI is configured through `prisma.config.ts` for forward compatibility with Prisma 7 migration guidance.
-- Password reset and email verification now use client-facing routes at `/reset-password` and `/verify-email`.
-- Package scripts were cleaned up to remove references to missing automated test files.
-- There is no comprehensive automated test suite in this repository yet; handover validation currently depends on build, lint, database setup, and manual smoke testing.
 
 ## Troubleshooting
 
