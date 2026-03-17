@@ -139,6 +139,7 @@ Notes:
 - If `ENABLE_EMAIL_VERIFICATION=false`, new users can sign in immediately after registration.
 - If `ENABLE_EMAIL_VERIFICATION=true`, Resend should also be configured so verification emails can be delivered.
 - Admin registration and destructive admin data-clear routes are disabled unless `ADMIN_REGISTRATION_KEY` and `ADMIN_CLEAR_DATA_CODE` are explicitly configured.
+- `prisma/migrations` is baseline-driven for fresh database setup; run `npm run db:deploy` on a new Supabase database to create the full schema.
 
 ## Useful Commands
 
