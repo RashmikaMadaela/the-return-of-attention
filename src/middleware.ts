@@ -50,9 +50,7 @@ export async function middleware(request: NextRequest) {
 
   // If accessing protected route without valid token, redirect to signin
   if (isProtectedRoute && !token) {
-    const url = new URL('/signin', request.url)
-    url.searchParams.set('expired', 'true')
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(new URL('/signin', request.url))
   }
 
   // If accessing auth route with valid token, redirect to home

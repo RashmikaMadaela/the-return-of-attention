@@ -7,9 +7,9 @@ async function main() {
 
   // Create Stages
   console.log('📚 Creating stages...')
-  
-  const stage1 = await prisma.stage.create({
-    data: {
+
+  const stages = [
+    {
       stageNumber: 1,
       name: 'Seeker',
       description: 'Foundation Stage - Physical Stillness Mastery through timer-only sessions. Build the essential foundation of sustained attention and physical stillness required for all future PAHM Matrix practices.',
@@ -64,68 +64,75 @@ async function main() {
           description: 'Final preparation for PAHM Matrix introduction'
         }
       ]
-    }
-  })
-
-  const stage2 = await prisma.stage.create({
-    data: {
+    },
+    {
       stageNumber: 2,
       name: 'PAHM Trainee',
       description: 'Introduction to Present Attention and Happiness Matrix. Users begin tracking their attention patterns across the 3×3 grid while maintaining physical stillness.',
       minSessions: 30,
       minHours: 15.0,
       sessionType: 'pahm_matrix',
-      hasSubStages: false
-    }
-  })
-
-  const stage3 = await prisma.stage.create({
-    data: {
+      hasSubStages: false,
+      subStages: undefined,
+    },
+    {
       stageNumber: 3,
       name: 'PAHM Beginner',
       description: 'Developing PAHM Proficiency and Pattern Recognition. Deepen practice by developing greater sensitivity to attention patterns.',
       minSessions: 30,
       minHours: 15.0,
       sessionType: 'pahm_matrix',
-      hasSubStages: false
-    }
-  })
-
-  const stage4 = await prisma.stage.create({
-    data: {
+      hasSubStages: false,
+      subStages: undefined,
+    },
+    {
       stageNumber: 4,
       name: 'PAHM Practitioner',
       description: 'Advanced PAHM Application and Mastery Development. Develop advanced skills in attention awareness and experience deeper benefits.',
       minSessions: 40,
       minHours: 20.0,
       sessionType: 'pahm_matrix',
-      hasSubStages: false
-    }
-  })
-
-  const stage5 = await prisma.stage.create({
-    data: {
+      hasSubStages: false,
+      subStages: undefined,
+    },
+    {
       stageNumber: 5,
       name: 'PAHM Master',
       description: 'Complete PAHM Mastery and Leadership Development. Achieve complete mastery and develop skills to guide others.',
       minSessions: 50,
       minHours: 25.0,
       sessionType: 'pahm_matrix',
-      hasSubStages: false
-    }
-  })
-
-  const stage6 = await prisma.stage.create({
-    data: {
+      hasSubStages: false,
+      subStages: undefined,
+    },
+    {
       stageNumber: 6,
       name: 'PAHM Illuminator',
       description: 'Enlightened PAHM Practice and Global Teaching. Represent the highest achievement combining complete mastery with enlightened understanding.',
       minSessions: 60,
       minHours: 30.0,
       sessionType: 'pahm_matrix',
-      hasSubStages: false
+      hasSubStages: false,
+      subStages: undefined,
     }
-  })
+  ]
+
+  for (const stage of stages) {
+    await prisma.stage.upsert({
+      where: { stageNumber: stage.stageNumber },
+      update: {
+        name: stage.name,
+        description: stage.description,
+        minSessions: stage.minSessions,
+        minHours: stage.minHours,
+        sessionType: stage.sessionType,
+        hasSubStages: stage.hasSubStages,
+        subStages: stage.subStages,
+        isActive: true,
+      },
+      create: stage,
+    })
+  }
 
   console.log('✅ Created 6 stages')
 
@@ -181,9 +188,28 @@ async function main() {
   ]
 
   for (const exercise of exercises) {
-    await prisma.mindRecoveryExercise.create({
-      data: exercise
+    const existingExercise = await prisma.mindRecoveryExercise.findFirst({
+      where: { type: exercise.type }
     })
+
+    if (existingExercise) {
+      await prisma.mindRecoveryExercise.update({
+        where: { id: existingExercise.id },
+        data: {
+          name: exercise.name,
+          description: exercise.description,
+          purpose: exercise.purpose,
+          bestTime: exercise.bestTime,
+          duration: exercise.duration,
+          sortOrder: exercise.sortOrder,
+          isActive: true,
+        }
+      })
+    } else {
+      await prisma.mindRecoveryExercise.create({
+        data: exercise
+      })
+    }
   }
 
   console.log('✅ Created 5 mind recovery exercises')

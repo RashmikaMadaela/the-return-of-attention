@@ -17,8 +17,8 @@
     "db:deploy": "dotenv -e .env.local -- prisma migrate deploy",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:studio": "dotenv -e .env.local -- prisma studio",
-    "db:seed": "dotenv -e .env.local -- ts-node prisma/seed.ts",
-    "admin:create": "dotenv -e .env.local -- ts-node scripts/create-admin.ts",
+    "db:seed": "dotenv -e .env.local -- tsx prisma/seed.ts",
+    "admin:create": "dotenv -e .env.local -- tsx scripts/create-admin.ts",
     "smoke": "npm run build"
   },
   "keywords": [
@@ -67,6 +67,7 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tailwindcss": "^4.1.14",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0"
   }
 }
