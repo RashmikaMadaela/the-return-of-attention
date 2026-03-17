@@ -16,13 +16,26 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [sessionExpired, setSessionExpired] = useState(false)
+  const [emailVerificationNotice, setEmailVerificationNotice] = useState(false)
+  const [emailVerified, setEmailVerified] = useState(false)
 
-  // Check for session expiration message
+  // Check query-string based status messages
   useEffect(() => {
     const expired = searchParams.get('expired')
+    const verificationPending = searchParams.get('verifyEmail')
+    const verified = searchParams.get('verified')
+
     if (expired === 'true') {
       setSessionExpired(true)
       setError('Your session has expired due to inactivity. Please sign in again.')
+    }
+
+    if (verificationPending === 'true') {
+      setEmailVerificationNotice(true)
+    }
+
+    if (verified === 'true') {
+      setEmailVerified(true)
     }
   }, [searchParams])
 
@@ -228,6 +241,13 @@ export default function SignInPage() {
             />
             <label htmlFor="rememberMe" className="text-gray-700 cursor-pointer">Remember me</label>
           </div>
+          <button
+            type="button"
+            onClick={() => router.push('/reset-password')}
+            className="text-xs font-medium text-blue-600 transition hover:text-blue-700 hover:underline sm:text-sm"
+          >
+            Forgot password?
+          </button>
         </div>
 
         {/* Session Expired Message */}
@@ -235,6 +255,20 @@ export default function SignInPage() {
           <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-yellow-700 border border-yellow-300 bg-yellow-50 rounded-xl">
             <span>⏱️</span>
             <span>Your session has expired due to inactivity. Please sign in again.</span>
+          </div>
+        )}
+
+        {emailVerificationNotice && (
+          <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-blue-700 border border-blue-200 bg-blue-50 rounded-xl">
+            <span>✉️</span>
+            <span>Your account was created. Verify your email before signing in.</span>
+          </div>
+        )}
+
+        {emailVerified && (
+          <div className="flex items-center justify-center gap-2 p-3 mb-5 text-sm text-center text-green-700 border border-green-200 bg-green-50 rounded-xl">
+            <span>✅</span>
+            <span>Your email has been verified. You can sign in now.</span>
           </div>
         )}
 

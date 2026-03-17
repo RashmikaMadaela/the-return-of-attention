@@ -118,6 +118,11 @@ export default function SignUpPage() {
         return
       }
 
+      if (data.data?.requiresEmailVerification) {
+        router.push('/signin?verifyEmail=true')
+        return
+      }
+
       // Auto sign in after successful registration
       const signInRes = await signIn('credentials', {
         redirect: false,

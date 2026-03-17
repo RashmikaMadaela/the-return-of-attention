@@ -16,7 +16,7 @@ export function generateResetToken(): string {
 
 // Send verification email with Resend or fallback to console
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {
-  const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`
+  const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}&email=${encodeURIComponent(email)}`
   
   if (resend) {
     try {
@@ -48,7 +48,7 @@ function logEmailToConsole(type: string, email: string, url: string) {
 
 // Send password reset email with Resend or fallback to console
 export async function sendPasswordResetEmail(email: string, token: string): Promise<void> {
-  const resetUrl = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${token}`
+  const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`
   
   if (resend) {
     try {

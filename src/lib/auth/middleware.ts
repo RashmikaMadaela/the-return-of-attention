@@ -9,7 +9,6 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getAdminUser } from '@/lib/admin-auth'
 import { CommonErrors } from '@/lib/errors'
-import type { Session } from 'next-auth'
 
 // ============================================================================
 // SESSION UTILITIES
@@ -18,7 +17,7 @@ import type { Session } from 'next-auth'
 /**
  * Get authenticated user session from API route
  */
-export async function getAuthenticatedUser(request: NextRequest) {
+export async function getAuthenticatedUser(_request: NextRequest) {
   const session = await getServerSession(authOptions)
   
   if (!session || !session.user?.id) {
@@ -350,7 +349,7 @@ export async function getRequestContext(request: NextRequest) {
       ip,
       timestamp: new Date()
     }
-  } catch (error) {
+  } catch {
     return {
       user: null,
       userAgent: request.headers.get('user-agent') || 'unknown',

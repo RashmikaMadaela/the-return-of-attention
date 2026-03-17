@@ -13,9 +13,13 @@ async function createAdminUser() {
     console.log('🔧 Creating admin user...\n');
 
     // Admin user details
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
     const adminName = process.env.ADMIN_NAME || 'Admin User';
+
+    if (!adminEmail || !adminPassword) {
+      throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set before running this script.');
+    }
 
     // Check if admin already exists
     const existingUser = await prisma.user.findUnique({
@@ -49,7 +53,7 @@ async function createAdminUser() {
       console.log(`📧 Email: ${adminEmail}`);
       console.log(`🔑 Password: ${adminPassword}`);
       console.log(`👤 Name: ${adminName}`);
-      console.log(`\n⚠️  IMPORTANT: Change the default password after first login!`);
+      console.log(`\n⚠️  IMPORTANT: Store these credentials securely and change the password after first login.`);
     }
 
     console.log('\n🎉 Admin setup complete!');

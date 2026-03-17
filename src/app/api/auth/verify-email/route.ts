@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
         {
           success: true,
           message: 'Email already verified',
-          redirect: '/auth/signin?verified=true'
+          redirect: '/signin?verified=true'
         },
         { status: 200 }
       )
@@ -209,7 +209,7 @@ export async function GET(request: NextRequest) {
       {
         success: true,
         message: 'Email verified successfully',
-        redirect: '/auth/signin?verified=true'
+        redirect: '/signin?verified=true'
       },
       { status: 200 }
     )

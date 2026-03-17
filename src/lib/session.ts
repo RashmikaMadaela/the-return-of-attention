@@ -4,7 +4,7 @@ import { authOptions } from './auth'
 import { prisma } from './prisma'
 
 // Auth middleware for protected routes
-export async function requireAuth(request: NextRequest) {
+export async function requireAuth(_request: NextRequest) {
   const session = await getServerSession(authOptions)
   
   if (!session || !session.user) {
@@ -34,7 +34,7 @@ export async function requireAuth(request: NextRequest) {
 }
 
 // Admin auth middleware
-export async function requireAdmin(request: NextRequest) {
+export async function requireAdmin(_request: NextRequest) {
   const session = await getServerSession(authOptions)
   
   if (!session || !session.user) {
@@ -148,20 +148,30 @@ export async function getUserStageProgress(userId: string) {
 }
 
 // Utility to handle API errors consistently
-export function createErrorResponse(error: string, status = 400, code?: string, details?: any) {
+export function createErrorResponse(error: string, status = 400, code?: string, details?: unknown) {
+  const responseBody: {
+    success: boolean
+    error: string
+    code?: string
+    details?: unknown
+  } = {
+    success: false,
+    error,
+    code,
+  }
+
+  if (details !== undefined) {
+    responseBody.details = details
+  }
+
   return NextResponse.json(
-    { 
-      success: false, 
-      error,
-      code,
-      ...(details && { details })
-    }, 
+    responseBody,
     { status }
   )
 }
 
 // Utility to handle API success responses consistently
-export function createSuccessResponse(data?: any, message?: string, status = 200) {
+export function createSuccessResponse(data?: unknown, message?: string, status = 200) {
   return NextResponse.json(
     { 
       success: true,

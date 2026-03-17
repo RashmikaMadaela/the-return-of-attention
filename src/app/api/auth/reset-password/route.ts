@@ -21,13 +21,22 @@ const resetPasswordSchema = z.object({
   path: ["confirmPassword"],
 })
 
+function hasToken(payload: unknown): payload is { token: string } {
+  return (
+    typeof payload === 'object' &&
+    payload !== null &&
+    'token' in payload &&
+    typeof (payload as { token?: unknown }).token === 'string'
+  )
+}
+
 // POST - Request password reset (send email)
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const body: unknown = await request.json()
     
     // Check if this is a reset request or password reset
-    if (body.token) {
+    if (hasToken(body)) {
       // This is a password reset with token
       return handlePasswordReset(body)
     } else {
@@ -49,7 +58,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Handle password reset request (send email)
-async function handleResetRequest(body: any) {
+async function handleResetRequest(body: unknown) {
   // Validate input data
   const validationResult = resetRequestSchema.safeParse(body)
   if (!validationResult.success) {
@@ -121,7 +130,7 @@ async function handleResetRequest(body: any) {
 }
 
 // Handle password reset with token
-async function handlePasswordReset(body: any) {
+async function handlePasswordReset(body: unknown) {
   // Validate input data
   const validationResult = resetPasswordSchema.safeParse(body)
   if (!validationResult.success) {

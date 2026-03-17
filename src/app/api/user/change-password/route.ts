@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions, hashPassword, verifyPassword } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'

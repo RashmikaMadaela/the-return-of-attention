@@ -1,137 +1,191 @@
 # The Return of Attention
 
-A PAHM (Present Attention and Happiness Matrix) methodology meditation web application built with Next.js, TypeScript, and Tailwind CSS.
+The Return of Attention is a Next.js meditation and self-reflection platform built around the PAHM (Present Attention and Happiness Matrix) methodology. It includes guided stage progression, timed practice sessions, self-assessments, daily notes, and an admin area for monitoring and support.
 
-## 🧘‍♀️ About
+## Overview
 
-This application implements the PAHM methodology by A.C. Amarasighe, providing a structured approach to meditation and mindfulness practice through a web-based platform.
+- Frontend: Next.js 15 App Router, React 19, TypeScript, Tailwind CSS
+- Backend: Next.js route handlers and server actions
+- Authentication: NextAuth credentials login with optional Google OAuth
+- Database: Prisma ORM with PostgreSQL on Supabase
+- Email: Resend for verification and password reset emails
+- Deployment target: Vercel + Supabase
 
-## 🚀 Quick Start
+## Core Features
 
-### Prerequisites
+- Guided meditation journey across six stages
+- PAHM session setup, timer, click tracking, and reflection flows
+- Questionnaire and self-assessment workflows
+- Daily notes and happiness tracking
+- User profile and password management
+- Admin tools for user management, stage control, and reporting
 
-- Node.js 18+ 
-- npm or yarn
-- Git
+## Prerequisites
 
-### Installation
+- Node.js 20 or newer
+- npm 10 or newer
+- A Supabase project with a PostgreSQL database
+- A Vercel project for deployment
+- Optional: Google OAuth credentials
+- Optional: Resend account for email delivery
 
-1. Clone the repository:
-```bash
-git clone <your-repo-url>
-cd the-return-of-attention
-```
+## Local Setup
 
-2. Install dependencies:
+1. Install dependencies.
+
 ```bash
 npm install
 ```
 
-3. Set up environment variables:
-```bash
-cp .env.example .env.local
-```
-Edit `.env.local` with your actual values.
+2. Create your local environment file.
 
-4. Start the development server:
+```bash
+copy .env.example .env.local
+```
+
+3. Fill in the required values in `.env.local`.
+
+Required for basic app startup:
+
+- `NEXTAUTH_URL`
+- `NEXTAUTH_SECRET`
+- `DATABASE_URL`
+- `DIRECT_URL`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+Optional integrations:
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `RESEND_API_KEY`
+- `FROM_EMAIL`
+- `ENABLE_EMAIL_VERIFICATION`
+
+4. Generate Prisma client.
+
+```bash
+npm run db:generate
+```
+
+5. Apply database migrations.
+
+```bash
+npm run db:deploy
+```
+
+6. Seed the baseline data.
+
+```bash
+npm run db:seed
+```
+
+7. Start the development server.
+
 ```bash
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to see the application.
+The app will run at `http://localhost:3000`.
 
-## 🛠️ Tech Stack
+## Admin Bootstrap
 
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Database**: Prisma + Supabase
-- **Authentication**: NextAuth.js
-- **Validation**: Zod
-- **Deployment**: Vercel
+Before creating the first admin user, set these values in `.env.local`:
 
-## 📁 Project Structure
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
+- `ADMIN_NAME`
 
+Then run:
+
+```bash
+npm run admin:create
 ```
+
+The script will fail if the admin email or password is missing. This is intentional to avoid shipping default credentials.
+
+## Deployment
+
+Recommended deployment model:
+
+1. Host the application on Vercel.
+2. Host PostgreSQL on Supabase.
+3. Configure the same environment variables from `.env.example` in the Vercel project.
+4. Run database deployment commands against the production database before the first release.
+
+Recommended production sequence:
+
+```bash
+npm install
+npm run db:generate
+npm run db:deploy
+npm run build
+```
+
+Notes:
+
+- If Google OAuth credentials are not provided, credentials-based sign-in still works.
+- If `ENABLE_EMAIL_VERIFICATION=false`, new users can sign in immediately after registration.
+- If `ENABLE_EMAIL_VERIFICATION=true`, Resend should also be configured so verification emails can be delivered.
+
+## Useful Commands
+
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm run check
+npm run db:generate
+npm run db:deploy
+npm run db:seed
+npm run db:studio
+npm run admin:create
+```
+
+## Project Structure
+
+```text
 src/
-├── app/              # Next.js app router pages
-├── components/       # Reusable UI components  
-├── lib/             # Utility functions and configurations
-└── types/           # TypeScript type definitions
-
+	app/              Next.js routes, pages, and API handlers
+	components/       Client UI and feature components
+	hooks/            Shared React hooks
+	lib/              Auth, data, validation, Prisma, Supabase, business logic
 prisma/
-└── schema.prisma    # Database schema
-
-Main Docs/           # Project documentation
-├── Project Todo List.md
-├── Development Guidelines.md
-├── Business Logic Documentation.md
-└── Stage Details & Progression System.md
+	schema.prisma     Prisma schema
+	migrations/       Database migrations
+	seed.ts           Seed data for stages and baseline records
+scripts/
+	create-admin.ts   Admin bootstrap script
+public/
+	audio/            Audio assets
+	images/           Static assets
 ```
 
-## 🔄 Development Workflow
+## Handover Verification Checklist
 
-This project follows a **backend-first development approach**:
+Run this before client delivery:
 
-1. **Weeks 1-7**: Complete backend APIs and database
-2. **Weeks 8-14**: Build frontend consuming tested APIs  
-3. **Week 15**: Deployment and production setup
+1. `npm install`
+2. `npm run db:generate`
+3. `npm run db:deploy`
+4. `npm run db:seed`
+5. `npm run lint`
+6. `npm run build`
+7. Manually verify sign up, sign in, stage progression, PAHM session flow, daily notes, and admin access
 
-## 📋 Current Status
+## Current Operational Notes
 
-✅ **Initial Setup Complete**
-- Next.js project with TypeScript and Tailwind CSS
-- Core dependencies installed (Prisma, NextAuth, Supabase, Zod)
-- Project folder structure established
-- ESLint and Prettier configurations set up
-- Git repository initialized
-- Placeholder files created for organized development
+- Prisma CLI is configured through `prisma.config.ts` for forward compatibility with Prisma 7 migration guidance.
+- Password reset and email verification now use client-facing routes at `/reset-password` and `/verify-email`.
+- Package scripts were cleaned up to remove references to missing automated test files.
+- There is no comprehensive automated test suite in this repository yet; handover validation currently depends on build, lint, database setup, and manual smoke testing.
 
-🔄 **Next Steps**
-- Set up Supabase account and database
-- Design and implement database schema
-- Create authentication system
+## Troubleshooting
 
-## 📁 File Structure
-
-All files are set up with placeholder content and TODO comments:
-
-```
-src/
-├── app/
-│   ├── globals.css          # Basic Tailwind setup
-│   ├── layout.tsx           # Root layout component
-│   ├── page.tsx             # Home page (minimal)
-│   └── api/                 # API routes (empty, ready for backend)
-├── components/              # UI components (empty, ready for frontend)
-├── lib/
-│   ├── utils.ts             # Utility functions (placeholder)
-│   ├── prisma.ts            # Database client (placeholder)
-│   └── happiness.ts         # Happiness calculation (placeholder)
-├── types/
-│   └── index.ts             # TypeScript types (placeholder)
-prisma/
-└── schema.prisma            # Database schema (placeholder)
-```
-
-## 🤝 Contributing
-
-1. Follow the Development Guidelines in `Main Docs/Development Guidelines.md`
-2. Complete backend tasks before frontend development
-3. Test all APIs thoroughly before moving to next phase
-4. Use TypeScript strictly for better code quality
-
-## 📖 Documentation
-
-- [Project Todo List](Main%20Docs/Project%20Todo%20List.md) - Complete development roadmap
-- [Development Guidelines](Main%20Docs/Development%20Guidelines.md) - Step-by-step implementation guide  
-- [Stage Details](Main%20Docs/Stage%20Details%20&%20Progression%20System.md) - PAHM methodology and progression
-- [Business Logic](Main%20Docs/Business%20Logic%20Documentation.md) - Core application logic and workflows
-
-## 📝 License
-
-MIT License - see LICENSE file for details.
-
----
-
-**The Return of Attention** - Developing sustained attention through mindful practice.
+- If the app fails at startup, verify every required variable in `.env.local`.
+- If authentication redirects fail, confirm `NEXTAUTH_URL` matches the current environment exactly.
+- If database commands fail, confirm Supabase connection strings are correct and SSL settings are included.
+- If email flows fail, either configure Resend correctly or set `ENABLE_EMAIL_VERIFICATION=false` for environments that should not send mail.
+- If Google login is needed, add both Google OAuth variables and confirm the redirect URL in Google Cloud matches the Vercel domain.

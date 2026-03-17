@@ -11,17 +11,15 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "check": "npm run lint && npm run build",
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "db:deploy": "dotenv -e .env.local -- prisma migrate deploy",
     "db:generate": "dotenv -e .env.local -- prisma generate",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "db:seed": "dotenv -e .env.local -- ts-node prisma/seed.ts",
-    "test": "node tests/api/run-tests.js",
-    "test:connectivity": "node tests/api/connectivity.test.js",
-    "test:auth": "node tests/api/auth/auth-api.test.js",
-    "test:auth:flow": "node tests/api/auth/email-verification-flow.test.mjs",
-    "test:postman": "node tests/api/auth/postman-helper.test.js",
-    "test:user": "node tests/api/user/run-user-tests.js"
+    "admin:create": "dotenv -e .env.local -- ts-node scripts/create-admin.ts",
+    "smoke": "npm run build"
   },
   "keywords": [
     "meditation",
@@ -70,8 +68,5 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "tailwindcss": "^4.1.14",
     "ts-node": "^10.9.2"
-  },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
   }
 }

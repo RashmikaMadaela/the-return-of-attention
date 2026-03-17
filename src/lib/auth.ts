@@ -1,11 +1,16 @@
 import { NextAuthOptions } from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
+import type { Adapter } from 'next-auth/adapters'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
-import { getServerSession } from 'next-auth/next'
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
 import { z } from 'zod'
+
+const isEmailVerificationEnabled = process.env.ENABLE_EMAIL_VERIFICATION === 'true'
+const hasGoogleOAuthConfig = Boolean(
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+)
 
 // Extend the built-in session types
 declare module 'next-auth' {
@@ -46,7 +51,7 @@ const loginSchema = z.object({
 })
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+  adapter: PrismaAdapter(prisma) as unknown as Adapter,
   session: {
     strategy: 'jwt',
     // Session expires after 1 hour of inactivity
@@ -55,19 +60,22 @@ export const authOptions: NextAuthOptions = {
     updateAge: 0, // Update on every request
   },
   providers: [
-    // Google OAuth Provider
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
-        }
-      }
-    }),
-    
+    ...(hasGoogleOAuthConfig
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            authorization: {
+              params: {
+                prompt: 'consent',
+                access_type: 'offline',
+                response_type: 'code'
+              }
+            }
+          })
+        ]
+      : []),
+
     // Credentials Provider for email/password
     CredentialsProvider({
       name: 'credentials',
@@ -109,11 +117,13 @@ export const authOptions: NextAuthOptions = {
             return null
           }
 
-          // Check if email is verified (temporarily disabled for testing)
-          // TODO: Re-enable email verification once email flow is implemented
-          // if (!user.emailVerified) {
-          //   throw new Error('Please verify your email before signing in')
-          // }
+          if (isEmailVerificationEnabled && !user.emailVerified) {
+            throw new Error('Please verify your email before signing in')
+          }
+
+          if (!user.isActive) {
+            throw new Error('Account is inactive. Please contact support.')
+          }
 
           // Return user object with rememberMe flag
           return {
@@ -133,14 +143,15 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    async jwt({ token, user, account, trigger }) {
+    async jwt({ token, user, account }) {
       const now = Math.floor(Date.now() / 1000)
       
       // Initial sign in
       if (account && user) {
+        const userPayload = user as { id: string; isActive?: boolean; rememberMe?: boolean }
         token.id = user.id
-        token.isActive = (user as any).isActive
-        token.rememberMe = (user as any).rememberMe || false
+        token.isActive = userPayload.isActive
+        token.rememberMe = userPayload.rememberMe || false
         token.lastActivity = now
         
         // Set token expiry to 1 hour from now
@@ -153,7 +164,11 @@ export const authOptions: NextAuthOptions = {
         
         // If more than 1 hour of inactivity, expire the session
         if (timeSinceLastActivity > 60 * 60) {
-          return {} as any // Return empty token to invalidate session
+          return {
+            ...token,
+            exp: 0,
+            lastActivity: undefined,
+          }
         }
         
         // Update last activity time
@@ -171,22 +186,33 @@ export const authOptions: NextAuthOptions = {
       }
       return session
     },
-    async signIn({ user, account, profile }) {
+    async signIn({ account, profile }) {
       // For OAuth providers, create user profile if needed
       if (account?.provider === 'google' && profile) {
         try {
+          const profileEmail = profile.email
+          const profileName = profile.name
+          const profilePicture =
+            typeof (profile as Record<string, unknown>).picture === 'string'
+              ? (profile as Record<string, string>).picture
+              : null
+
+          if (!profileEmail) {
+            return false
+          }
+
           // Check if user already exists
           const existingUser = await prisma.user.findUnique({
-            where: { email: profile.email! }
+            where: { email: profileEmail }
           })
 
           if (!existingUser) {
             // Create new user with email verification
             await prisma.user.create({
               data: {
-                email: profile.email!,
-                name: profile.name,
-                image: (profile as any).picture,
+                email: profileEmail,
+                name: profileName,
+                image: profilePicture,
                 emailVerified: new Date(), // OAuth emails are pre-verified
                 isActive: true
               }
@@ -201,9 +227,7 @@ export const authOptions: NextAuthOptions = {
     }
   },
   pages: {
-    signIn: '/auth/signin',
-    error: '/auth/error',
-    verifyRequest: '/auth/verify-email',
+    signIn: '/signin',
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',

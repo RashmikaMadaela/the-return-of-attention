@@ -5,6 +5,8 @@ import { registerSchema, validateRequestBody } from '@/lib/validation'
 import { handleApiError, createSuccessResponse, CommonErrors } from '@/lib/errors'
 import { generateVerificationToken, sendVerificationEmail } from '@/lib/email'
 
+const isEmailVerificationEnabled = process.env.ENABLE_EMAIL_VERIFICATION === 'true'
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -33,8 +35,9 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(password)
 
-    // Generate email verification token
-    const verificationToken = generateVerificationToken()
+    const verificationToken = isEmailVerificationEnabled
+      ? generateVerificationToken()
+      : null
     const tokenExpires = new Date()
     tokenExpires.setHours(tokenExpires.getHours() + 24) // 24 hours expiry
 
@@ -46,28 +49,30 @@ export async function POST(request: NextRequest) {
           email,
           password: hashedPassword,
           name,
-          emailVerified: new Date(), // Auto-verify for testing purposes
-          isActive: true, // Activate user immediately for testing
+          emailVerified: isEmailVerificationEnabled ? null : new Date(),
+          isActive: !isEmailVerificationEnabled,
         }
       })
 
-      // Create verification token
-      await prisma.verificationToken.create({
-        data: {
-          identifier: email,
-          token: verificationToken,
-          type: 'email_verification',
-          expires: tokenExpires
-        }
-      })
+      if (isEmailVerificationEnabled && verificationToken) {
+        await prisma.verificationToken.create({
+          data: {
+            identifier: email,
+            token: verificationToken,
+            type: 'email_verification',
+            expires: tokenExpires
+          }
+        })
+      }
 
       return user
     })
 
     const user = result
     
-    // Skip email sending for now
-    console.log('Email verification skipped for testing purposes')
+    if (isEmailVerificationEnabled && verificationToken) {
+      await sendVerificationEmail(email, verificationToken)
+    }
 
     // Return success response (don't include password or sensitive data)
     return createSuccessResponse({
@@ -75,8 +80,11 @@ export async function POST(request: NextRequest) {
       email: user.email,
       name: user.name,
       emailVerified: user.emailVerified,
-      isActive: user.isActive
-    }, 'Account created successfully! You can now sign in immediately. (Email verification auto-enabled for testing)', 201)
+      isActive: user.isActive,
+      requiresEmailVerification: isEmailVerificationEnabled
+    }, isEmailVerificationEnabled
+      ? 'Account created successfully. Please verify your email before signing in.'
+      : 'Account created successfully! You can now sign in immediately.', 201)
 
   } catch (error) {
     return handleApiError(error)
