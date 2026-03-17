@@ -22,12 +22,36 @@ The Return of Attention is a Next.js meditation and self-reflection platform bui
 
 ## Prerequisites
 
-- Node.js 20 or newer
-- npm 10 or newer
-- A Supabase project with a PostgreSQL database
-- A Vercel project for deployment
-- Optional: Google OAuth credentials
-- Optional: Resend account for email delivery
+Before starting, ensure you have:
+
+### 1. Node.js and npm
+
+1. Download and install [Node.js 20 or newer](https://nodejs.org/).
+2. Verify installation:
+
+   ```bash
+   node --version
+   npm --version
+   ```
+
+### 2. Supabase Project
+
+1. Go to [supabase.com](https://supabase.com) and sign in or create an account.
+2. Create a new project:
+   - Click **New project**.
+   - Choose an organization, enter a project name, set a strong database password, and select a region.
+   - Wait for the database to initialize.
+3. Once ready, note your **Project URL**, **Anon Key**, and **Service Role Key** (found under **Settings > API keys**).
+
+### 3. Vercel Account (for deployment)
+
+1. Go to [vercel.com](https://vercel.com) and sign in or create an account.
+2. You'll use Vercel to deploy the application later.
+
+### 4. Optional Integrations
+
+- **Google OAuth**: Register at [Google Cloud Console](https://console.cloud.google.com/) if you want to support Google login.
+- **Resend**: Sign up at [resend.com](https://resend.com) if you want to enable email verification and password reset emails.
 
 ## Local Setup
 
@@ -66,7 +90,9 @@ Required for basic app startup:
 	- Click `Connect` (top bar).
 	- Open the `ORMs` tab.
 	- Select `Prisma`.
-	- Copy the provided connection URLs into:
+	- You will see two connection URLs. **Both contain `[your-password]` as a placeholder**.
+	- Replace `[your-password]` with the database password you set when creating the Supabase project.
+	- Copy the updated URLs into:
 		- `DATABASE_URL`
 		- `DIRECT_URL`
 
@@ -152,6 +178,7 @@ Recommended deployment model:
 1. Host the application on Vercel.
 2. Host PostgreSQL on Supabase.
 3. Configure the same environment variables from `.env.example` in the Vercel project.
+   - **Important**: Set `NEXTAUTH_URL` to your Vercel deployment URL (for example `https://your-app.vercel.app`). This must match your actual deployed domain exactly, or authentication will fail.
 4. Run database deployment commands against the production database before the first release.
 
 Recommended production sequence:
