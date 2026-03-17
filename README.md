@@ -63,6 +63,11 @@ Optional integrations:
 - `FROM_EMAIL`
 - `ENABLE_EMAIL_VERIFICATION`
 
+Required only for admin-only protected operations:
+
+- `ADMIN_REGISTRATION_KEY`
+- `ADMIN_CLEAR_DATA_CODE`
+
 4. Generate Prisma client.
 
 ```bash
@@ -97,6 +102,11 @@ Before creating the first admin user, set these values in `.env.local`:
 - `ADMIN_PASSWORD`
 - `ADMIN_NAME`
 
+If you intend to use admin registration or destructive admin maintenance routes, also set:
+
+- `ADMIN_REGISTRATION_KEY`
+- `ADMIN_CLEAR_DATA_CODE`
+
 Then run:
 
 ```bash
@@ -128,6 +138,7 @@ Notes:
 - If Google OAuth credentials are not provided, credentials-based sign-in still works.
 - If `ENABLE_EMAIL_VERIFICATION=false`, new users can sign in immediately after registration.
 - If `ENABLE_EMAIL_VERIFICATION=true`, Resend should also be configured so verification emails can be delivered.
+- Admin registration and destructive admin data-clear routes are disabled unless `ADMIN_REGISTRATION_KEY` and `ADMIN_CLEAR_DATA_CODE` are explicitly configured.
 
 ## Useful Commands
 

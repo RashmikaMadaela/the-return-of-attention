@@ -60,8 +60,18 @@ export async function POST(request: NextRequest) {
 
     const { action, targetType, userId, reason, confirmationCode } = validation.data;
 
-    // Verify confirmation code (in production, this should be more secure)
-    const validConfirmationCode = process.env.ADMIN_CLEAR_DATA_CODE || 'CLEAR-DATA-2024';
+    const validConfirmationCode = process.env.ADMIN_CLEAR_DATA_CODE;
+    if (!validConfirmationCode) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Admin data clearing is not configured',
+          code: 'ADMIN_CLEAR_DATA_NOT_CONFIGURED'
+        },
+        { status: 500 }
+      );
+    }
+
     if (confirmationCode !== validConfirmationCode) {
       return NextResponse.json(
         {

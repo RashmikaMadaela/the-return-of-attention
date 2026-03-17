@@ -44,8 +44,18 @@ export async function POST(request: NextRequest) {
 
     const { email, password, name, role, permissions, registrationKey } = validation.data;
 
-    // Verify registration key (in production, this should be from environment variables)
-    const validRegistrationKey = process.env.ADMIN_REGISTRATION_KEY || 'admin-registration-2024';
+    const validRegistrationKey = process.env.ADMIN_REGISTRATION_KEY;
+    if (!validRegistrationKey) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Admin registration is not configured',
+          code: 'ADMIN_REGISTRATION_NOT_CONFIGURED'
+        },
+        { status: 500 }
+      );
+    }
+
     if (registrationKey !== validRegistrationKey) {
       return NextResponse.json(
         {
