@@ -210,7 +210,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 pb-10">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] pb-10">
       <ToastContainer />
       
       {/* Confirmation Dialog */}
@@ -230,7 +230,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
 
       {/* Success Message */}
       {successMessage && (
-        <div className="fixed top-20 right-4 z-50 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl animate-fade-in">
+        <div className="fixed top-20 right-4 z-50 bg-[#1f6fb6] text-white px-6 py-4 rounded-lg shadow-2xl animate-fade-in">
           <div className="flex items-center gap-3">
             <span className="text-2xl">✓</span>
             <span className="font-semibold">{successMessage}</span>
@@ -245,19 +245,19 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
           <div className="max-w-7xl mx-auto px-10 flex gap-8 justify-center">
             <button 
               onClick={() => handleAdminNavigation('user-progress')}
-              className="px-8 py-3 bg-transparent text-blue-600 border-2 border-blue-600 rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-blue-600 hover:text-white hover:-translate-y-1 hover:shadow-lg"
+              className="px-8 py-3 bg-transparent text-[#6465e0] border-2 border-[#6465e0] rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-[#6465e0] hover:text-white hover:-translate-y-1 hover:shadow-lg"
             >
               User Progress
             </button>
             <button 
               onClick={() => handleAdminNavigation('user-management')}
-              className="px-8 py-3 bg-blue-600 text-white border-2 border-blue-600 rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 hover:shadow-lg"
+              className="px-8 py-3 bg-[#6465e0] text-white border-2 border-[#6465e0] rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-[#5658d1] hover:border-[#5658d1] hover:-translate-y-1 hover:shadow-lg"
             >
               User Management
             </button>
             <button 
               onClick={() => handleAdminNavigation('stage-testing')}
-              className="px-8 py-3 bg-transparent text-blue-600 border-2 border-blue-600 rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-blue-600 hover:text-white hover:-translate-y-1 hover:shadow-lg"
+              className="px-8 py-3 bg-transparent text-[#6465e0] border-2 border-[#6465e0] rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-[#6465e0] hover:text-white hover:-translate-y-1 hover:shadow-lg"
             >
               Stage Testing
             </button>
@@ -269,7 +269,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
           <div className="px-4 py-3">
             <button 
               onClick={() => setMobileAdminMenuOpen(!mobileAdminMenuOpen)}
-              className="w-full flex items-center justify-between px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold"
+              className="w-full flex items-center justify-between px-4 py-3 bg-[#6465e0] text-white rounded-lg font-semibold"
             >
               <span>Admin Menu</span>
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -285,19 +285,19 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
               <div className="mt-2 space-y-2">
                 <button 
                   onClick={() => handleAdminNavigation('user-progress')}
-                  className="w-full px-4 py-3 text-left text-blue-600 border-2 border-blue-600 rounded-lg font-semibold hover:bg-blue-50"
+                  className="w-full px-4 py-3 text-left text-[#6465e0] border-2 border-[#6465e0] rounded-lg font-semibold hover:bg-[#eef4ff]"
                 >
                   User Progress
                 </button>
                 <button 
                   onClick={() => handleAdminNavigation('user-management')}
-                  className="w-full px-4 py-3 text-left bg-blue-600 text-white rounded-lg font-semibold"
+                  className="w-full px-4 py-3 text-left bg-[#6465e0] text-white rounded-lg font-semibold"
                 >
                   User Management
                 </button>
                 <button 
                   onClick={() => handleAdminNavigation('stage-testing')}
-                  className="w-full px-4 py-3 text-left text-blue-600 border-2 border-blue-600 rounded-lg font-semibold hover:bg-blue-50"
+                  className="w-full px-4 py-3 text-left text-[#6465e0] border-2 border-[#6465e0] rounded-lg font-semibold hover:bg-[#eef4ff]"
                 >
                   Stage Testing
                 </button>
@@ -311,7 +311,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
         {/* Page Header */}
         <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 mb-6 sm:mb-8 shadow-2xl">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 text-blue-600 text-xl sm:text-2xl lg:text-3xl font-bold mb-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 text-[#03478f] text-xl sm:text-2xl lg:text-3xl font-bold mb-3">
             <span className="text-3xl sm:text-4xl">👥</span>
             <span>User Management</span>
           </div>
@@ -330,7 +330,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
               disabled={isPending}
-              className="w-full p-2.5 sm:p-3 border-2 border-gray-200 rounded-lg text-sm transition-all duration-300 focus:outline-none focus:border-blue-600 focus:shadow-lg focus:shadow-blue-600/10 disabled:opacity-50"
+              className="w-full p-2.5 sm:p-3 border-2 border-[#d6e8f8] bg-[#f7fbff] rounded-lg text-sm transition-all duration-300 focus:outline-none focus:border-[#6465e0] focus:shadow-lg focus:shadow-[#6465e0]/10 disabled:opacity-50"
             />
           </div>
 
@@ -340,7 +340,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
               value={sortBy}
               onChange={(e) => handleSortChange(e.target.value)}
               disabled={isPending}
-              className="w-full p-2.5 sm:p-3 border-2 border-gray-200 rounded-lg text-sm cursor-pointer transition-all duration-300 focus:outline-none focus:border-blue-600 disabled:opacity-50"
+              className="w-full p-2.5 sm:p-3 border-2 border-[#d6e8f8] bg-[#f7fbff] rounded-lg text-sm cursor-pointer transition-all duration-300 focus:outline-none focus:border-[#6465e0] disabled:opacity-50"
             >
               <option>Creation Date</option>
               <option>Last Login</option>
@@ -354,7 +354,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
               value={filterBy}
               onChange={(e) => handleFilterChange(e.target.value)}
               disabled={isPending}
-              className="w-full p-2.5 sm:p-3 border-2 border-gray-200 rounded-lg text-sm cursor-pointer transition-all duration-300 focus:outline-none focus:border-blue-600 disabled:opacity-50"
+              className="w-full p-2.5 sm:p-3 border-2 border-[#d6e8f8] bg-[#f7fbff] rounded-lg text-sm cursor-pointer transition-all duration-300 focus:outline-none focus:border-[#6465e0] disabled:opacity-50"
             >
               <option>All Users</option>
               <option>Active Users</option>
@@ -373,7 +373,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
           {isPending && (
             <div className="flex items-center justify-center py-12">
               <div className="text-center">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600 mb-3"></div>
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-4 border-[#6465e0] mb-3"></div>
                 <p className="text-gray-600 text-base">Loading users...</p>
               </div>
             </div>
@@ -389,7 +389,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
 
           {/* Users Grid */}
           {!isPending && initialData.users.length > 0 && initialData.users.map((user) => (
-            <div key={user.id} className="bg-gray-50 rounded-xl sm:rounded-2xl p-5 sm:p-6 mb-4 sm:mb-5 border-2 border-gray-100 transition-all duration-300 hover:border-blue-200 hover:shadow-lg">
+            <div key={user.id} className="bg-gray-50 rounded-xl sm:rounded-2xl p-5 sm:p-6 mb-4 sm:mb-5 border-2 border-gray-100 transition-all duration-300 hover:border-[#b9d4ee] hover:shadow-lg">
               <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -406,19 +406,19 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
                   <div className="text-center bg-white rounded-lg p-3 border border-gray-200">
-                    <div className="text-blue-600 font-bold text-lg">{user.progressSummary.currentStage}</div>
+                    <div className="text-[#6465e0] font-bold text-lg">{user.progressSummary.currentStage}</div>
                     <div className="text-gray-500 text-xs">Stage</div>
                   </div>
                   <div className="text-center bg-white rounded-lg p-3 border border-gray-200">
-                    <div className="text-blue-600 font-bold text-lg">{user.progressSummary.totalSessions}</div>
+                    <div className="text-[#6465e0] font-bold text-lg">{user.progressSummary.totalSessions}</div>
                     <div className="text-gray-500 text-xs">Sessions</div>
                   </div>
                   <div className="text-center bg-white rounded-lg p-3 border border-gray-200">
-                    <div className="text-blue-600 font-bold text-lg">{user.progressSummary.totalHours}h</div>
+                    <div className="text-[#6465e0] font-bold text-lg">{user.progressSummary.totalHours}h</div>
                     <div className="text-gray-500 text-xs">Hours</div>
                   </div>
                   <div className="text-center bg-white rounded-lg p-3 border border-gray-200">
-                    <div className="text-blue-600 font-bold text-lg">{user.progressSummary.happinessScore}</div>
+                    <div className="text-[#6465e0] font-bold text-lg">{user.progressSummary.happinessScore}</div>
                     <div className="text-gray-500 text-xs">Happy</div>
                   </div>
                 </div>
@@ -428,7 +428,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
                 <button 
                   onClick={() => handleUserAction(user.id, user.name || user.email, 'reset')}
                   disabled={actionLoading === `${user.id}-reset`}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-lg text-xs font-semibold transition-all hover:bg-orange-600 disabled:opacity-50"
+                  className="px-4 py-2 bg-[#9eaac0] text-white rounded-lg text-xs font-semibold transition-all hover:bg-[#8f9bb1] disabled:opacity-50"
                 >
                   {actionLoading === `${user.id}-reset` ? 'Resetting...' : 'Reset Progress'}
                 </button>
@@ -436,7 +436,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
                   <button 
                     onClick={() => handleUserAction(user.id, user.name || user.email, 'disable')}
                     disabled={actionLoading === `${user.id}-disable`}
-                    className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-xs font-semibold transition-all hover:bg-yellow-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-[#6a95cb] text-white rounded-lg text-xs font-semibold transition-all hover:bg-[#587fb2] disabled:opacity-50"
                   >
                     {actionLoading === `${user.id}-disable` ? 'Disabling...' : 'Disable'}
                   </button>
@@ -444,7 +444,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
                   <button 
                     onClick={() => handleUserAction(user.id, user.name || user.email, 'enable')}
                     disabled={actionLoading === `${user.id}-enable`}
-                    className="px-4 py-2 bg-green-500 text-white rounded-lg text-xs font-semibold transition-all hover:bg-green-600 disabled:opacity-50"
+                    className="px-4 py-2 bg-[#1f6fb6] text-white rounded-lg text-xs font-semibold transition-all hover:bg-[#175d98] disabled:opacity-50"
                   >
                     {actionLoading === `${user.id}-enable` ? 'Enabling...' : 'Enable'}
                   </button>
@@ -466,7 +466,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
               <button
                 onClick={() => handlePageChange(initialData.pagination.currentPage - 1)}
                 disabled={initialData.pagination.currentPage === 1 || isPending}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-[#6465e0] text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5658d1] transition-colors"
               >
                 Previous
               </button>
@@ -476,7 +476,7 @@ export default function AdminUserManagementClient({ initialData }: AdminUserMana
               <button
                 onClick={() => handlePageChange(initialData.pagination.currentPage + 1)}
                 disabled={!initialData.pagination.hasMore || isPending}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-[#6465e0] text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#5658d1] transition-colors"
               >
                 Next
               </button>

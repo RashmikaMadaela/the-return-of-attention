@@ -35,7 +35,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
       number: initialData.dashboardCounts.practiceSessions,
       label: 'Practice Sessions',
       subtitle: 'ALL users in database',
-      gradient: 'from-blue-500 to-blue-700',
+      gradient: 'from-[#6465e0] to-[#7c7de8]',
       dataKey: 'practiceSessions'
     },
     {
@@ -44,7 +44,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
       number: initialData.dashboardCounts.mindRecoverySessions,
       label: 'Mind Recovery Sessions',
       subtitle: 'ALL users in database',
-      gradient: 'from-purple-500 to-purple-700',
+      gradient: 'from-[#1f6fb6] to-[#2d82cc]',
       dataKey: 'mindRecoverySessions'
     },
     {
@@ -53,7 +53,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
       number: initialData.dashboardCounts.dailyNotes,
       label: 'Daily Emotional Notes',
       subtitle: 'ALL users in database',
-      gradient: 'from-orange-500 to-orange-700',
+      gradient: 'from-[#4f7db8] to-[#6a95cb]',
       dataKey: 'dailyNotes'
     },
     {
@@ -62,7 +62,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
       number: initialData.dashboardCounts.totalUsers,
       label: 'Users',
       subtitle: 'ALL users in database',
-      gradient: 'from-pink-500 to-pink-700',
+      gradient: 'from-[#5870d8] to-[#7c7de8]',
       dataKey: 'totalUsers'
     }
   ]
@@ -111,7 +111,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       <ToastContainer />
       
       {/* Confirmation Dialog */}
@@ -134,19 +134,19 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
         <div className="max-w-7xl mx-auto px-10 flex gap-8 justify-center">
           <button 
             onClick={() => handleNavigation('user-progress')}
-            className="px-8 py-3 bg-blue-600 text-white border-2 border-blue-600 rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-blue-700 hover:-translate-y-1 hover:shadow-lg"
+            className="px-8 py-3 bg-[#6465e0] text-white border-2 border-[#6465e0] rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-[#5658d1] hover:border-[#5658d1] hover:-translate-y-1 hover:shadow-lg"
           >
             User Progress
           </button>
           <button 
             onClick={() => handleNavigation('user-management')}
-            className="px-8 py-3 bg-transparent text-blue-600 border-2 border-blue-600 rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-blue-600 hover:text-white hover:-translate-y-1 hover:shadow-lg"
+            className="px-8 py-3 bg-transparent text-[#6465e0] border-2 border-[#6465e0] rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-[#6465e0] hover:text-white hover:-translate-y-1 hover:shadow-lg"
           >
             User Management
           </button>
           <button 
             onClick={() => handleNavigation('stage-testing')}
-            className="px-8 py-3 bg-transparent text-blue-600 border-2 border-blue-600 rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-blue-600 hover:text-white hover:-translate-y-1 hover:shadow-lg"
+            className="px-8 py-3 bg-transparent text-[#6465e0] border-2 border-[#6465e0] rounded-lg cursor-pointer text-base font-semibold transition-all duration-300 hover:bg-[#6465e0] hover:text-white hover:-translate-y-1 hover:shadow-lg"
           >
             Stage Testing
           </button>
@@ -158,7 +158,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
         <div className="px-4 py-3">
           <button 
             onClick={() => setMobileAdminMenuOpen(!mobileAdminMenuOpen)}
-            className="w-full flex items-center justify-between px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold"
+              className="w-full flex items-center justify-between px-4 py-3 bg-[#6465e0] text-white rounded-lg font-semibold"
           >
             <span>Admin Menu</span>
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -174,19 +174,19 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
             <div className="mt-2 space-y-2">
               <button 
                 onClick={() => handleNavigation('user-progress')}
-                className="w-full px-4 py-3 text-left bg-blue-600 text-white rounded-lg font-semibold"
+                  className="w-full px-4 py-3 text-left bg-[#6465e0] text-white rounded-lg font-semibold"
               >
                 User Progress
               </button>
               <button 
                 onClick={() => handleNavigation('user-management')}
-                className="w-full px-4 py-3 text-left text-blue-600 border-2 border-blue-600 rounded-lg font-semibold hover:bg-blue-50"
+                  className="w-full px-4 py-3 text-left text-[#6465e0] border-2 border-[#6465e0] rounded-lg font-semibold hover:bg-[#eef4ff]"
               >
                 User Management
               </button>
               <button 
                 onClick={() => handleNavigation('stage-testing')}
-                className="w-full px-4 py-3 text-left text-blue-600 border-2 border-blue-600 rounded-lg font-semibold hover:bg-blue-50"
+                  className="w-full px-4 py-3 text-left text-[#6465e0] border-2 border-[#6465e0] rounded-lg font-semibold hover:bg-[#eef4ff]"
               >
                 Stage Testing
               </button>
@@ -197,7 +197,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pb-10">
-        <h1 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center drop-shadow-lg px-4">
+        <h1 className="text-[#03478f] text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 sm:mb-8 lg:mb-10 text-center px-4">
           User Progress Dashboard
         </h1>
 
@@ -205,15 +205,15 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-6xl mx-auto">
           <div className="bg-white rounded-2xl p-6 shadow-xl">
             <div className="text-sm text-gray-600 mb-2">Active Users (30d)</div>
-            <div className="text-3xl font-bold text-blue-600">{initialData.systemMetrics.activeUsers}</div>
+            <div className="text-3xl font-bold text-[#6465e0]">{initialData.systemMetrics.activeUsers}</div>
           </div>
           <div className="bg-white rounded-2xl p-6 shadow-xl">
             <div className="text-sm text-gray-600 mb-2">New This Month</div>
-            <div className="text-3xl font-bold text-green-600">{initialData.systemMetrics.newUsersThisMonth}</div>
+            <div className="text-3xl font-bold text-[#1f6fb6]">{initialData.systemMetrics.newUsersThisMonth}</div>
           </div>
           <div className="bg-white rounded-2xl p-6 shadow-xl">
             <div className="text-sm text-gray-600 mb-2">Total Practice Hours</div>
-            <div className="text-3xl font-bold text-purple-600">{initialData.systemMetrics.totalPracticeHours}h</div>
+            <div className="text-3xl font-bold text-[#7c7de8]">{initialData.systemMetrics.totalPracticeHours}h</div>
           </div>
         </div>
 
@@ -230,7 +230,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
                 {stat.icon}
               </div>
               
-              <div className="text-7xl font-bold text-blue-600 text-center mb-3">
+              <div className="text-7xl font-bold text-[#03478f] text-center mb-3">
                 {stat.number}
               </div>
               
@@ -239,7 +239,7 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
               </div>
               
               <div className="text-sm text-gray-500 text-center flex items-center justify-center gap-2 mb-5">
-                <div className="w-4 h-4 bg-green-500 rounded-sm"></div>
+                <div className="w-4 h-4 bg-[#7c7de8] rounded-sm"></div>
                 {stat.subtitle}
               </div>
               
@@ -260,15 +260,15 @@ export default function AdminUserProgressClient({ initialData }: AdminUserProgre
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">{initialData.engagementMetrics.dailyActiveUsers}</div>
+              <div className="text-4xl font-bold text-[#6465e0] mb-2">{initialData.engagementMetrics.dailyActiveUsers}</div>
               <div className="text-sm text-gray-600">Daily Active Users</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">{initialData.engagementMetrics.weeklyActiveUsers}</div>
+              <div className="text-4xl font-bold text-[#6465e0] mb-2">{initialData.engagementMetrics.weeklyActiveUsers}</div>
               <div className="text-sm text-gray-600">Weekly Active Users</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">{initialData.engagementMetrics.monthlyActiveUsers}</div>
+              <div className="text-4xl font-bold text-[#6465e0] mb-2">{initialData.engagementMetrics.monthlyActiveUsers}</div>
               <div className="text-sm text-gray-600">Monthly Active Users</div>
             </div>
           </div>

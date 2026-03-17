@@ -206,14 +206,14 @@ export default function PersonalInfoPage() {
   ];
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 sm:p-6">
-      <div className="w-full max-w-md p-6 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl sm:p-10">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] sm:p-6">
+      <div className="w-full max-w-md p-6 shadow-2xl bg-white rounded-3xl sm:p-10 border border-[#d6e8f8]">
         {/* Header */}
         <div className="mb-6 text-center sm:mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg sm:w-20 sm:h-20 bg-gradient-to-br from-indigo-500 to-pink-500">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg sm:w-20 sm:h-20 bg-gradient-to-br from-[#03478f] to-[#6465e0]">
             <UserCircle className="w-8 h-8 text-white sm:w-10 sm:h-10" />
           </div>
-          <h1 className="mb-2 text-2xl font-bold text-gray-800 sm:text-3xl">Personal Information</h1>
+          <h1 className="mb-2 text-2xl font-bold text-[#03478f] sm:text-3xl">Personal Information</h1>
           <p className="text-sm text-gray-600 sm:text-base">Help us personalize your experience</p>
         </div>
 
@@ -232,7 +232,7 @@ export default function PersonalInfoPage() {
               min={13}
               max={120}
               step={1}
-              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-indigo-500 focus:bg-white focus:shadow-lg"
+              className="w-full p-3 text-sm transition-all duration-200 border-2 border-[#d6e8f8] sm:p-4 rounded-xl bg-[#f7fbff] sm:text-base focus:outline-none focus:border-[#6465e0] focus:bg-white focus:shadow-lg"
             />
           </div>
 
@@ -245,7 +245,7 @@ export default function PersonalInfoPage() {
             <select
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full p-3 text-sm text-gray-600 transition-all duration-200 border-2 border-gray-200 cursor-pointer sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-indigo-500 focus:bg-white focus:shadow-lg"
+              className="w-full p-3 text-sm text-gray-600 transition-all duration-200 border-2 border-[#d6e8f8] cursor-pointer sm:p-4 rounded-xl bg-[#f7fbff] sm:text-base focus:outline-none focus:border-[#6465e0] focus:bg-white focus:shadow-lg"
             >
               <option value="">Select your gender</option>
               <option value="male">Male</option>
@@ -264,7 +264,7 @@ export default function PersonalInfoPage() {
             <select
               value={nationality}
               onChange={(e) => setNationality(e.target.value)}
-              className="w-full p-3 text-sm text-gray-600 transition-all duration-200 border-2 border-gray-200 cursor-pointer sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-indigo-500 focus:bg-white focus:shadow-lg"
+              className="w-full p-3 text-sm text-gray-600 transition-all duration-200 border-2 border-[#d6e8f8] cursor-pointer sm:p-4 rounded-xl bg-[#f7fbff] sm:text-base focus:outline-none focus:border-[#6465e0] focus:bg-white focus:shadow-lg"
             >
               <option value="">Select your nationality</option>
               {NATIONALITIES.map((nat) => (
@@ -284,7 +284,7 @@ export default function PersonalInfoPage() {
             <select
               value={currentCountry}
               onChange={(e) => setCurrentCountry(e.target.value)}
-              className="w-full p-3 text-sm text-gray-600 transition-all duration-200 border-2 border-gray-200 cursor-pointer sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-indigo-500 focus:bg-white focus:shadow-lg"
+              className="w-full p-3 text-sm text-gray-600 transition-all duration-200 border-2 border-[#d6e8f8] cursor-pointer sm:p-4 rounded-xl bg-[#f7fbff] sm:text-base focus:outline-none focus:border-[#6465e0] focus:bg-white focus:shadow-lg"
             >
               <option value="">Select your current country</option>
               {COUNTRIES.map((country) => (
@@ -308,7 +308,7 @@ export default function PersonalInfoPage() {
         <div className="flex gap-3 mt-6 sm:mt-8">
           <button
             onClick={handleBack}
-            className="flex items-center justify-center flex-1 gap-2 p-3 text-sm font-semibold text-indigo-600 transition-all duration-200 bg-white border-2 border-indigo-500 sm:p-4 sm:text-base rounded-xl hover:bg-indigo-50 hover:shadow-lg"
+            className="flex items-center justify-center flex-1 gap-2 p-3 text-sm font-semibold text-[#6465e0] transition-all duration-200 bg-white border-2 border-[#6465e0] sm:p-4 sm:text-base rounded-xl hover:bg-[#eef4ff] hover:shadow-lg"
           >
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             BACK
@@ -316,7 +316,7 @@ export default function PersonalInfoPage() {
           <button
             onClick={handleFinishUp}
             disabled={loading}
-            className="flex-1 p-3 sm:p-4 text-sm sm:text-base font-semibold text-white transition-all duration-200 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-xl hover:shadow-xl hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+            className="flex-1 p-3 sm:p-4 text-sm sm:text-base font-semibold text-white transition-all duration-200 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-xl hover:shadow-xl hover:scale-[1.02] hover:from-[#5658d1] hover:to-[#6465e0] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
           >
             {loading ? (
               <>

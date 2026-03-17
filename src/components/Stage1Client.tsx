@@ -66,15 +66,15 @@ export default function Stage1Client({ initialData }: Stage1ClientProps) {
   })
 
   const getStageButton = (stage: any) => {
-    if (!stage.unlocked) return { text: 'Locked', color: 'bg-orange-400', disabled: true }
+    if (!stage.unlocked) return { text: 'Locked', color: 'bg-[#9eaac0]', disabled: true }
     if (stage.isPAHM) {
       if (stage.completed) return { text: 'Completed', color: 'bg-green-600', disabled: false }
-      return { text: 'Complete', color: 'bg-blue-600', disabled: false }
+      return { text: 'Complete', color: 'bg-[#6465e0]', disabled: false }
     }
     // Allow practice even after meeting the session requirement - show "Practice" or "Continue"
-    if (stage.meetsSessionRequirement) return { text: 'Practice', color: 'bg-blue-600', disabled: false }
-    if (stage.sessions > 0) return { text: 'Continue', color: 'bg-blue-600', disabled: false }
-    return { text: 'Start', color: 'bg-blue-600', disabled: false }
+    if (stage.meetsSessionRequirement) return { text: 'Practice', color: 'bg-[#6465e0]', disabled: false }
+    if (stage.sessions > 0) return { text: 'Continue', color: 'bg-[#6465e0]', disabled: false }
+    return { text: 'Start', color: 'bg-[#6465e0]', disabled: false }
   }
 
   const handleStageClick = (stage: any) => {
@@ -145,10 +145,10 @@ export default function Stage1Client({ initialData }: Stage1ClientProps) {
                   </h3>
                   {!stage.isPAHM && (
                     <>
-                      <p className="mb-2 text-gray-700">Duration: {stage.duration} minutes</p>
-                      <p className="mb-4 text-gray-700">Sessions: {stage.sessions}/{stage.minSessions}</p>
+                      <p className="mb-2 text-[#123a63]">Duration: {stage.duration} minutes</p>
+                      <p className="mb-4 text-[#123a63]">Sessions: {stage.sessions}/{stage.minSessions}</p>
                       <div className="mb-4">
-                        <div className="w-full h-2 bg-gray-200 rounded-full">
+                        <div className="w-full h-2 bg-[#d6e8f8] rounded-full">
                           <div
                             className="h-2 transition-all duration-300 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-full"
                             style={{ width: `${Math.min(100, stage.progressPercent || 0)}%` }}
@@ -159,10 +159,10 @@ export default function Stage1Client({ initialData }: Stage1ClientProps) {
                   )}
                   {stage.isPAHM && (
                     <>
-                      <p className="mb-2 text-gray-700">Introduction to PAHM Matrix</p>
-                      <p className="mb-4 text-gray-700">Sessions: {stage.sessions}/1</p>
+                      <p className="mb-2 text-[#123a63]">Introduction to PAHM Matrix</p>
+                      <p className="mb-4 text-[#123a63]">Sessions: {stage.sessions}/1</p>
                       <div className="mb-4">
-                        <div className="w-full h-2 bg-gray-200 rounded-full">
+                        <div className="w-full h-2 bg-[#d6e8f8] rounded-full">
                           <div className="h-2 transition-all duration-300 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] rounded-full" style={{ width: `${(stage.sessions / 1) * 100}%` }}></div>
                         </div>
                       </div>

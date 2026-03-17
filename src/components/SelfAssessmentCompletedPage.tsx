@@ -61,7 +61,7 @@ export default function SelfAssessmentCompletedPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600">
+    <div className="min-h-screen bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       {/* Navigation */}
       <Navigation currentPage="self-assessment" />
       
@@ -70,17 +70,17 @@ export default function SelfAssessmentCompletedPage() {
           {/* Celebration Section */}
           <div className="text-center mb-12">
             <div className="text-7xl mb-4">🎉</div>
-            <h1 className="text-white text-5xl font-bold mb-4">Great Job!</h1>
-            <p className="text-white text-lg max-w-2xl mx-auto">
+            <h1 className="text-[#03478f] text-5xl font-bold mb-4">Great Job!</h1>
+            <p className="text-[#123a63] text-lg max-w-2xl mx-auto">
               You have completed the self-assessment and taken the first step on your journey
               to greater presence and attention.
             </p>
           </div>
 
           {/* Journey Ahead Section */}
-          <div className="bg-blue-400 bg-opacity-40 backdrop-blur-sm rounded-3xl p-8 mb-8">
-            <h2 className="text-white text-3xl font-bold text-center mb-4">Your Journey Ahead</h2>
-            <p className="text-white text-center mb-8">
+          <div className="bg-[#e5f3ff] border border-[#d6e8f8] rounded-3xl p-8 mb-8">
+            <h2 className="text-[#03478f] text-3xl font-bold text-center mb-4">Your Journey Ahead</h2>
+            <p className="text-[#123a63] text-center mb-8">
               The Return of Attention practice consists of six progressive stages:
             </p>
 
@@ -102,7 +102,7 @@ export default function SelfAssessmentCompletedPage() {
                     </div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-purple-600 font-bold text-xl mb-2">{stage.title}</h3>
+                    <h3 className="text-[#6465e0] font-bold text-xl mb-2">{stage.title}</h3>
                     <p className="text-gray-600 text-sm">{stage.description}</p>
                   </div>
                 </div>
@@ -111,9 +111,9 @@ export default function SelfAssessmentCompletedPage() {
           </div>
 
           {/* Ready to Begin Section */}
-          <div className="bg-blue-400 bg-opacity-40 backdrop-blur-sm rounded-3xl p-8 mb-8">
-            <h2 className="text-white text-3xl font-bold text-center mb-4">Ready to Begin?</h2>
-            <p className="text-white text-center mb-8 max-w-3xl mx-auto">
+          <div className="bg-[#e5f3ff] border border-[#d6e8f8] rounded-3xl p-8 mb-8">
+            <h2 className="text-[#03478f] text-3xl font-bold text-center mb-4">Ready to Begin?</h2>
+            <p className="text-[#123a63] text-center mb-8 max-w-3xl mx-auto">
               Click Start Your Journey to access your personalized dashboard and begin Stage
               One. Each stage builds upon the previous one, creating a comprehensive path to
               mastery.
@@ -122,13 +122,13 @@ export default function SelfAssessmentCompletedPage() {
             <div className="flex justify-center gap-4">
               <button 
                 onClick={handleStartJourney}
-                className="bg-green-500 hover:bg-green-600 text-white font-bold px-10 py-4 rounded-xl transition-colors shadow-lg"
+                className="bg-gradient-to-r from-[#6465e0] to-[#7c7de8] hover:from-[#5658d1] hover:to-[#6465e0] text-white font-bold px-10 py-4 rounded-xl transition-colors shadow-lg"
               >
                 Start Your Journey
               </button>
               <button 
                 onClick={handleBackToAssessment}
-                className="bg-blue-300 bg-opacity-50 hover:bg-opacity-70 text-white font-bold px-10 py-4 rounded-xl transition-colors"
+                className="bg-white hover:bg-[#f7fbff] border border-[#6465e0] text-[#6465e0] font-bold px-10 py-4 rounded-xl transition-colors"
               >
                 Back to Self-Assessment
               </button>

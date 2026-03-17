@@ -43,18 +43,18 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
   })
 
   const emotions = [
-    { name: 'Happy', emoji: '😊', color: 'bg-cyan-400' },
-    { name: 'Excited', emoji: '🤩', color: 'bg-cyan-400' },
-    { name: 'Calm', emoji: '😌', color: 'bg-cyan-400' },
-    { name: 'Confident', emoji: '💪', color: 'bg-cyan-400' },
-    { name: 'Peaceful', emoji: '🕊️', color: 'bg-cyan-400' },
-    { name: 'Energetic', emoji: '⚡', color: 'bg-cyan-400' },
-    { name: 'Neutral', emoji: '😐', color: 'bg-cyan-400' },
-    { name: 'Tired', emoji: '😴', color: 'bg-cyan-400' },
-    { name: 'Bored', emoji: '😑', color: 'bg-cyan-400' },
-    { name: 'Sad', emoji: '😢', color: 'bg-cyan-400' },
-    { name: 'Anxious', emoji: '😰', color: 'bg-cyan-400' },
-    { name: 'Frustrated', emoji: '😤', color: 'bg-cyan-400' }
+    { name: 'Happy', emoji: '😊', color: 'bg-[#7c7de8]' },
+    { name: 'Excited', emoji: '🤩', color: 'bg-[#7c7de8]' },
+    { name: 'Calm', emoji: '😌', color: 'bg-[#7c7de8]' },
+    { name: 'Confident', emoji: '💪', color: 'bg-[#7c7de8]' },
+    { name: 'Peaceful', emoji: '🕊️', color: 'bg-[#7c7de8]' },
+    { name: 'Energetic', emoji: '⚡', color: 'bg-[#7c7de8]' },
+    { name: 'Neutral', emoji: '😐', color: 'bg-[#7c7de8]' },
+    { name: 'Tired', emoji: '😴', color: 'bg-[#7c7de8]' },
+    { name: 'Bored', emoji: '😑', color: 'bg-[#7c7de8]' },
+    { name: 'Sad', emoji: '😢', color: 'bg-[#7c7de8]' },
+    { name: 'Anxious', emoji: '😰', color: 'bg-[#7c7de8]' },
+    { name: 'Frustrated', emoji: '😤', color: 'bg-[#7c7de8]' }
   ]
 
   const triggers = [
@@ -84,7 +84,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
           </p>
           <button
             onClick={() => router.push('/signin')}
-            className="px-8 py-3 font-bold text-white transition-colors bg-blue-600 hover:bg-blue-700 rounded-xl"
+            className="px-8 py-3 font-bold text-white transition-colors bg-[#6465e0] hover:bg-[#5658d1] rounded-xl"
           >
             Sign In
           </button>
@@ -214,8 +214,8 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
               onClick={() => setViewMode('quick')}
               className={`px-8 py-3 rounded-lg font-semibold transition-all ${
                 viewMode === 'quick'
-                  ? 'bg-[#e5f3ff] text-[#6465e0]'
-                  : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
+                  ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
+                  : 'bg-[#e5f3ff] text-[#6465e0] hover:bg-[#d6e8f8]'
               }`}
             >
               Quick Log
@@ -224,8 +224,8 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
               onClick={() => setViewMode('detailed')}
               className={`px-8 py-3 rounded-lg font-semibold transition-all ${
                 viewMode === 'detailed'
-                  ? 'bg-[#e5f3ff] text-[#6465e0]'
-                  : 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
+                  ? 'bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white hover:from-[#5658d1] hover:to-[#6465e0]'
+                  : 'bg-[#e5f3ff] text-[#6465e0] hover:bg-[#d6e8f8]'
               }`}
             >
               Detailed
@@ -235,7 +235,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
           {/* Quick Log View */}
           {viewMode === 'quick' && (
             <div className="bg-[#e5f3ff] rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 shadow-2xl">
-              <h2 className="mb-4 text-lg font-bold text-gray-800 sm:text-xl sm:mb-6">How are you feeling right now?</h2>
+              <h2 className="mb-4 text-lg font-bold text-[#03478f] sm:text-xl sm:mb-6">How are you feeling right now?</h2>
               
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 sm:gap-3 md:gap-4">
                 {emotions.map((emotion) => (
@@ -243,7 +243,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                     key={emotion.name}
                     onClick={() => handleQuickLog(emotion.name)}
                     disabled={isLoading}
-                    className={`${emotion.color} hover:opacity-80 p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`${emotion.color} hover:bg-[#6465e0] p-3 sm:p-4 rounded-xl flex flex-col items-center justify-center transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     <span className="mb-1 text-3xl sm:text-4xl sm:mb-2">{emotion.emoji}</span>
                     <span className="text-xs font-semibold text-white sm:text-sm">{emotion.name}</span>
@@ -253,7 +253,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
               
               {isLoading && (
                 <div className="mt-4 text-center">
-                  <div className="text-gray-600">Saving your emotion...</div>
+                  <div className="text-[#123a63]">Saving your emotion...</div>
                 </div>
               )}
             </div>
@@ -271,7 +271,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                   value={detailedForm.description}
                   onChange={(e) => setDetailedForm({ ...detailedForm, description: e.target.value })}
                   placeholder="Describe what trigger's this emotion or what's on your mind"
-                  className="w-full h-24 p-3 text-sm text-gray-600 border-2 border-gray-200 resize-none sm:h-32 sm:p-4 bg-gray-50 rounded-xl focus:border-blue-500 focus:outline-none sm:text-base"
+                  className="w-full h-24 p-3 text-sm text-gray-700 border-2 border-[#d6e8f8] resize-none sm:h-32 sm:p-4 bg-[#f7fbff] rounded-xl focus:border-[#6465e0] focus:outline-none sm:text-base"
                 />
               </div>
 
@@ -288,8 +288,8 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                         onClick={() => setDetailedForm({ ...detailedForm, emotion: emotion.name })}
                         className={`p-2 rounded-lg flex flex-col items-center transition-all ${
                           detailedForm.emotion === emotion.name
-                            ? 'bg-blue-500 text-white scale-105'
-                            : 'bg-gray-100 hover:bg-gray-200'
+                            ? 'bg-[#6465e0] text-white scale-105'
+                            : 'bg-[#f7fbff] hover:bg-[#eef4ff]'
                         }`}
                       >
                         <span className="mb-1 text-2xl">{emotion.emoji}</span>
@@ -310,7 +310,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                     max="10"
                     value={detailedForm.intensity}
                     onChange={(e) => setDetailedForm({ ...detailedForm, intensity: parseInt(e.target.value) })}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    className="w-full h-2 bg-[#d6e8f8] rounded-lg appearance-none cursor-pointer accent-[#6465e0]"
                   />
                   <div className="flex justify-between mt-1 text-xs text-gray-600">
                     <span>Low</span>
@@ -328,7 +328,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
                 <select
                   value={detailedForm.trigger}
                   onChange={(e) => setDetailedForm({ ...detailedForm, trigger: e.target.value })}
-                  className="w-full p-3 text-gray-600 border-2 border-gray-200 bg-gray-50 rounded-xl focus:border-blue-500 focus:outline-none"
+                  className="w-full p-3 text-gray-700 border-2 border-[#d6e8f8] bg-[#f7fbff] rounded-xl focus:border-[#6465e0] focus:outline-none"
                 >
                   <option value="">Select a trigger</option>
                   {triggers.map((trigger) => (
@@ -350,7 +350,7 @@ export function DailyNotesClient({ initialData }: DailyNotesClientProps) {
 
           {/* Today's Emotional Journey */}
           <div className="bg-[#e5f3ff] rounded-3xl p-8 shadow-2xl">
-            <h2 className="mb-6 text-2xl font-bold text-gray-800">Today's Emotional Journey</h2>
+            <h2 className="mb-6 text-2xl font-bold text-[#03478f]">Today's Emotional Journey</h2>
             
             {emotionalJourney.length === 0 ? (
               <div className="py-8 text-center">

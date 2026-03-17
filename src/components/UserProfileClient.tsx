@@ -65,7 +65,7 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
           </p>
           <button
             onClick={() => router.push('/signin')}
-            className="px-8 py-3 font-bold text-white transition-colors bg-blue-600 hover:bg-blue-700 rounded-xl"
+            className="px-8 py-3 font-bold text-white transition-colors bg-[#6465e0] hover:bg-[#5658d1] rounded-xl"
           >
             Sign In
           </button>
@@ -253,13 +253,13 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
             )}
             <button 
               onClick={handleBack}
-              className="px-3 py-2 text-xs font-bold text-blue-600 transition-colors bg-white rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-gray-100 sm:rounded-xl sm:text-sm md:text-base"
+              className="px-3 py-2 text-xs font-bold text-[#6465e0] transition-colors bg-white rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-[#eef4ff] sm:rounded-xl sm:text-sm md:text-base"
             >
               ← Back
             </button>
             <button 
               onClick={handlePrivacy}
-              className="px-3 py-2 text-xs font-bold text-white transition-colors bg-blue-600 rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-blue-700 sm:rounded-xl sm:text-sm md:text-base"
+              className="px-3 py-2 text-xs font-bold text-white transition-colors bg-[#6465e0] rounded-lg sm:px-4 sm:py-2 md:px-6 md:py-3 hover:bg-[#5658d1] sm:rounded-xl sm:text-sm md:text-base"
             >
               Privacy
             </button>
@@ -269,42 +269,42 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
             {/* Left Panel - User Information */}
             <div className="space-y-4 sm:space-y-6">
               {/* Profile Card */}
-              <div className="p-4 bg-blue-600 shadow-lg sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl">
+              <div className="p-4 bg-[#6465e0] shadow-lg sm:p-5 md:p-6 rounded-2xl sm:rounded-3xl">
                 <div className="flex justify-center mb-4 sm:mb-6">
                   <div className="flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg sm:w-24 sm:h-24 md:w-32 md:h-32">
-                    <User className="w-12 h-12 text-blue-600 sm:w-16 sm:h-16 md:w-20 md:h-20" />
+                    <User className="w-12 h-12 text-[#6465e0] sm:w-16 sm:h-16 md:w-20 md:h-20" />
                   </div>
                 </div>
 
                 <div className="p-4 space-y-4 bg-white sm:p-5 md:p-6 sm:space-y-5 md:space-y-6 rounded-xl sm:rounded-2xl">
-                  <div className="pb-2 text-center border-b-2 border-blue-500 sm:pb-3 sm:border-b-4">
+                  <div className="pb-2 text-center border-b-2 border-[#6465e0] sm:pb-3 sm:border-b-4">
                     <h1 className="text-xl font-bold text-gray-800 sm:text-2xl md:text-3xl">Hello {userProfile.name}</h1>
                   </div>
 
                   {/* User Details */}
                   {!isEditing ? (
                     <div className="space-y-3 sm:space-y-4">
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Email :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.email}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Age :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.age}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Gender :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.gender}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Nationality :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.nationality}</span>
                       </div>
 
-                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="flex items-center justify-between py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="text-sm font-semibold text-gray-700 sm:text-base">Current Country :</span>
                         <span className="text-sm text-gray-800 sm:text-base">{userProfile.currentCountry}</span>
                       </div>
@@ -312,7 +312,7 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                   ) : (
                     <div className="space-y-3 sm:space-y-4">
                       {/* Name Field */}
-                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Name <span className="text-red-500">*</span>:</span>
                         <input
                           type="text"
@@ -320,12 +320,12 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                           onChange={(e) => handleInputChange('name', e.target.value)}
                           placeholder="Enter your full name"
                           required
-                          className="w-full p-2 text-sm border border-gray-300 rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 text-sm border border-[#d6e8f8] bg-[#f7fbff] rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-[#6465e0]"
                         />
                       </div>
 
                       {/* Email Field */}
-                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Email <span className="text-red-500">*</span>:</span>
                         <input
                           type="email"
@@ -333,13 +333,13 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                           onChange={(e) => handleInputChange('email', e.target.value)}
                           placeholder="Enter your email address"
                           required
-                          className="w-full p-2 text-sm border border-gray-300 rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 text-sm border border-[#d6e8f8] bg-[#f7fbff] rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-[#6465e0]"
                         />
                         <p className="mt-1 text-xs text-orange-600 sm:text-sm">⚠️ Changing your email will require you to log in again</p>
                       </div>
 
                       {/* Age Field */}
-                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Age <span className="text-red-500">*</span>:</span>
                         <input
                           type="number"
@@ -349,17 +349,17 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                           min="13"
                           max="120"
                           required
-                          className="w-full p-2 text-sm border border-gray-300 rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 text-sm border border-[#d6e8f8] bg-[#f7fbff] rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-[#6465e0]"
                         />
                       </div>
 
                       {/* Gender Field */}
-                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Gender :</span>
                         <select
                           value={editForm.gender}
                           onChange={(e) => handleInputChange('gender', e.target.value)}
-                          className="w-full p-2 text-sm border border-gray-300 rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 text-sm border border-[#d6e8f8] bg-[#f7fbff] rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-[#6465e0]"
                         >
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
@@ -369,12 +369,12 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                       </div>
 
                       {/* Nationality Field */}
-                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Nationality :</span>
                         <select
                           value={editForm.nationality}
                           onChange={(e) => handleInputChange('nationality', e.target.value)}
-                          className="w-full p-2 text-sm border border-gray-300 rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 text-sm border border-[#d6e8f8] bg-[#f7fbff] rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-[#6465e0]"
                         >
                           <option value="">Select Your Country</option>
                           <option value="Afghanistan">Afghanistan</option>
@@ -392,12 +392,12 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                       </div>
 
                       {/* Current Country Field */}
-                      <div className="py-2 pl-3 border-l-2 border-blue-500 sm:pl-4 sm:border-l-4">
+                      <div className="py-2 pl-3 border-l-2 border-[#6465e0] sm:pl-4 sm:border-l-4">
                         <span className="block mb-1 text-sm font-semibold text-gray-700 sm:mb-2 sm:text-base">Current Country :</span>
                         <select
                           value={editForm.currentCountry}
                           onChange={(e) => handleInputChange('currentCountry', e.target.value)}
-                          className="w-full p-2 text-sm border border-gray-300 rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 text-sm border border-[#d6e8f8] bg-[#f7fbff] rounded-lg sm:text-base focus:outline-none focus:ring-2 focus:ring-[#6465e0]"
                         >
                           <option value="">Select Your Country</option>
                           <option value="Afghanistan">Afghanistan</option>
@@ -420,7 +420,7 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                     <button 
                       onClick={handleLogout}
                       disabled={isLoggingOut}
-                      className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white transition-colors bg-blue-600 rounded-lg sm:px-6 sm:py-2 md:px-8 md:py-3 hover:bg-blue-700 sm:rounded-xl sm:text-sm md:text-base disabled:bg-blue-400 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white transition-colors bg-[#6465e0] rounded-lg sm:px-6 sm:py-2 md:px-8 md:py-3 hover:bg-[#5658d1] sm:rounded-xl sm:text-sm md:text-base disabled:bg-[#9ea0ef] disabled:cursor-not-allowed"
                     >
                       {isLoggingOut ? (
                         <>
@@ -437,7 +437,7 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                     {!isEditing ? (
                       <button 
                         onClick={handleEditToggle}
-                        className="text-sm font-semibold text-blue-500 underline sm:text-base hover:text-blue-600"
+                        className="text-sm font-semibold text-[#6465e0] underline sm:text-base hover:text-[#5658d1]"
                       >
                         Edit
                       </button>
@@ -476,23 +476,23 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
               {/* Stats Grid */}
               <div className="p-4 bg-white shadow-lg sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl">
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-                  <div className="p-3 text-center bg-gray-50 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
-                    <div className="mb-1 text-3xl font-bold text-blue-600 sm:text-4xl md:text-5xl lg:text-6xl sm:mb-2">{userProfile.happiness}</div>
+                    <div className="p-3 text-center bg-[#f7fbff] sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
+                    <div className="mb-1 text-3xl font-bold text-[#6465e0] sm:text-4xl md:text-5xl lg:text-6xl sm:mb-2">{userProfile.happiness}</div>
                     <div className="text-xs font-semibold text-gray-700 sm:text-sm md:text-base lg:text-lg">Happiness</div>
                   </div>
 
-                  <div className="p-3 text-center bg-gray-50 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
-                    <div className="mb-1 text-3xl font-bold text-blue-600 sm:text-4xl md:text-5xl lg:text-6xl sm:mb-2">{userProfile.sessions}</div>
+                  <div className="p-3 text-center bg-[#f7fbff] sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
+                    <div className="mb-1 text-3xl font-bold text-[#6465e0] sm:text-4xl md:text-5xl lg:text-6xl sm:mb-2">{userProfile.sessions}</div>
                     <div className="text-xs font-semibold text-gray-700 sm:text-sm md:text-base lg:text-lg">Sessions</div>
                   </div>
 
-                  <div className="p-3 text-center bg-gray-50 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
-                    <div className="mb-1 text-sm font-bold text-center text-blue-600 break-words sm:text-base md:text-lg sm:mb-2">{userProfile.userLevel}</div>
+                  <div className="p-3 text-center bg-[#f7fbff] sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
+                    <div className="mb-1 text-sm font-bold text-center text-[#6465e0] break-words sm:text-base md:text-lg sm:mb-2">{userProfile.userLevel}</div>
                     <div className="text-xs font-semibold text-gray-700 sm:text-sm md:text-base lg:text-lg">User Level</div>
                   </div>
 
-                  <div className="p-3 text-center bg-gray-50 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
-                    <div className="mb-1 text-3xl font-bold text-blue-600 sm:text-4xl md:text-5xl lg:text-6xl sm:mb-2">{userProfile.hours}</div>
+                  <div className="p-3 text-center bg-[#f7fbff] sm:p-4 md:p-6 rounded-xl sm:rounded-2xl">
+                    <div className="mb-1 text-3xl font-bold text-[#6465e0] sm:text-4xl md:text-5xl lg:text-6xl sm:mb-2">{userProfile.hours}</div>
                     <div className="text-xs font-semibold text-gray-700 sm:text-sm md:text-base lg:text-lg">Hours</div>
                   </div>
                 </div>
@@ -508,8 +508,8 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                     <button 
                       className={`font-bold px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 rounded-lg sm:rounded-xl text-xs sm:text-sm md:text-base ${
                         assessmentStatus.questionnaire 
-                          ? 'bg-blue-500 text-white' 
-                          : 'bg-blue-600 text-white'
+                          ? 'bg-[#7c7de8] text-white' 
+                          : 'bg-[#6465e0] text-white'
                       }`}
                     >
                       {assessmentStatus.questionnaire ? 'Completed' : 'Complete'}
@@ -546,7 +546,7 @@ export function UserProfileClient({ initialData }: UserProfileClientProps) {
                             }
                           }}
                           className={`w-full sm:w-auto font-bold px-3 py-1.5 sm:px-4 sm:py-2 md:px-6 rounded-lg sm:rounded-xl hover:opacity-90 transition-opacity text-xs sm:text-sm md:text-base ${
-                            assessmentStatus.selfAssessment ? 'bg-blue-500 text-white cursor-default'  : 'bg-blue-600 text-white'
+                            assessmentStatus.selfAssessment ? 'bg-[#7c7de8] text-white cursor-default'  : 'bg-[#6465e0] text-white'
                           }`}
                           disabled={assessmentStatus.selfAssessment}
                         >

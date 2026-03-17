@@ -412,13 +412,13 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
 
         {/* CTA for incomplete assessments */}
         {!assessmentsCompleted && (
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-[25px] p-6 sm:p-8 lg:p-10 mb-6 sm:mb-10 shadow-xl">
-            <div className="flex flex-col items-center space-y-4 text-center text-white sm:space-y-6">
+          <div className="bg-[#e5f3ff] border-2 border-[#b9d4ee] rounded-[25px] p-6 sm:p-8 lg:p-10 mb-6 sm:mb-10 shadow-xl">
+            <div className="flex flex-col items-center space-y-4 text-center sm:space-y-6">
               <div className="text-4xl sm:text-5xl lg:text-6xl">🎯</div>
-              <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl font-lexend">
+              <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl font-lexend text-[#03478f]">
                 Start Your Journey to Lasting Happiness
               </h2>
-              <p className="max-w-2xl text-base sm:text-lg lg:text-xl font-lexend">
+              <p className="max-w-2xl text-base sm:text-lg lg:text-xl font-lexend text-[#123a63]">
                 Complete the questionnaire and self-assessment to unlock your personalized journey.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto sm:min-w-[400px]">
@@ -427,7 +427,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                   className={`px-8 py-4 rounded-[15px] font-bold font-lexend transition-colors text-lg shadow-lg flex-1 sm:flex-none ${
                     questionnaireCompleted 
                       ? 'bg-green-500 text-white cursor-default' 
-                      : 'bg-white text-blue-600 hover:bg-blue-50'
+                      : 'bg-[#03478f] text-white hover:bg-[#023a74]'
                   }`}
                   disabled={questionnaireCompleted}
                 >
@@ -446,7 +446,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                       ? 'bg-green-500 text-white cursor-default' 
                       : !questionnaireCompleted
                       ? 'bg-gray-400 text-gray-300 cursor-not-allowed opacity-60'
-                      : 'bg-purple-700 text-white hover:bg-purple-800'
+                      : 'bg-[#1f6fb6] text-white hover:bg-[#175d98]'
                   }`}
                   disabled={selfAssessmentCompleted || !questionnaireCompleted}
                 >

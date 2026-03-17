@@ -152,11 +152,11 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-500 via-blue-600 to-purple-600 sm:p-6">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa] sm:p-6">
       {/* Back Button - Top Left */}
       <button
         onClick={handleBackToHome}
-        className="fixed z-10 flex items-center gap-2 p-2 text-white transition-all duration-200 rounded-full top-4 left-4 sm:top-6 sm:left-6 sm:p-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm hover:scale-110 group"
+        className="fixed z-10 flex items-center gap-2 p-2 text-[#03478f] transition-all duration-200 rounded-full top-4 left-4 sm:top-6 sm:left-6 sm:p-3 bg-white/80 border border-[#d6e8f8] hover:bg-white backdrop-blur-sm hover:scale-110 group"
       >
         <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
         <span className="hidden text-sm font-medium transition-opacity duration-200 opacity-0 sm:inline-block group-hover:opacity-100">
@@ -164,13 +164,13 @@ export default function SignInPage() {
         </span>
       </button>
 
-      <div className="w-full max-w-md p-6 shadow-2xl bg-white/95 backdrop-blur-sm rounded-3xl sm:p-10">
+      <div className="w-full max-w-md p-6 shadow-2xl bg-white rounded-3xl sm:p-10 border border-[#d6e8f8]">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-purple-600">
+          <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg sm:w-20 sm:h-20 bg-gradient-to-br from-[#03478f] to-[#6465e0]">
             <LogIn className="w-8 h-8 text-white sm:w-10 sm:h-10" />
           </div>
-          <h1 className="mb-2 text-2xl font-bold text-gray-800 sm:text-3xl">Welcome Back</h1>
+          <h1 className="mb-2 text-2xl font-bold text-[#03478f] sm:text-3xl">Welcome Back</h1>
           <p className="text-sm text-gray-600 sm:text-base">Sign in to continue your journey</p>
         </div>
         
@@ -186,7 +186,7 @@ export default function SignInPage() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
+              className="w-full p-3 text-sm transition-all duration-200 border-2 border-[#d6e8f8] sm:p-4 rounded-xl bg-[#f7fbff] sm:text-base focus:outline-none focus:border-[#6465e0] focus:bg-white focus:shadow-lg"
             />
             {fieldErrors.email && (
               <div className="flex items-center gap-1 mt-1 text-xs text-red-500 sm:text-sm">
@@ -207,7 +207,7 @@ export default function SignInPage() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 pr-12 text-sm transition-all duration-200 border-2 border-gray-200 sm:p-4 sm:pr-12 rounded-xl bg-gray-50 sm:text-base focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-lg"
+                className="w-full p-3 pr-12 text-sm transition-all duration-200 border-2 border-[#d6e8f8] sm:p-4 sm:pr-12 rounded-xl bg-[#f7fbff] sm:text-base focus:outline-none focus:border-[#6465e0] focus:bg-white focus:shadow-lg"
               />
               <button
                 type="button"
@@ -237,14 +237,14 @@ export default function SignInPage() {
               id="rememberMe"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 mr-2 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="w-4 h-4 mr-2 text-[#6465e0] border-gray-300 rounded focus:ring-[#6465e0]"
             />
             <label htmlFor="rememberMe" className="text-gray-700 cursor-pointer">Remember me</label>
           </div>
           <button
             type="button"
             onClick={() => router.push('/reset-password')}
-            className="text-xs font-medium text-blue-600 transition hover:text-blue-700 hover:underline sm:text-sm"
+            className="text-xs font-medium text-[#6465e0] transition hover:text-[#5658d1] hover:underline sm:text-sm"
           >
             Forgot password?
           </button>
@@ -292,7 +292,7 @@ export default function SignInPage() {
         <button
           onClick={handleSignIn}
           disabled={loading}
-          className="w-full p-3 sm:p-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 hover:shadow-xl hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+          className="w-full p-3 sm:p-4 bg-gradient-to-r from-[#6465e0] to-[#7c7de8] text-white rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 hover:shadow-xl hover:scale-[1.02] hover:from-[#5658d1] hover:to-[#6465e0] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -312,7 +312,7 @@ export default function SignInPage() {
           Don't have an account?{' '}
           <button 
             onClick={handleSignUp}
-            className="font-semibold text-blue-600 cursor-pointer hover:text-blue-700 hover:underline">
+            className="font-semibold text-[#6465e0] cursor-pointer hover:text-[#5658d1] hover:underline">
             Sign Up
           </button>
         </div>

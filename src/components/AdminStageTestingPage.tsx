@@ -32,7 +32,7 @@ export default function AdminStageTestingPage() {
       label: 'Seeker',
       title: 'Physical Readiness',
       description: 'Building the foundation through physical stillness',
-      gradient: 'from-purple-600 to-purple-800'
+      gradient: 'from-[#6465e0] to-[#7c7de8]'
     },
     {
       id: 2,
@@ -40,7 +40,7 @@ export default function AdminStageTestingPage() {
       label: 'Observer',
       title: 'Understanding Thought Patterns',
       description: 'Learning to observe without attachment',
-      gradient: 'from-pink-600 to-red-600'
+      gradient: 'from-[#1f6fb6] to-[#2d82cc]'
     },
     {
       id: 3,
@@ -48,7 +48,7 @@ export default function AdminStageTestingPage() {
       label: 'Trainee',
       title: 'Dot Tracking Practice',
       description: 'Developing sustained attention',
-      gradient: 'from-blue-500 to-cyan-500'
+      gradient: 'from-[#4f7db8] to-[#6a95cb]'
     },
     {
       id: 4,
@@ -56,7 +56,7 @@ export default function AdminStageTestingPage() {
       label: 'Practitioner',
       title: 'Tool-Free Practice',
       description: 'Practicing without external supports',
-      gradient: 'from-green-500 to-teal-600'
+      gradient: 'from-[#5870d8] to-[#7c7de8]'
     },
     {
       id: 5,
@@ -64,7 +64,7 @@ export default function AdminStageTestingPage() {
       label: 'Master',
       title: 'Sustained Presence',
       description: 'Maintaining presence throughout daily activities',
-      gradient: 'from-pink-500 to-yellow-500'
+      gradient: 'from-[#6a95cb] to-[#9eaac0]'
     },
     {
       id: 6,
@@ -72,7 +72,7 @@ export default function AdminStageTestingPage() {
       label: 'Illuminator',
       title: 'Integration & Teaching',
       description: 'Fully integrating the practice into your life',
-      gradient: 'from-cyan-500 to-purple-800'
+      gradient: 'from-[#2d82cc] to-[#6465e0]'
     }
   ])
 
@@ -156,7 +156,7 @@ export default function AdminStageTestingPage() {
   }
 
   return (
-    <div className="min-h-screen pb-10 bg-gradient-to-br from-blue-600 to-blue-800">
+    <div className="min-h-screen pb-10 bg-gradient-to-b from-[#b9d4ee] to-[#fffafa]">
       <ToastContainer />
       {/* Navigation */}
       <Navigation currentPage="admin" />
@@ -166,19 +166,19 @@ export default function AdminStageTestingPage() {
         <div className="flex justify-center gap-8 px-10 mx-auto max-w-7xl">
           <button 
             onClick={() => handleNavigation('user-progress')}
-            className="px-8 py-3 text-base font-semibold text-blue-600 transition-all duration-300 bg-transparent border-2 border-blue-600 rounded-lg cursor-pointer hover:bg-blue-600 hover:text-white hover:-translate-y-1 hover:shadow-lg"
+            className="px-8 py-3 text-base font-semibold text-[#6465e0] transition-all duration-300 bg-transparent border-2 border-[#6465e0] rounded-lg cursor-pointer hover:bg-[#6465e0] hover:text-white hover:-translate-y-1 hover:shadow-lg"
           >
             User Progress
           </button>
           <button 
             onClick={() => handleNavigation('user-management')}
-            className="px-8 py-3 text-base font-semibold text-blue-600 transition-all duration-300 bg-transparent border-2 border-blue-600 rounded-lg cursor-pointer hover:bg-blue-600 hover:text-white hover:-translate-y-1 hover:shadow-lg"
+            className="px-8 py-3 text-base font-semibold text-[#6465e0] transition-all duration-300 bg-transparent border-2 border-[#6465e0] rounded-lg cursor-pointer hover:bg-[#6465e0] hover:text-white hover:-translate-y-1 hover:shadow-lg"
           >
             User Management
           </button>
           <button 
             onClick={() => handleNavigation('stage-testing')}
-            className="px-8 py-3 text-base font-semibold text-white transition-all duration-300 bg-blue-600 border-2 border-blue-600 rounded-lg cursor-pointer hover:bg-blue-700 hover:-translate-y-1 hover:shadow-lg"
+            className="px-8 py-3 text-base font-semibold text-white transition-all duration-300 bg-[#6465e0] border-2 border-[#6465e0] rounded-lg cursor-pointer hover:bg-[#5658d1] hover:border-[#5658d1] hover:-translate-y-1 hover:shadow-lg"
           >
             Stage Testing
           </button>
@@ -190,7 +190,7 @@ export default function AdminStageTestingPage() {
         <div className="px-4 py-3">
           <button 
             onClick={() => setMobileAdminMenuOpen(!mobileAdminMenuOpen)}
-            className="flex items-center justify-between w-full px-4 py-3 font-semibold text-white bg-blue-600 rounded-lg"
+            className="flex items-center justify-between w-full px-4 py-3 font-semibold text-white bg-[#6465e0] rounded-lg"
           >
             <span>Admin Menu</span>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -206,19 +206,19 @@ export default function AdminStageTestingPage() {
             <div className="mt-2 space-y-2">
               <button 
                 onClick={() => handleNavigation('user-progress')}
-                className="w-full px-4 py-3 font-semibold text-left text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50"
+                className="w-full px-4 py-3 font-semibold text-left text-[#6465e0] border-2 border-[#6465e0] rounded-lg hover:bg-[#eef4ff]"
               >
                 User Progress
               </button>
               <button 
                 onClick={() => handleNavigation('user-management')}
-                className="w-full px-4 py-3 font-semibold text-left text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50"
+                className="w-full px-4 py-3 font-semibold text-left text-[#6465e0] border-2 border-[#6465e0] rounded-lg hover:bg-[#eef4ff]"
               >
                 User Management
               </button>
               <button 
                 onClick={() => handleNavigation('stage-testing')}
-                className="w-full px-4 py-3 font-semibold text-left text-white bg-blue-600 rounded-lg"
+                className="w-full px-4 py-3 font-semibold text-left text-white bg-[#6465e0] rounded-lg"
               >
                 Stage Testing
               </button>
@@ -229,10 +229,10 @@ export default function AdminStageTestingPage() {
 
       {/* Main Content */}
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-10">
-        <h1 className="px-4 mb-3 text-2xl font-bold text-center text-white sm:text-3xl lg:text-4xl sm:mb-4 drop-shadow-lg">
+        <h1 className="px-4 mb-3 text-2xl font-bold text-center text-[#03478f] sm:text-3xl lg:text-4xl sm:mb-4">
           Stage-by-Stage Testing Suite
         </h1>
-        <p className="px-4 mb-8 text-sm text-center text-white/90 sm:text-base sm:mb-12 drop-shadow">
+        <p className="px-4 mb-8 text-sm text-center text-[#123a63] sm:text-base sm:mb-12">
           Manage and test all journey stages with advanced controls
         </p>
 
@@ -253,7 +253,7 @@ export default function AdminStageTestingPage() {
                 <div className="mb-2 text-xs font-semibold tracking-wider text-gray-600 uppercase">
                   {stage.label}
                 </div>
-                <div className="mb-2 text-lg font-bold text-blue-600 sm:text-xl">
+                <div className="mb-2 text-lg font-bold text-[#03478f] sm:text-xl">
                   {stage.title}
                 </div>
                 <div className="mb-4 text-xs leading-relaxed text-gray-600 sm:text-sm sm:mb-5">
@@ -264,7 +264,7 @@ export default function AdminStageTestingPage() {
                   {stageStatus[stage.id]?.isUnlocked ? (
                     <button 
                       onClick={() => handleStageAction(stage.id, 'complete')}
-                      className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-blue-500 text-white hover:bg-blue-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/30 min-h-[40px] active:bg-blue-700"
+                      className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-[#6465e0] text-white hover:bg-[#5658d1] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#6465e0]/30 min-h-[40px] active:bg-[#4a4bc2]"
                       disabled={isLoading}
                     >
                       Complete
@@ -272,7 +272,7 @@ export default function AdminStageTestingPage() {
                   ) : (
                     <button 
                       onClick={() => handleStageAction(stage.id, 'unlock')}
-                      className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-green-500 text-white hover:bg-green-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-green-500/30 min-h-[40px] active:bg-green-700"
+                      className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-[#1f6fb6] text-white hover:bg-[#175d98] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#1f6fb6]/30 min-h-[40px] active:bg-[#124d80]"
                       disabled={isLoading}
                     >
                       Unlock
@@ -280,7 +280,7 @@ export default function AdminStageTestingPage() {
                   )}
                   <button 
                     onClick={() => handleStageAction(stage.id, 'reset')}
-                    className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-orange-500 text-white hover:bg-orange-600 hover:-translate-y-1 hover:shadow-lg hover:shadow-orange-500/30 min-h-[40px] active:bg-orange-700"
+                    className="w-full p-3 border-none rounded-lg cursor-pointer text-xs sm:text-sm font-semibold transition-all duration-300 bg-[#9eaac0] text-white hover:bg-[#8f9bb1] hover:-translate-y-1 hover:shadow-lg hover:shadow-[#9eaac0]/30 min-h-[40px] active:bg-[#7f8ba1]"
                     disabled={isLoading}
                   >
                     Reset
@@ -299,22 +299,22 @@ export default function AdminStageTestingPage() {
           
           <div className="space-y-3 sm:space-y-4">
             
-            <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-blue-50">
-              <span className="text-sm font-bold text-blue-600 sm:text-base min-w-fit sm:min-w-24">Unlock:</span>
+            <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-[#eef4ff]">
+              <span className="text-sm font-bold text-[#6465e0] sm:text-base min-w-fit sm:min-w-24">Unlock:</span>
               <span className="text-xs leading-relaxed text-gray-700 sm:text-sm lg:text-base">
                 Unlock a locked stage and complete all previous stages. Example: Unlock Stage 5 → Stages 1-4 completed, Stage 5 unlocked.
               </span>
             </div>
             
-            <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-blue-50">
-              <span className="text-sm font-bold text-blue-600 sm:text-base min-w-fit sm:min-w-24">Complete:</span>
+            <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-[#eef4ff]">
+              <span className="text-sm font-bold text-[#6465e0] sm:text-base min-w-fit sm:min-w-24">Complete:</span>
               <span className="text-xs leading-relaxed text-gray-700 sm:text-sm lg:text-base">
                 Mark the stage as fully completed with all requirements met, and unlock the next stage. For Stage 1, marks all sub-stages as completed.
               </span>
             </div>
             
-            <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-blue-50">
-              <span className="text-sm font-bold text-blue-600 sm:text-base min-w-fit sm:min-w-24">Reset:</span>
+            <div className="flex flex-col items-start gap-2 p-3 transition-all duration-300 rounded-lg sm:flex-row sm:gap-4 sm:p-4 bg-gray-50 sm:rounded-xl hover:bg-[#eef4ff]">
+              <span className="text-sm font-bold text-[#6465e0] sm:text-base min-w-fit sm:min-w-24">Reset:</span>
               <span className="text-xs leading-relaxed text-gray-700 sm:text-sm lg:text-base">
                 Reset only this specific stage back to its initial progress (0 sessions/hours). The stage remains at its current lock status.
               </span>
