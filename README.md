@@ -118,6 +118,7 @@ Optional integrations:
 - `RESEND_API_KEY`
 - `FROM_EMAIL`
 - `ENABLE_EMAIL_VERIFICATION`
+- `NEXT_PUBLIC_REMOTE_BACKEND_URL` (base URL for ESP remote backend used by PAHM timer)
 
 Required only for admin-only protected operations:
 

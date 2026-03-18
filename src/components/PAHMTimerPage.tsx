@@ -46,6 +46,7 @@ interface SessionData {
 export default function PAHMTimerPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const remoteBaseUrl = process.env.NEXT_PUBLIC_REMOTE_BACKEND_URL?.replace(/\/$/, '')
   const stageId = searchParams.get('stage') || '2'
   const sessionId = searchParams.get('sessionId') // Get sessionId from URL
   const mindRecoverySession = searchParams.get('session')
@@ -99,6 +100,14 @@ export default function PAHMTimerPage() {
   const eventSourceRef = useRef<EventSource | null>(null)
   const [useRemote, setUseRemote] = useState(false) // From session settings
   const handlePahmClickRef = useRef<((position: keyof PAHMTracking, event?: React.MouseEvent) => Promise<void>) | null>(null)
+
+  const getRemoteEndpoint = useCallback((path: string) => {
+    if (!remoteBaseUrl) {
+      return null
+    }
+
+    return `${remoteBaseUrl}${path}`
+  }, [remoteBaseUrl])
 
   // Initialize meditation audio hook
   const { playBell, playVoice } = useMeditationAudio({
@@ -157,8 +166,16 @@ export default function PAHMTimerPage() {
   
   // Function to check remote connection status
   const checkRemoteConnection = async () => {
+    const statusEndpoint = getRemoteEndpoint('/api/remote/status')
+    if (!statusEndpoint) {
+      console.warn('NEXT_PUBLIC_REMOTE_BACKEND_URL is not configured. Remote controls are unavailable.')
+      setRemoteConnected(false)
+      setRemoteStatus('disconnected')
+      return
+    }
+
     try {
-      const response = await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/status')
+      const response = await fetch(statusEndpoint)
       const data = await response.json()
       setRemoteConnected(data.connected && data.mqtt_connected)
       setRemoteStatus(data.connected && data.mqtt_connected ? 'connected' : 'disconnected')
@@ -319,8 +336,12 @@ export default function PAHMTimerPage() {
     
     // Enable remote button tracking if remote is being used
     if (useRemote) {
+      const enableEndpoint = getRemoteEndpoint('/api/remote/enable')
+      if (!enableEndpoint) {
+        setRemoteStatus('disconnected')
+      } else {
       try {
-        const response = await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/enable', {
+        const response = await fetch(enableEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         })
@@ -331,6 +352,7 @@ export default function PAHMTimerPage() {
         }
       } catch (error) {
         setRemoteStatus('disconnected')
+      }
       }
     }
     
@@ -372,8 +394,12 @@ export default function PAHMTimerPage() {
     
     // Disable remote when pausing (only if remote is being used)
     if (timer.isRunning && useRemote) {
+      const disableEndpoint = getRemoteEndpoint('/api/remote/disable')
+      if (!disableEndpoint) {
+        setRemoteStatus('disconnected')
+      } else {
       try {
-        await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/disable', {
+        await fetch(disableEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         })
@@ -381,16 +407,22 @@ export default function PAHMTimerPage() {
       } catch (error) {
         console.error('Failed to disable remote:', error)
       }
+      }
     } else if (!timer.isRunning && useRemote) {
       // Re-enable remote when resuming
+      const enableEndpoint = getRemoteEndpoint('/api/remote/enable')
+      if (!enableEndpoint) {
+        setRemoteStatus('disconnected')
+      } else {
       try {
-        await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/enable', {
+        await fetch(enableEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         })
         setRemoteEnabled(true)
       } catch (error) {
         console.error('Failed to enable remote:', error)
+      }
       }
     }
     
@@ -409,8 +441,12 @@ export default function PAHMTimerPage() {
     
     // Disable remote button tracking (only if remote is being used)
     if (useRemote) {
+      const disableEndpoint = getRemoteEndpoint('/api/remote/disable')
+      if (!disableEndpoint) {
+        setRemoteStatus('disconnected')
+      } else {
       try {
-        await fetch('https://9c86da5e-48ec-49f7-bb29-7a670ef6f8be-dev.e1-us-east-azure.choreoapis.dev/default/returnofattention-remote/v1.0/api/remote/disable', {
+        await fetch(disableEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         })
@@ -418,6 +454,7 @@ export default function PAHMTimerPage() {
         console.log('🛑 Remote disabled after session')
       } catch (error) {
         console.error('Failed to disable remote:', error)
+      }
       }
     }
     
